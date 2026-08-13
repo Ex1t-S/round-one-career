@@ -1,18 +1,15 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { DarkTheme, Stack, ThemeProvider } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import 'react-native-reanimated';
+import '@/global.css';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { CareerStoreProvider } from '@/state/career-store';
 
-SplashScreen.preventAutoHideAsync();
+const roundOneTheme = {
+  ...DarkTheme,
+  colors: { ...DarkTheme.colors, primary: '#ff6a2b', background: '#090b10', card: '#0d1017', text: '#f4f1ea', border: '#293140', notification: '#ff6a2b' },
+};
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
-  );
+export default function RootLayout() {
+  return <ThemeProvider value={roundOneTheme}><CareerStoreProvider><Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: '#090b10' } }}><Stack.Screen name="index" /><Stack.Screen name="[screen]" /></Stack><StatusBar style="light" /></CareerStoreProvider></ThemeProvider>;
 }
