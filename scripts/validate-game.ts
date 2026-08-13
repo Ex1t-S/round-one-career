@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 import { SCREEN_IDS } from '../src/constants/routes';
 import { ALL_CAREER_DECISIONS, CAREER_EVENTS, getCareerEvent } from '../src/data/events';
@@ -40,6 +42,15 @@ assert.ok(UPGRADES.length >= 70, 'The lifestyle catalog must be extensive');
 assert.ok(DEFAULT_MAJOR_FORMAT.stages.length >= 10, 'The configurable Major model must include all stages');
 assert.equal(new Set(ALL_CAREER_DECISIONS.map((event) => event.slot).filter(Boolean)).size, 6, 'There must be six contextual decision slots per season');
 assert.ok(CONSUMABLES.length >= 10, 'Consumables and lifestyle purchases must be available');
+
+const logoManifest = JSON.parse(readFileSync(resolve('assets/team-logos/manifest.json'), 'utf8')) as {
+  teams: { id: string; file?: string; status: string }[];
+};
+assert.equal(logoManifest.teams.length, TEAMS.length, 'Every team must have a logo catalog entry or explicit fallback');
+assert.deepEqual(new Set(logoManifest.teams.map((entry) => entry.id)), new Set(TEAMS.map((team) => team.id)), 'Logo catalog ids must match the VRS teams');
+const verifiedLogos = logoManifest.teams.filter((entry) => entry.file);
+assert.ok(verifiedLogos.length >= 150, 'At least 150 current or parent-organization marks must be bundled');
+for (const entry of verifiedLogos) assert.ok(existsSync(resolve('assets/team-logos', entry.file!)), `Missing local logo ${entry.file}`);
 
 const identity: PlayerIdentity = { fullName: 'Test Player', nickname: 'TEST', nationality: 'Argentina', region: 'Argentina', city: 'Buenos Aires', age: 17, primaryLanguage: 'Español', secondaryLanguages: ['Inglés'], handedness: 'Diestro', personality: 'Analítico', ambition: 85, riskTolerance: 60, priority: 'Títulos', role: 'Rifler', style: 'Mechanical' };
 

@@ -1,0 +1,1906 @@
+{
+  "generatedAt": "2026-08-13T07:31:16.732Z",
+  "source": "Liquipedia Commons team logo repository",
+  "sourceGuide": "https://liquipedia.net/commons/File_Standards_Guide",
+  "trademarkNotice": "Team names and marks remain the property of their respective organizations.",
+  "teams": [
+    {
+      "id": "spirit",
+      "name": "Spirit",
+      "status": "official-mark",
+      "file": "spirit.png",
+      "sourceTitle": "File:Team Spirit allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_Spirit_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/5/56/Team_Spirit_allmode.png/256px-Team_Spirit_allmode.png",
+      "width": 256,
+      "height": 332
+    },
+    {
+      "id": "falcons",
+      "name": "Falcons",
+      "status": "official-mark",
+      "file": "falcons.png",
+      "sourceTitle": "File:Falcons Esports 2020 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Falcons_Esports_2020_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/02/Falcons_Esports_2020_allmode.png/256px-Falcons_Esports_2020_allmode.png",
+      "width": 256,
+      "height": 263
+    },
+    {
+      "id": "mouz",
+      "name": "MOUZ",
+      "status": "official-mark",
+      "file": "mouz.png",
+      "sourceTitle": "File:MOUZ 2021 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:MOUZ_2021_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/c/c2/MOUZ_2021_allmode.png/256px-MOUZ_2021_allmode.png",
+      "width": 256,
+      "height": 272
+    },
+    {
+      "id": "9z",
+      "name": "9z",
+      "status": "official-mark",
+      "file": "9z.png",
+      "sourceTitle": "File:9z allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:9z_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/64/9z_allmode.png/256px-9z_allmode.png",
+      "width": 256,
+      "height": 247
+    },
+    {
+      "id": "vitality",
+      "name": "Vitality",
+      "status": "official-mark",
+      "file": "vitality.png",
+      "sourceTitle": "File:Vitality allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Vitality_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/0c/Vitality_allmode.png/256px-Vitality_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "natus-vincere",
+      "name": "Natus Vincere",
+      "status": "official-mark",
+      "file": "natus-vincere.png",
+      "sourceTitle": "File:Natus Vincere allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Natus_Vincere_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/2/2a/Natus_Vincere_allmode.png/256px-Natus_Vincere_allmode.png",
+      "width": 256,
+      "height": 228
+    },
+    {
+      "id": "legacy",
+      "name": "Legacy",
+      "status": "official-mark",
+      "file": "legacy.png",
+      "sourceTitle": "File:Legacy allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Legacy_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/3/34/Legacy_allmode.png/256px-Legacy_allmode.png",
+      "width": 256,
+      "height": 259
+    },
+    {
+      "id": "furia",
+      "name": "FURIA",
+      "status": "official-mark",
+      "file": "furia.png",
+      "sourceTitle": "File:FURIA Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:FURIA_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/a/aa/FURIA_Esports_allmode.png/256px-FURIA_Esports_allmode.png",
+      "width": 256,
+      "height": 249
+    },
+    {
+      "id": "betboom",
+      "name": "BetBoom",
+      "status": "official-mark",
+      "file": "betboom.png",
+      "sourceTitle": "File:BetBoom Team allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:BetBoom_Team_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/18/BetBoom_Team_allmode.png/256px-BetBoom_Team_allmode.png",
+      "width": 256,
+      "height": 162
+    },
+    {
+      "id": "aurora",
+      "name": "Aurora",
+      "status": "official-mark",
+      "file": "aurora.png",
+      "sourceTitle": "File:Aurora allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Aurora_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/8/85/Aurora_allmode.png/256px-Aurora_allmode.png",
+      "width": 256,
+      "height": 306
+    },
+    {
+      "id": "g2",
+      "name": "G2",
+      "status": "official-mark",
+      "file": "g2.png",
+      "sourceTitle": "File:G2 Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:G2_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/2/2d/G2_Esports_allmode.png/256px-G2_Esports_allmode.png",
+      "width": 256,
+      "height": 296
+    },
+    {
+      "id": "parivision",
+      "name": "PARIVISION",
+      "status": "official-mark",
+      "file": "parivision.png",
+      "sourceTitle": "File:PARIVISION allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:PARIVISION_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/9/9d/PARIVISION_allmode.png/256px-PARIVISION_allmode.png",
+      "width": 256,
+      "height": 227
+    },
+    {
+      "id": "faze",
+      "name": "FaZe",
+      "status": "official-mark",
+      "file": "faze.png",
+      "sourceTitle": "File:FaZe Clan allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:FaZe_Clan_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/e/e3/FaZe_Clan_allmode.png/256px-FaZe_Clan_allmode.png",
+      "width": 256,
+      "height": 169
+    },
+    {
+      "id": "fut",
+      "name": "FUT",
+      "status": "unverified"
+    },
+    {
+      "id": "the-mongolz",
+      "name": "The MongolZ",
+      "status": "official-mark",
+      "file": "the-mongolz.png",
+      "sourceTitle": "File:The MongolZ 2023 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:The_MongolZ_2023_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/7/70/The_MongolZ_2023_allmode.png/256px-The_MongolZ_2023_allmode.png",
+      "width": 256,
+      "height": 311
+    },
+    {
+      "id": "mibr",
+      "name": "MIBR",
+      "status": "official-mark",
+      "file": "mibr.png",
+      "sourceTitle": "File:MIBR 2018 darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:MIBR_2018_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/7/72/MIBR_2018_darkmode.png/256px-MIBR_2018_darkmode.png",
+      "width": 256,
+      "height": 102
+    },
+    {
+      "id": "alliance",
+      "name": "Alliance",
+      "status": "official-mark",
+      "file": "alliance.png",
+      "sourceTitle": "File:Alliance allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Alliance_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/8/85/Alliance_allmode.png/256px-Alliance_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "tyloo",
+      "name": "TYLOO",
+      "status": "official-mark",
+      "file": "tyloo.png",
+      "sourceTitle": "File:TyLoo 2016 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:TyLoo_2016_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/5/5f/TyLoo_2016_allmode.png/256px-TyLoo_2016_allmode.png",
+      "width": 256,
+      "height": 230
+    },
+    {
+      "id": "astralis",
+      "name": "Astralis",
+      "status": "official-mark",
+      "file": "astralis.png",
+      "sourceTitle": "File:Astralis 2020 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Astralis_2020_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/3/3d/Astralis_2020_allmode.png/256px-Astralis_2020_allmode.png",
+      "width": 256,
+      "height": 311
+    },
+    {
+      "id": "b8",
+      "name": "B8",
+      "status": "official-mark",
+      "file": "b8.png",
+      "sourceTitle": "File:B8 darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:B8_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/a/a6/B8_darkmode.png/256px-B8_darkmode.png",
+      "width": 256,
+      "height": 307
+    },
+    {
+      "id": "big",
+      "name": "BIG",
+      "status": "official-mark",
+      "file": "big.png",
+      "sourceTitle": "File:Team BIG allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_BIG_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/c/c7/Team_BIG_allmode.png/256px-Team_BIG_allmode.png",
+      "width": 256,
+      "height": 509
+    },
+    {
+      "id": "gamerlegion",
+      "name": "GamerLegion",
+      "status": "official-mark",
+      "file": "gamerlegion.png",
+      "sourceTitle": "File:Team GamerLegion allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_GamerLegion_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/a/a5/Team_GamerLegion_allmode.png/256px-Team_GamerLegion_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "magic",
+      "name": "magic",
+      "status": "unverified"
+    },
+    {
+      "id": "luminosity",
+      "name": "Luminosity",
+      "status": "official-mark",
+      "file": "luminosity.png",
+      "sourceTitle": "File:Luminosity Gaming allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Luminosity_Gaming_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/2/28/Luminosity_Gaming_allmode.png/256px-Luminosity_Gaming_allmode.png",
+      "width": 256,
+      "height": 252
+    },
+    {
+      "id": "inner-circle",
+      "name": "Inner Circle",
+      "status": "official-mark",
+      "file": "inner-circle.png",
+      "sourceTitle": "File:Inner Circle 2025 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Inner_Circle_2025_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/c/c6/Inner_Circle_2025_allmode.png/256px-Inner_Circle_2025_allmode.png",
+      "width": 256,
+      "height": 297
+    },
+    {
+      "id": "pain",
+      "name": "paiN",
+      "status": "official-mark",
+      "file": "pain.png",
+      "sourceTitle": "File:PaiN Gaming allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:PaiN_Gaming_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/12/PaiN_Gaming_allmode.png/256px-PaiN_Gaming_allmode.png",
+      "width": 256,
+      "height": 63
+    },
+    {
+      "id": "ninjas-in-pyjamas",
+      "name": "Ninjas in Pyjamas",
+      "status": "official-mark",
+      "file": "ninjas-in-pyjamas.png",
+      "sourceTitle": "File:Ninjas in Pyjamas 2012 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Ninjas_in_Pyjamas_2012_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/14/Ninjas_in_Pyjamas_2012_allmode.png/256px-Ninjas_in_Pyjamas_2012_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "dendele",
+      "name": "DENDELE",
+      "status": "official-mark",
+      "file": "dendele.png",
+      "sourceTitle": "File:Dendele FC allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Dendele_FC_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/b/b4/Dendele_FC_allmode.png",
+      "width": 168,
+      "height": 212
+    },
+    {
+      "id": "lynn-vision",
+      "name": "Lynn Vision",
+      "status": "official-mark",
+      "file": "lynn-vision.png",
+      "sourceTitle": "File:Lynn Vision Gaming 2020 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Lynn_Vision_Gaming_2020_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/b/b8/Lynn_Vision_Gaming_2020_allmode.png/256px-Lynn_Vision_Gaming_2020_allmode.png",
+      "width": 256,
+      "height": 228
+    },
+    {
+      "id": "heroic",
+      "name": "HEROIC",
+      "status": "official-mark",
+      "file": "heroic.png",
+      "sourceTitle": "File:Heroic allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Heroic_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/07/Heroic_allmode.png/256px-Heroic_allmode.png",
+      "width": 256,
+      "height": 233
+    },
+    {
+      "id": "3dmax",
+      "name": "3DMAX",
+      "status": "official-mark",
+      "file": "3dmax.png",
+      "sourceTitle": "File:3DMAX allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:3DMAX_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/f/f7/3DMAX_allmode.png",
+      "width": 197,
+      "height": 230
+    },
+    {
+      "id": "liquid",
+      "name": "Liquid",
+      "status": "official-mark",
+      "file": "liquid.png",
+      "sourceTitle": "File:Team Liquid allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_Liquid_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/f/fc/Team_Liquid_allmode.png/256px-Team_Liquid_allmode.png",
+      "width": 256,
+      "height": 255
+    },
+    {
+      "id": "eyeballers",
+      "name": "EYEBALLERS",
+      "status": "official-mark",
+      "file": "eyeballers.png",
+      "sourceTitle": "File:Eyeballers allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Eyeballers_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/4/48/Eyeballers_allmode.png/256px-Eyeballers_allmode.png",
+      "width": 256,
+      "height": 357
+    },
+    {
+      "id": "nemesis",
+      "name": "Nemesis",
+      "status": "official-mark",
+      "file": "nemesis.png",
+      "sourceTitle": "File:Nemesis allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Nemesis_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/6b/Nemesis_allmode.png/256px-Nemesis_allmode.png",
+      "width": 256,
+      "height": 312
+    },
+    {
+      "id": "hotu",
+      "name": "HOTU",
+      "status": "unverified"
+    },
+    {
+      "id": "m80",
+      "name": "M80",
+      "status": "official-mark",
+      "file": "m80.png",
+      "sourceTitle": "File:M80 darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:M80_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/66/M80_darkmode.png/256px-M80_darkmode.png",
+      "width": 256,
+      "height": 298
+    },
+    {
+      "id": "virtus-pro",
+      "name": "Virtus.pro",
+      "status": "official-mark",
+      "file": "virtus-pro.png",
+      "sourceTitle": "File:Virtus.pro allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Virtus.pro_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/1d/Virtus.pro_allmode.png/256px-Virtus.pro_allmode.png",
+      "width": 256,
+      "height": 265
+    },
+    {
+      "id": "wildcard",
+      "name": "Wildcard",
+      "status": "official-mark",
+      "file": "wildcard.png",
+      "sourceTitle": "File:Wildcard Gaming allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Wildcard_Gaming_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/63/Wildcard_Gaming_allmode.png/256px-Wildcard_Gaming_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "k27",
+      "name": "K27",
+      "status": "official-mark",
+      "file": "k27.png",
+      "sourceTitle": "File:K27 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:K27_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/c/c0/K27_allmode.png/256px-K27_allmode.png",
+      "width": 256,
+      "height": 94
+    },
+    {
+      "id": "100-thieves",
+      "name": "100 Thieves",
+      "status": "official-mark",
+      "file": "100-thieves.png",
+      "sourceTitle": "File:100 Thieves darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:100_Thieves_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/7/78/100_Thieves_darkmode.png/256px-100_Thieves_darkmode.png",
+      "width": 256,
+      "height": 201
+    },
+    {
+      "id": "flyquest",
+      "name": "FlyQuest",
+      "status": "official-mark",
+      "file": "flyquest.png",
+      "sourceTitle": "File:FlyQuest allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:FlyQuest_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/2/20/FlyQuest_allmode.png/256px-FlyQuest_allmode.png",
+      "width": 256,
+      "height": 67
+    },
+    {
+      "id": "echo",
+      "name": "Echo",
+      "status": "official-mark",
+      "file": "echo.png",
+      "sourceTitle": "File:ECHO Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:ECHO_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/13/ECHO_Esports_allmode.png/256px-ECHO_Esports_allmode.png",
+      "width": 256,
+      "height": 282
+    },
+    {
+      "id": "fokus",
+      "name": "FOKUS",
+      "status": "official-mark",
+      "file": "fokus.png",
+      "sourceTitle": "File:FOKUS allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:FOKUS_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/12/FOKUS_allmode.png/256px-FOKUS_allmode.png",
+      "width": 256,
+      "height": 347
+    },
+    {
+      "id": "bulgaria",
+      "name": "Bulgaria",
+      "status": "official-mark",
+      "file": "bulgaria.png",
+      "sourceTitle": "File:Bulgaria std.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Bulgaria_std.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/9/94/Bulgaria_std.png",
+      "width": 120,
+      "height": 50
+    },
+    {
+      "id": "gentle-mates",
+      "name": "Gentle Mates",
+      "status": "official-mark",
+      "file": "gentle-mates.png",
+      "sourceTitle": "File:Gentle Mates allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Gentle_Mates_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/3/34/Gentle_Mates_allmode.png/256px-Gentle_Mates_allmode.png",
+      "width": 256,
+      "height": 187
+    },
+    {
+      "id": "infinite",
+      "name": "INFINITE",
+      "status": "official-mark",
+      "file": "infinite.png",
+      "sourceTitle": "File:Infinite Gaming allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Infinite_Gaming_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/12/Infinite_Gaming_allmode.png/256px-Infinite_Gaming_allmode.png",
+      "width": 256,
+      "height": 124
+    },
+    {
+      "id": "nuclear-tigeres",
+      "name": "Nuclear TigeRES",
+      "status": "official-mark",
+      "file": "nuclear-tigeres.png",
+      "sourceTitle": "File:Nuclear TigeRES darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Nuclear_TigeRES_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/2/2c/Nuclear_TigeRES_darkmode.png/256px-Nuclear_TigeRES_darkmode.png",
+      "width": 256,
+      "height": 184
+    },
+    {
+      "id": "tdk",
+      "name": "TDK",
+      "status": "official-mark",
+      "file": "tdk.png",
+      "sourceTitle": "File:TDK allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:TDK_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/0c/TDK_allmode.png/256px-TDK_allmode.png",
+      "width": 256,
+      "height": 259
+    },
+    {
+      "id": "nrg",
+      "name": "NRG",
+      "status": "official-mark",
+      "file": "nrg.png",
+      "sourceTitle": "File:NRG 2024 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:NRG_2024_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/16/NRG_2024_allmode.png/256px-NRG_2024_allmode.png",
+      "width": 256,
+      "height": 61
+    },
+    {
+      "id": "ww",
+      "name": "WW",
+      "status": "unverified"
+    },
+    {
+      "id": "ex-ruby",
+      "name": "ex-RUBY",
+      "status": "former-roster"
+    },
+    {
+      "id": "nemiga",
+      "name": "Nemiga",
+      "status": "unverified"
+    },
+    {
+      "id": "sinners",
+      "name": "SINNERS",
+      "status": "official-mark",
+      "file": "sinners.png",
+      "sourceTitle": "File:SINNERS Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:SINNERS_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/4/4f/SINNERS_Esports_allmode.png/256px-SINNERS_Esports_allmode.png",
+      "width": 256,
+      "height": 328
+    },
+    {
+      "id": "walczaki",
+      "name": "Walczaki",
+      "status": "official-mark",
+      "file": "walczaki.png",
+      "sourceTitle": "File:Walczaki darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Walczaki_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/5/51/Walczaki_darkmode.png/256px-Walczaki_darkmode.png",
+      "width": 256,
+      "height": 132
+    },
+    {
+      "id": "sashi",
+      "name": "Sashi",
+      "status": "official-mark",
+      "file": "sashi.png",
+      "sourceTitle": "File:Sashi Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Sashi_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/64/Sashi_Esports_allmode.png/256px-Sashi_Esports_allmode.png",
+      "width": 256,
+      "height": 236
+    },
+    {
+      "id": "bestia",
+      "name": "BESTIA",
+      "status": "official-mark",
+      "file": "bestia.png",
+      "sourceTitle": "File:BESTIA darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:BESTIA_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/f/f4/BESTIA_darkmode.png/256px-BESTIA_darkmode.png",
+      "width": 256,
+      "height": 305
+    },
+    {
+      "id": "fluxo",
+      "name": "Fluxo",
+      "status": "official-mark",
+      "file": "fluxo.png",
+      "sourceTitle": "File:Fluxo FC allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Fluxo_FC_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/1/17/Fluxo_FC_allmode.png",
+      "width": 206,
+      "height": 205
+    },
+    {
+      "id": "jijiehao",
+      "name": "JiJieHao",
+      "status": "official-mark",
+      "file": "jijiehao.png",
+      "sourceTitle": "File:JiJieHao allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:JiJieHao_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/67/JiJieHao_allmode.png/256px-JiJieHao_allmode.png",
+      "width": 256,
+      "height": 235
+    },
+    {
+      "id": "imperial",
+      "name": "Imperial",
+      "status": "official-mark",
+      "file": "imperial.png",
+      "sourceTitle": "File:Team IMPERIAL allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_IMPERIAL_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/8/8d/Team_IMPERIAL_allmode.png/256px-Team_IMPERIAL_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "thunder-downunder",
+      "name": "THUNDER dOWNUNDER",
+      "status": "unverified"
+    },
+    {
+      "id": "fnatic",
+      "name": "fnatic",
+      "status": "official-mark",
+      "file": "fnatic.png",
+      "sourceTitle": "File:Fnatic allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Fnatic_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/8/83/Fnatic_allmode.png/256px-Fnatic_allmode.png",
+      "width": 256,
+      "height": 211
+    },
+    {
+      "id": "arcred",
+      "name": "ARCRED",
+      "status": "official-mark",
+      "file": "arcred.png",
+      "sourceTitle": "File:ARCRED 2022 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:ARCRED_2022_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/e/e7/ARCRED_2022_allmode.png/256px-ARCRED_2022_allmode.png",
+      "width": 256,
+      "height": 255
+    },
+    {
+      "id": "omega",
+      "name": "Omega",
+      "status": "official-mark",
+      "file": "omega.png",
+      "sourceTitle": "File:Team Omega allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_Omega_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/8/83/Team_Omega_allmode.png/256px-Team_Omega_allmode.png",
+      "width": 256,
+      "height": 209
+    },
+    {
+      "id": "phantom",
+      "name": "Phantom",
+      "status": "official-mark",
+      "file": "phantom.png",
+      "sourceTitle": "File:Phantom allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Phantom_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/1a/Phantom_allmode.png/256px-Phantom_allmode.png",
+      "width": 256,
+      "height": 237
+    },
+    {
+      "id": "ex-1win",
+      "name": "ex-1win",
+      "status": "former-roster"
+    },
+    {
+      "id": "novaq",
+      "name": "NOVAQ",
+      "status": "official-mark",
+      "file": "novaq.png",
+      "sourceTitle": "File:Team Novaq allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_Novaq_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/02/Team_Novaq_allmode.png/256px-Team_Novaq_allmode.png",
+      "width": 256,
+      "height": 289
+    },
+    {
+      "id": "cybershoke",
+      "name": "CYBERSHOKE",
+      "status": "official-mark",
+      "file": "cybershoke.png",
+      "sourceTitle": "File:CYBERSHOKE Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:CYBERSHOKE_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/d/df/CYBERSHOKE_Esports_allmode.png/256px-CYBERSHOKE_Esports_allmode.png",
+      "width": 256,
+      "height": 296
+    },
+    {
+      "id": "genone",
+      "name": "GenOne",
+      "status": "official-mark",
+      "file": "genone.png",
+      "sourceTitle": "File:GenOne darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:GenOne_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/0a/GenOne_darkmode.png/256px-GenOne_darkmode.png",
+      "width": 256,
+      "height": 309
+    },
+    {
+      "id": "inox-division",
+      "name": "INOX Division",
+      "status": "official-mark",
+      "file": "inox-division.png",
+      "sourceTitle": "File:INOX Division allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:INOX_Division_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/8/86/INOX_Division_allmode.png/256px-INOX_Division_allmode.png",
+      "width": 256,
+      "height": 269
+    },
+    {
+      "id": "lp",
+      "name": "LP",
+      "status": "official-mark",
+      "file": "lp.png",
+      "sourceTitle": "File:LP allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:LP_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/63/LP_allmode.png/256px-LP_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "shinden",
+      "name": "ShindeN",
+      "status": "official-mark",
+      "file": "shinden.png",
+      "sourceTitle": "File:ShindeN darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:ShindeN_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/3/31/ShindeN_darkmode.png/256px-ShindeN_darkmode.png",
+      "width": 256,
+      "height": 238
+    },
+    {
+      "id": "depo",
+      "name": "DEPO",
+      "status": "official-mark",
+      "file": "depo.png",
+      "sourceTitle": "File:Depo allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Depo_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/b/bb/Depo_allmode.png/256px-Depo_allmode.png",
+      "width": 256,
+      "height": 124
+    },
+    {
+      "id": "state",
+      "name": "STATE",
+      "status": "unverified"
+    },
+    {
+      "id": "voca",
+      "name": "Voca",
+      "status": "official-mark",
+      "file": "voca.png",
+      "sourceTitle": "File:Team Voca darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_Voca_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/2/29/Team_Voca_darkmode.png/256px-Team_Voca_darkmode.png",
+      "width": 256,
+      "height": 133
+    },
+    {
+      "id": "basement-boys",
+      "name": "BASEMENT BOYS",
+      "status": "official-mark",
+      "file": "basement-boys.png",
+      "sourceTitle": "File:BASEMENT BOYS darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:BASEMENT_BOYS_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/4/49/BASEMENT_BOYS_darkmode.png/256px-BASEMENT_BOYS_darkmode.png",
+      "width": 256,
+      "height": 131
+    },
+    {
+      "id": "metizport",
+      "name": "Metizport",
+      "status": "official-mark",
+      "file": "metizport.png",
+      "sourceTitle": "File:Metizport 2021 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Metizport_2021_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/b/b1/Metizport_2021_allmode.png/256px-Metizport_2021_allmode.png",
+      "width": 256,
+      "height": 304
+    },
+    {
+      "id": "brute",
+      "name": "BRUTE",
+      "status": "official-mark",
+      "file": "brute.png",
+      "sourceTitle": "File:Team Brute allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_Brute_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/0e/Team_Brute_allmode.png/256px-Team_Brute_allmode.png",
+      "width": 256,
+      "height": 215
+    },
+    {
+      "id": "cybershoke-prospects",
+      "name": "CYBERSHOKE Prospects",
+      "status": "official-mark",
+      "file": "cybershoke-prospects.png",
+      "sourceTitle": "File:CYBERSHOKE Prospects darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:CYBERSHOKE_Prospects_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/8/82/CYBERSHOKE_Prospects_darkmode.png/256px-CYBERSHOKE_Prospects_darkmode.png",
+      "width": 256,
+      "height": 292
+    },
+    {
+      "id": "kolesie",
+      "name": "KOLESIE",
+      "status": "official-mark",
+      "file": "kolesie.png",
+      "sourceTitle": "File:Kolesie allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Kolesie_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/7/70/Kolesie_allmode.png/256px-Kolesie_allmode.png",
+      "width": 256,
+      "height": 304
+    },
+    {
+      "id": "butterfly",
+      "name": "Butterfly",
+      "status": "official-mark",
+      "file": "butterfly.png",
+      "sourceTitle": "File:Butterfly RU allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Butterfly_RU_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/7/7d/Butterfly_RU_allmode.png/256px-Butterfly_RU_allmode.png",
+      "width": 256,
+      "height": 164
+    },
+    {
+      "id": "bc-game",
+      "name": "BC.Game",
+      "status": "official-mark",
+      "file": "bc-game.png",
+      "sourceTitle": "File:BC.Game allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:BC.Game_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/1/13/BC.Game_allmode.png",
+      "width": 150,
+      "height": 198
+    },
+    {
+      "id": "eac",
+      "name": "EAC",
+      "status": "unverified"
+    },
+    {
+      "id": "johnny-speeds",
+      "name": "Johnny Speeds",
+      "status": "official-mark",
+      "file": "johnny-speeds.png",
+      "sourceTitle": "File:Johnny Speeds allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Johnny_Speeds_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/5/55/Johnny_Speeds_allmode.png/256px-Johnny_Speeds_allmode.png",
+      "width": 256,
+      "height": 180
+    },
+    {
+      "id": "rune-eaters",
+      "name": "Rune Eaters",
+      "status": "official-mark",
+      "file": "rune-eaters.png",
+      "sourceTitle": "File:Rune Eaters Esports darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Rune_Eaters_Esports_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/7/73/Rune_Eaters_Esports_darkmode.png/256px-Rune_Eaters_Esports_darkmode.png",
+      "width": 256,
+      "height": 329
+    },
+    {
+      "id": "og",
+      "name": "OG",
+      "status": "official-mark",
+      "file": "og.png",
+      "sourceTitle": "File:OG Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:OG_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/05/OG_Esports_allmode.png/256px-OG_Esports_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "eternal-fire",
+      "name": "Eternal Fire",
+      "status": "official-mark",
+      "file": "eternal-fire.png",
+      "sourceTitle": "File:Eternal Fire allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Eternal_Fire_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/8/82/Eternal_Fire_allmode.png/256px-Eternal_Fire_allmode.png",
+      "width": 256,
+      "height": 136
+    },
+    {
+      "id": "the-huns",
+      "name": "The Huns",
+      "status": "official-mark",
+      "file": "the-huns.png",
+      "sourceTitle": "File:The Huns Esports 2025 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:The_Huns_Esports_2025_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/3/35/The_Huns_Esports_2025_allmode.png/256px-The_Huns_Esports_2025_allmode.png",
+      "width": 256,
+      "height": 283
+    },
+    {
+      "id": "just-players",
+      "name": "Just Players",
+      "status": "official-mark",
+      "file": "just-players.png",
+      "sourceTitle": "File:Just Players allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Just_Players_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/1b/Just_Players_allmode.png/256px-Just_Players_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "9ine",
+      "name": "9INE",
+      "status": "official-mark",
+      "file": "9ine.png",
+      "sourceTitle": "File:9ine Team allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:9ine_Team_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/2/2b/9ine_Team_allmode.png",
+      "width": 246,
+      "height": 61
+    },
+    {
+      "id": "5star",
+      "name": "5star",
+      "status": "unverified"
+    },
+    {
+      "id": "quazar",
+      "name": "QUAZAR",
+      "status": "official-mark",
+      "file": "quazar.png",
+      "sourceTitle": "File:QUAZAR.GG allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:QUAZAR.GG_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/4/46/QUAZAR.GG_allmode.png/256px-QUAZAR.GG_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "galorys",
+      "name": "Galorys",
+      "status": "official-mark",
+      "file": "galorys.png",
+      "sourceTitle": "File:Galorys team logo allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Galorys_team_logo_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/b/b0/Galorys_team_logo_allmode.png/256px-Galorys_team_logo_allmode.png",
+      "width": 256,
+      "height": 474
+    },
+    {
+      "id": "astral",
+      "name": "ASTRAL",
+      "status": "official-mark",
+      "file": "astral.png",
+      "sourceTitle": "File:Astral Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Astral_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/02/Astral_Esports_allmode.png/256px-Astral_Esports_allmode.png",
+      "width": 256,
+      "height": 167
+    },
+    {
+      "id": "passion-ua",
+      "name": "Passion UA",
+      "status": "official-mark",
+      "file": "passion-ua.png",
+      "sourceTitle": "File:Passion UA allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Passion_UA_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/b/bb/Passion_UA_allmode.png/256px-Passion_UA_allmode.png",
+      "width": 256,
+      "height": 367
+    },
+    {
+      "id": "baks",
+      "name": "BAKS",
+      "status": "unverified"
+    },
+    {
+      "id": "sparta",
+      "name": "SPARTA",
+      "status": "official-mark",
+      "file": "sparta.png",
+      "sourceTitle": "File:SPARTA allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:SPARTA_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/4/41/SPARTA_allmode.png/256px-SPARTA_allmode.png",
+      "width": 256,
+      "height": 294
+    },
+    {
+      "id": "bounty-hunters",
+      "name": "Bounty Hunters",
+      "status": "official-mark",
+      "file": "bounty-hunters.png",
+      "sourceTitle": "File:Bounty Hunters allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Bounty_Hunters_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/a/a5/Bounty_Hunters_allmode.png/256px-Bounty_Hunters_allmode.png",
+      "width": 256,
+      "height": 144
+    },
+    {
+      "sourceTitle": "File:AM Gaming full allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:AM_Gaming_full_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/7/7d/AM_Gaming_full_allmode.png/256px-AM_Gaming_full_allmode.png",
+      "width": 256,
+      "height": 145,
+      "id": "am",
+      "name": "AM",
+      "status": "official-mark",
+      "file": "am.png"
+    },
+    {
+      "id": "bet-m",
+      "name": "BET-M",
+      "status": "official-mark",
+      "file": "bet-m.png",
+      "sourceTitle": "File:BET-M 33 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:BET-M_33_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/5/5f/BET-M_33_allmode.png/256px-BET-M_33_allmode.png",
+      "width": 256,
+      "height": 273
+    },
+    {
+      "id": "leo",
+      "name": "Leo",
+      "status": "unverified"
+    },
+    {
+      "id": "the-last-resort",
+      "name": "The Last Resort",
+      "status": "official-mark",
+      "file": "the-last-resort.png",
+      "sourceTitle": "File:The Last Resort darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:The_Last_Resort_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/9/99/The_Last_Resort_darkmode.png/256px-The_Last_Resort_darkmode.png",
+      "width": 256,
+      "height": 126
+    },
+    {
+      "id": "rebels",
+      "name": "Rebels",
+      "status": "official-mark",
+      "file": "rebels.png",
+      "sourceTitle": "File:Rebels allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Rebels_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/7/7e/Rebels_allmode.png",
+      "width": 245,
+      "height": 245
+    },
+    {
+      "id": "ground-zero",
+      "name": "Ground Zero",
+      "status": "official-mark",
+      "file": "ground-zero.png",
+      "sourceTitle": "File:Ground Zero Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Ground_Zero_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/b/bc/Ground_Zero_Esports_allmode.png/256px-Ground_Zero_Esports_allmode.png",
+      "width": 256,
+      "height": 296
+    },
+    {
+      "id": "betclic",
+      "name": "Betclic",
+      "status": "official-mark",
+      "file": "betclic.png",
+      "sourceTitle": "File:Betclic allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Betclic_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/00/Betclic_allmode.png/256px-Betclic_allmode.png",
+      "width": 256,
+      "height": 87
+    },
+    {
+      "id": "sportsbetexpert",
+      "name": "SportsBetExpert",
+      "status": "official-mark",
+      "file": "sportsbetexpert.png",
+      "sourceTitle": "File:SportsBetExpert allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:SportsBetExpert_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/8/85/SportsBetExpert_allmode.png",
+      "width": 173,
+      "height": 215
+    },
+    {
+      "id": "gaimin-gladiators",
+      "name": "Gaimin Gladiators",
+      "status": "official-mark",
+      "file": "gaimin-gladiators.png",
+      "sourceTitle": "File:Gaimin Gladiators 2022 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Gaimin_Gladiators_2022_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/4/45/Gaimin_Gladiators_2022_allmode.png/256px-Gaimin_Gladiators_2022_allmode.png",
+      "width": 256,
+      "height": 424
+    },
+    {
+      "id": "nexvoid",
+      "name": "NEXVOID",
+      "status": "official-mark",
+      "file": "nexvoid.png",
+      "sourceTitle": "File:NEXVOID allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:NEXVOID_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/4/46/NEXVOID_allmode.png/256px-NEXVOID_allmode.png",
+      "width": 256,
+      "height": 164
+    },
+    {
+      "id": "chicken-coop",
+      "name": "Chicken Coop",
+      "status": "official-mark",
+      "file": "chicken-coop.png",
+      "sourceTitle": "File:Chicken Coop Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Chicken_Coop_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/01/Chicken_Coop_Esports_allmode.png/256px-Chicken_Coop_Esports_allmode.png",
+      "width": 256,
+      "height": 336
+    },
+    {
+      "id": "black-phoenix",
+      "name": "Black Phoenix",
+      "status": "official-mark",
+      "file": "black-phoenix.png",
+      "sourceTitle": "File:Black Phoenix 2021 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Black_Phoenix_2021_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/b/b3/Black_Phoenix_2021_allmode.png/256px-Black_Phoenix_2021_allmode.png",
+      "width": 256,
+      "height": 321
+    },
+    {
+      "id": "turma-do-pagode",
+      "name": "Turma do Pagode",
+      "status": "official-mark",
+      "file": "turma-do-pagode.png",
+      "sourceTitle": "File:Turma do Pagode allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Turma_do_Pagode_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/e/ea/Turma_do_Pagode_allmode.png/256px-Turma_do_Pagode_allmode.png",
+      "width": 256,
+      "height": 559
+    },
+    {
+      "id": "fisher-college",
+      "name": "Fisher College",
+      "status": "official-mark",
+      "file": "fisher-college.png",
+      "sourceTitle": "File:Fisher College allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Fisher_College_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/8/89/Fisher_College_allmode.png/256px-Fisher_College_allmode.png",
+      "width": 256,
+      "height": 154
+    },
+    {
+      "id": "isurus",
+      "name": "Isurus",
+      "status": "official-mark",
+      "file": "isurus.png",
+      "sourceTitle": "File:Isurus Gaming allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Isurus_Gaming_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/0d/Isurus_Gaming_allmode.png/256px-Isurus_Gaming_allmode.png",
+      "width": 256,
+      "height": 202
+    },
+    {
+      "id": "marsborne",
+      "name": "Marsborne",
+      "status": "official-mark",
+      "file": "marsborne.png",
+      "sourceTitle": "File:Marsborne logo allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Marsborne_logo_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/1a/Marsborne_logo_allmode.png/256px-Marsborne_logo_allmode.png",
+      "width": 256,
+      "height": 307
+    },
+    {
+      "id": "pcific",
+      "name": "PCIFIC",
+      "status": "official-mark",
+      "file": "pcific.png",
+      "sourceTitle": "File:PCIFIC Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:PCIFIC_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/f/f2/PCIFIC_Esports_allmode.png/256px-PCIFIC_Esports_allmode.png",
+      "width": 256,
+      "height": 174
+    },
+    {
+      "id": "psychoface",
+      "name": "PsychoFace",
+      "status": "unverified"
+    },
+    {
+      "id": "masonic",
+      "name": "MASONIC",
+      "status": "official-mark",
+      "file": "masonic.png",
+      "sourceTitle": "File:MASONIC allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:MASONIC_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/3/3a/MASONIC_allmode.png/256px-MASONIC_allmode.png",
+      "width": 256,
+      "height": 183
+    },
+    {
+      "id": "lavked",
+      "name": "Lavked",
+      "status": "unverified"
+    },
+    {
+      "id": "g2-ares",
+      "name": "G2 Ares",
+      "status": "official-parent-mark",
+      "file": "g2.png",
+      "sourceTitle": "File:G2 Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:G2_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/2/2d/G2_Esports_allmode.png/256px-G2_Esports_allmode.png",
+      "width": 256,
+      "height": 296,
+      "inheritedFrom": "g2"
+    },
+    {
+      "id": "lazer-cats",
+      "name": "Lazer Cats",
+      "status": "official-mark",
+      "file": "lazer-cats.png",
+      "sourceTitle": "File:Lazer Cats allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Lazer_Cats_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/5/5b/Lazer_Cats_allmode.png/256px-Lazer_Cats_allmode.png",
+      "width": 256,
+      "height": 319
+    },
+    {
+      "id": "keyd-stars",
+      "name": "Keyd Stars",
+      "status": "official-mark",
+      "file": "keyd-stars.png",
+      "sourceTitle": "File:Keyd Stars 2015 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Keyd_Stars_2015_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/c/c1/Keyd_Stars_2015_allmode.png/256px-Keyd_Stars_2015_allmode.png",
+      "width": 256,
+      "height": 332
+    },
+    {
+      "id": "nordic-partners",
+      "name": "Nordic Partners",
+      "status": "official-mark",
+      "file": "nordic-partners.png",
+      "sourceTitle": "File:Nordic Partners Gaming darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Nordic_Partners_Gaming_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/8/86/Nordic_Partners_Gaming_darkmode.png/256px-Nordic_Partners_Gaming_darkmode.png",
+      "width": 256,
+      "height": 89
+    },
+    {
+      "id": "ex-rustec",
+      "name": "ex-RUSTEC",
+      "status": "former-roster"
+    },
+    {
+      "id": "dragonclaw",
+      "name": "DragonClaw",
+      "status": "unverified"
+    },
+    {
+      "id": "washed",
+      "name": "Washed",
+      "status": "official-mark",
+      "file": "washed.png",
+      "sourceTitle": "File:Washed Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Washed_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/c/c2/Washed_Esports_allmode.png/256px-Washed_Esports_allmode.png",
+      "width": 256,
+      "height": 240
+    },
+    {
+      "id": "rethink",
+      "name": "ReThink",
+      "status": "official-mark",
+      "file": "rethink.png",
+      "sourceTitle": "File:ReThink darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:ReThink_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/e/ec/ReThink_darkmode.png/256px-ReThink_darkmode.png",
+      "width": 256,
+      "height": 195
+    },
+    {
+      "id": "semperfi",
+      "name": "SemperFi",
+      "status": "official-mark",
+      "file": "semperfi.png",
+      "sourceTitle": "File:SemperFI Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:SemperFI_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/a/aa/SemperFI_Esports_allmode.png/256px-SemperFI_Esports_allmode.png",
+      "width": 256,
+      "height": 408
+    },
+    {
+      "id": "nexus",
+      "name": "Nexus",
+      "status": "official-mark",
+      "file": "nexus.png",
+      "sourceTitle": "File:Nexus allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Nexus_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/c/c9/Nexus_allmode.png/256px-Nexus_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "red-canids",
+      "name": "RED Canids",
+      "status": "official-mark",
+      "file": "red-canids.png",
+      "sourceTitle": "File:Red Canids allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Red_Canids_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/3/3b/Red_Canids_allmode.png/256px-Red_Canids_allmode.png",
+      "width": 256,
+      "height": 224
+    },
+    {
+      "id": "pure",
+      "name": "PURE",
+      "status": "official-mark",
+      "file": "pure.png",
+      "sourceTitle": "File:PURE allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:PURE_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/e/ea/PURE_allmode.png/256px-PURE_allmode.png",
+      "width": 256,
+      "height": 205
+    },
+    {
+      "id": "honv-d",
+      "name": "Honvéd",
+      "status": "unverified"
+    },
+    {
+      "id": "ence",
+      "name": "ENCE",
+      "status": "official-mark",
+      "file": "ence.png",
+      "sourceTitle": "File:ENCE Gaming allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:ENCE_Gaming_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/a/a1/ENCE_Gaming_allmode.png/256px-ENCE_Gaming_allmode.png",
+      "width": 256,
+      "height": 104
+    },
+    {
+      "id": "sangal",
+      "name": "Sangal",
+      "status": "official-mark",
+      "file": "sangal.png",
+      "sourceTitle": "File:Sangal Esports 2020 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Sangal_Esports_2020_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/7/7a/Sangal_Esports_2020_allmode.png/256px-Sangal_Esports_2020_allmode.png",
+      "width": 256,
+      "height": 300
+    },
+    {
+      "id": "uno-mille",
+      "name": "UNO MILLE",
+      "status": "unverified"
+    },
+    {
+      "id": "enjoy",
+      "name": "Enjoy",
+      "status": "official-mark",
+      "file": "enjoy.png",
+      "sourceTitle": "File:Enjoy allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Enjoy_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/9/91/Enjoy_allmode.png/256px-Enjoy_allmode.png",
+      "width": 256,
+      "height": 257
+    },
+    {
+      "id": "berg",
+      "name": "BERG",
+      "status": "unverified"
+    },
+    {
+      "id": "atreides",
+      "name": "Atreides",
+      "status": "unverified"
+    },
+    {
+      "id": "endless-journey",
+      "name": "Endless Journey",
+      "status": "official-mark",
+      "file": "endless-journey.png",
+      "sourceTitle": "File:Endless Journey allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Endless_Journey_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/5/50/Endless_Journey_allmode.png/256px-Endless_Journey_allmode.png",
+      "width": 256,
+      "height": 176
+    },
+    {
+      "id": "illwill",
+      "name": "illwill",
+      "status": "official-mark",
+      "file": "illwill.png",
+      "sourceTitle": "File:Illwill allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Illwill_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/7/76/Illwill_allmode.png/256px-Illwill_allmode.png",
+      "width": 256,
+      "height": 180
+    },
+    {
+      "id": "young-ninjas",
+      "name": "Young Ninjas",
+      "status": "official-parent-mark",
+      "file": "ninjas-in-pyjamas.png",
+      "sourceTitle": "File:Ninjas in Pyjamas 2012 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Ninjas_in_Pyjamas_2012_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/14/Ninjas_in_Pyjamas_2012_allmode.png/256px-Ninjas_in_Pyjamas_2012_allmode.png",
+      "width": 256,
+      "height": 256,
+      "inheritedFrom": "ninjas-in-pyjamas"
+    },
+    {
+      "id": "yawara",
+      "name": "Yawara",
+      "status": "official-mark",
+      "file": "yawara.png",
+      "sourceTitle": "File:Yawara Esports darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Yawara_Esports_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/8/8d/Yawara_Esports_darkmode.png/256px-Yawara_Esports_darkmode.png",
+      "width": 256,
+      "height": 123
+    },
+    {
+      "id": "fake-do-biru",
+      "name": "Fake do Biru",
+      "status": "official-mark",
+      "file": "fake-do-biru.png",
+      "sourceTitle": "File:Fake do biru allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Fake_do_biru_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/69/Fake_do_biru_allmode.png/256px-Fake_do_biru_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "ecstatic",
+      "name": "ECSTATIC",
+      "status": "official-mark",
+      "file": "ecstatic.png",
+      "sourceTitle": "File:ECSTATIC allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:ECSTATIC_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/b/b7/ECSTATIC_allmode.png/256px-ECSTATIC_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "bebop",
+      "name": "Bebop",
+      "status": "unverified"
+    },
+    {
+      "id": "bushido-wildcats",
+      "name": "Bushido Wildcats",
+      "status": "official-mark",
+      "file": "bushido-wildcats.png",
+      "sourceTitle": "File:Bushido Wildcats allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Bushido_Wildcats_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/2/2c/Bushido_Wildcats_allmode.png/256px-Bushido_Wildcats_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "entropy",
+      "name": "Entropy",
+      "status": "official-mark",
+      "file": "entropy.png",
+      "sourceTitle": "File:Entropy allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Entropy_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/62/Entropy_allmode.png/256px-Entropy_allmode.png",
+      "width": 256,
+      "height": 53
+    },
+    {
+      "id": "strael-bora",
+      "name": "Strael Bora",
+      "status": "official-mark",
+      "file": "strael-bora.png",
+      "sourceTitle": "File:Strael-Bora allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Strael-Bora_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/4/46/Strael-Bora_allmode.png/256px-Strael-Bora_allmode.png",
+      "width": 256,
+      "height": 339
+    },
+    {
+      "id": "ex-zero-tenacity",
+      "name": "ex-Zero Tenacity",
+      "status": "former-roster"
+    },
+    {
+      "id": "poland",
+      "name": "Poland",
+      "status": "official-mark",
+      "file": "poland.png",
+      "sourceTitle": "File:Poland std.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Poland_std.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/5/5f/Poland_std.png",
+      "width": 120,
+      "height": 50
+    },
+    {
+      "id": "chinggis-warriors",
+      "name": "Chinggis Warriors",
+      "status": "official-mark",
+      "file": "chinggis-warriors.png",
+      "sourceTitle": "File:Chinggis Warriors darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Chinggis_Warriors_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/5/53/Chinggis_Warriors_darkmode.png/256px-Chinggis_Warriors_darkmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "rare-atom",
+      "name": "Rare Atom",
+      "status": "official-mark",
+      "file": "rare-atom.png",
+      "sourceTitle": "File:Rare Atom allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Rare_Atom_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/03/Rare_Atom_allmode.png/256px-Rare_Atom_allmode.png",
+      "width": 256,
+      "height": 232
+    },
+    {
+      "id": "havu",
+      "name": "HAVU",
+      "status": "official-mark",
+      "file": "havu.png",
+      "sourceTitle": "File:HAVU Gaming 2019 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:HAVU_Gaming_2019_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/66/HAVU_Gaming_2019_allmode.png/256px-HAVU_Gaming_2019_allmode.png",
+      "width": 256,
+      "height": 500
+    },
+    {
+      "id": "inner-circle-academy",
+      "name": "Inner Circle Academy",
+      "status": "official-parent-mark",
+      "file": "inner-circle.png",
+      "sourceTitle": "File:Inner Circle 2025 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Inner_Circle_2025_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/c/c6/Inner_Circle_2025_allmode.png/256px-Inner_Circle_2025_allmode.png",
+      "width": 256,
+      "height": 297,
+      "inheritedFrom": "inner-circle"
+    },
+    {
+      "id": "mouz-nxt",
+      "name": "MOUZ NXT",
+      "status": "official-mark",
+      "file": "mouz-nxt.png",
+      "sourceTitle": "File:MOUZ darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:MOUZ_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/5/57/MOUZ_darkmode.png/256px-MOUZ_darkmode.png",
+      "width": 256,
+      "height": 272
+    },
+    {
+      "id": "lag",
+      "name": "LAG",
+      "status": "official-mark",
+      "file": "lag.png",
+      "sourceTitle": "File:LAG Gaming allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:LAG_Gaming_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/d/dd/LAG_Gaming_allmode.png/256px-LAG_Gaming_allmode.png",
+      "width": 256,
+      "height": 293
+    },
+    {
+      "id": "hyperspirit",
+      "name": "HYPERSPIRIT",
+      "status": "official-mark",
+      "file": "hyperspirit.png",
+      "sourceTitle": "File:HyperSpirit 2024 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:HyperSpirit_2024_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/67/HyperSpirit_2024_allmode.png/256px-HyperSpirit_2024_allmode.png",
+      "width": 256,
+      "height": 330
+    },
+    {
+      "id": "regain",
+      "name": "regain",
+      "status": "official-mark",
+      "file": "regain.png",
+      "sourceTitle": "File:Regain darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Regain_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/c/c7/Regain_darkmode.png/256px-Regain_darkmode.png",
+      "width": 256,
+      "height": 58
+    },
+    {
+      "id": "noir-verse",
+      "name": "Noir Verse",
+      "status": "unverified"
+    },
+    {
+      "id": "kaleido",
+      "name": "Kaleido",
+      "status": "official-mark",
+      "file": "kaleido.png",
+      "sourceTitle": "File:Kaleido Gaming 2025 allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Kaleido_Gaming_2025_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/c/cf/Kaleido_Gaming_2025_allmode.png/256px-Kaleido_Gaming_2025_allmode.png",
+      "width": 256,
+      "height": 199
+    },
+    {
+      "id": "roamsfiest",
+      "name": "roamsfiest",
+      "status": "unverified"
+    },
+    {
+      "id": "sinqu",
+      "name": "SINQU",
+      "status": "official-mark",
+      "file": "sinqu.png",
+      "sourceTitle": "File:SINQU Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:SINQU_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/e/e9/SINQU_Esports_allmode.png/256px-SINQU_Esports_allmode.png",
+      "width": 256,
+      "height": 251
+    },
+    {
+      "id": "wbt",
+      "name": "WBT",
+      "status": "official-mark",
+      "file": "wbt.png",
+      "sourceTitle": "File:WBT allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:WBT_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/0d/WBT_allmode.png/256px-WBT_allmode.png",
+      "width": 256,
+      "height": 245
+    },
+    {
+      "id": "alter-ego",
+      "name": "Alter Ego",
+      "status": "official-mark",
+      "file": "alter-ego.png",
+      "sourceTitle": "File:Alter Ego allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Alter_Ego_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/5/50/Alter_Ego_allmode.png/256px-Alter_Ego_allmode.png",
+      "width": 256,
+      "height": 251
+    },
+    {
+      "id": "oddik",
+      "name": "ODDIK",
+      "status": "official-mark",
+      "file": "oddik.png",
+      "sourceTitle": "File:ODDIK allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:ODDIK_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/03/ODDIK_allmode.png/256px-ODDIK_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "favbet",
+      "name": "FAVBET",
+      "status": "official-mark",
+      "file": "favbet.png",
+      "sourceTitle": "File:FAVBET Team allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:FAVBET_Team_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/3/3a/FAVBET_Team_allmode.png/256px-FAVBET_Team_allmode.png",
+      "width": 256,
+      "height": 179
+    },
+    {
+      "id": "algo",
+      "name": "ALGO",
+      "status": "official-mark",
+      "file": "algo.png",
+      "sourceTitle": "File:ALGO allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:ALGO_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/a/ae/ALGO_allmode.png/256px-ALGO_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "rooster",
+      "name": "Rooster",
+      "status": "official-mark",
+      "file": "rooster.png",
+      "sourceTitle": "File:Rooster allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Rooster_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/3/3d/Rooster_allmode.png/256px-Rooster_allmode.png",
+      "width": 256,
+      "height": 319
+    },
+    {
+      "id": "mibr-academy",
+      "name": "MIBR Academy",
+      "status": "official-mark",
+      "file": "mibr-academy.png",
+      "sourceTitle": "File:MIBR Academy darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:MIBR_Academy_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/6f/MIBR_Academy_darkmode.png/256px-MIBR_Academy_darkmode.png",
+      "width": 256,
+      "height": 136
+    },
+    {
+      "sourceTitle": "File:SAW darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:SAW_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/b/ba/SAW_darkmode.png/256px-SAW_darkmode.png",
+      "width": 256,
+      "height": 212,
+      "id": "saw-youngsters",
+      "name": "SAW Youngsters",
+      "status": "official-mark",
+      "file": "saw-youngsters.png"
+    },
+    {
+      "id": "wazabi",
+      "name": "WAZABI",
+      "status": "official-mark",
+      "file": "wazabi.png",
+      "sourceTitle": "File:WAZABI allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:WAZABI_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/a/a2/WAZABI_allmode.png/256px-WAZABI_allmode.png",
+      "width": 256,
+      "height": 363
+    },
+    {
+      "id": "mibr-fe",
+      "name": "MIBR fe",
+      "status": "official-mark",
+      "file": "mibr-fe.png",
+      "sourceTitle": "File:MIBR 2018 darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:MIBR_2018_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/7/72/MIBR_2018_darkmode.png/256px-MIBR_2018_darkmode.png",
+      "width": 256,
+      "height": 102
+    },
+    {
+      "id": "spirit-academy",
+      "name": "Spirit Academy",
+      "status": "official-mark",
+      "file": "spirit-academy.png",
+      "sourceTitle": "File:Team Spirit Academy allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_Spirit_Academy_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/09/Team_Spirit_Academy_allmode.png/256px-Team_Spirit_Academy_allmode.png",
+      "width": 256,
+      "height": 270
+    },
+    {
+      "id": "falcons-force",
+      "name": "Falcons Force",
+      "status": "unverified"
+    },
+    {
+      "id": "bmz",
+      "name": "BMZ",
+      "status": "official-mark",
+      "file": "bmz.png",
+      "sourceTitle": "File:BMZ allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:BMZ_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/4/48/BMZ_allmode.png/256px-BMZ_allmode.png",
+      "width": 256,
+      "height": 67
+    },
+    {
+      "id": "sashi-academy",
+      "name": "Sashi Academy",
+      "status": "official-parent-mark",
+      "file": "sashi.png",
+      "sourceTitle": "File:Sashi Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Sashi_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/64/Sashi_Esports_allmode.png/256px-Sashi_Esports_allmode.png",
+      "width": 256,
+      "height": 236,
+      "inheritedFrom": "sashi"
+    },
+    {
+      "id": "hashiras",
+      "name": "Hashiras",
+      "status": "official-mark",
+      "file": "hashiras.png",
+      "sourceTitle": "File:Hashiras allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Hashiras_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/e/e6/Hashiras_allmode.png/256px-Hashiras_allmode.png",
+      "width": 256,
+      "height": 256
+    },
+    {
+      "id": "los-kogutos",
+      "name": "los kogutos",
+      "status": "official-mark",
+      "file": "los-kogutos.png",
+      "sourceTitle": "File:Los kogutos allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Los_kogutos_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/5/5f/Los_kogutos_allmode.png/256px-Los_kogutos_allmode.png",
+      "width": 256,
+      "height": 281
+    },
+    {
+      "id": "nutorious",
+      "name": "NuTorious",
+      "status": "official-mark",
+      "file": "nutorious.png",
+      "sourceTitle": "File:NuTorious darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:NuTorious_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/6/61/NuTorious_darkmode.png/256px-NuTorious_darkmode.png",
+      "width": 256,
+      "height": 246
+    },
+    {
+      "id": "last-bullet",
+      "name": "Last Bullet",
+      "status": "official-mark",
+      "file": "last-bullet.png",
+      "sourceTitle": "File:Last Bullet allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Last_Bullet_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/b/bf/Last_Bullet_allmode.png/256px-Last_Bullet_allmode.png",
+      "width": 256,
+      "height": 298
+    },
+    {
+      "id": "mindfreak",
+      "name": "Mindfreak",
+      "status": "official-mark",
+      "file": "mindfreak.png",
+      "sourceTitle": "File:Mindfreak allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Mindfreak_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/10/Mindfreak_allmode.png/256px-Mindfreak_allmode.png",
+      "width": 256,
+      "height": 344
+    },
+    {
+      "id": "mai-tai",
+      "name": "Mai Tai",
+      "status": "unverified"
+    },
+    {
+      "id": "villainous",
+      "name": "Villainous",
+      "status": "official-mark",
+      "file": "villainous.png",
+      "sourceTitle": "File:Team Villainous allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_Villainous_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/06/Team_Villainous_allmode.png/256px-Team_Villainous_allmode.png",
+      "width": 256,
+      "height": 241
+    },
+    {
+      "id": "vexar",
+      "name": "Vexar",
+      "status": "official-mark",
+      "file": "vexar.png",
+      "sourceTitle": "File:Team Vexar logo allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Team_Vexar_logo_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/1/1e/Team_Vexar_logo_allmode.png/256px-Team_Vexar_logo_allmode.png",
+      "width": 256,
+      "height": 240
+    },
+    {
+      "id": "aimclub",
+      "name": "aimclub",
+      "status": "official-mark",
+      "file": "aimclub.png",
+      "sourceTitle": "File:Aimclub darkmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Aimclub_darkmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/e/eb/Aimclub_darkmode.png/256px-Aimclub_darkmode.png",
+      "width": 256,
+      "height": 253
+    },
+    {
+      "id": "haunted-house",
+      "name": "Haunted House",
+      "status": "unverified"
+    },
+    {
+      "id": "fortress",
+      "name": "Fortress",
+      "status": "official-mark",
+      "file": "fortress.png",
+      "sourceTitle": "File:Fortress allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Fortress_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/0/01/Fortress_allmode.png/256px-Fortress_allmode.png",
+      "width": 256,
+      "height": 304
+    },
+    {
+      "id": "navi-junior",
+      "name": "NAVI Junior",
+      "status": "official-mark",
+      "file": "navi-junior.png",
+      "sourceTitle": "File:Natus Vincere Junior allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Natus_Vincere_Junior_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/4/4b/Natus_Vincere_Junior_allmode.png/256px-Natus_Vincere_Junior_allmode.png",
+      "width": 256,
+      "height": 244
+    },
+    {
+      "id": "donstu",
+      "name": "DONSTU",
+      "status": "unverified"
+    },
+    {
+      "id": "misa",
+      "name": "Misa",
+      "status": "official-mark",
+      "file": "misa.png",
+      "sourceTitle": "File:Misa Esports allmode.png",
+      "sourcePage": "https://liquipedia.net/commons/File:Misa_Esports_allmode.png",
+      "downloadUrl": "https://liquipedia.net/commons/images/thumb/b/bc/Misa_Esports_allmode.png/256px-Misa_Esports_allmode.png",
+      "width": 256,
+      "height": 228
+    }
+  ]
+}
