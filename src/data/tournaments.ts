@@ -1,4 +1,4 @@
-import { Tournament } from '@/types/game';
+import { Region, Tournament } from '@/types/game';
 import { ACTIVE_MAP_IDS } from './maps';
 
 const make = (input: Partial<Tournament> & Pick<Tournament, 'id' | 'name' | 'shortName' | 'kind' | 'tier' | 'region' | 'month' | 'week' | 'prizePool' | 'format' | 'seriesFormat' | 'teams' | 'location'>): Tournament => ({
@@ -13,6 +13,41 @@ const make = (input: Partial<Tournament> & Pick<Tournament, 'id' | 'name' | 'sho
   reputationImpact: input.kind === 'major' ? 20 : input.tier === 'S' ? 12 : 5,
   mapPool: ACTIVE_MAP_IDS, ...input,
 });
+
+const regionalCircuits: { id: string; name: string; region: Region; location: string }[] = [
+  { id: 'eu', name: 'European Circuit', region: 'Europe', location: 'Online Europe' },
+  { id: 'cis', name: 'Eastern Circuit', region: 'CIS', location: 'Online East' },
+  { id: 'sa', name: 'South American Circuit', region: 'South America', location: 'Online South America' },
+  { id: 'br', name: 'Brazil Challenger', region: 'Brazil', location: 'São Paulo, Brazil' },
+  { id: 'na', name: 'North American Circuit', region: 'North America', location: 'Online North America' },
+  { id: 'as', name: 'Asia Challenger', region: 'Asia', location: 'Online Asia' },
+  { id: 'oc', name: 'Oceania Challenger', region: 'Oceania', location: 'Online Oceania' },
+  { id: 'me', name: 'MENA Circuit', region: 'Middle East', location: 'Online MENA' },
+];
+
+// These events model the dense weekly ecosystem below the headline LANs. They
+// are original, configurable competitions rather than claims about an official
+// annual calendar.
+const CIRCUIT_EVENTS: Tournament[] = regionalCircuits.flatMap((circuit, circuitIndex) => [1, 2, 3, 4, 5, 6].map((split) => {
+  const month = ((split - 1) * 2 + circuitIndex % 2) % 12 + 1;
+  const week = 1 + ((circuitIndex + split) % 4);
+  const tier = split % 3 === 0 ? 'A' as const : split % 2 === 0 ? 'B' as const : 'C' as const;
+  return make({
+    id: `circuit-${circuit.id}-${split}`,
+    name: `${circuit.name} · Split ${split}`,
+    shortName: `${circuit.id.toUpperCase()} C${split}`,
+    kind: split % 2 === 0 ? 'regional' : 'online',
+    tier,
+    region: circuit.region,
+    month,
+    week,
+    prizePool: tier === 'A' ? 120000 : tier === 'B' ? 60000 : 25000,
+    format: split % 3 === 0 ? 'Swiss' : split % 2 === 0 ? 'Groups + playoffs' : 'Double elimination',
+    seriesFormat: 'BO3',
+    teams: tier === 'A' ? 16 : 24,
+    location: circuit.location,
+  });
+}));
 
 export const TOURNAMENTS: Tournament[] = [
   make({ id: 'iem-krakow', name: 'IEM Kraków', shortName: 'IEM KRA', kind: 'international', tier: 'S', region: 'Europe', month: 1, week: 3, prizePool: 1000000, format: 'Play-in', seriesFormat: 'BO3', teams: 24, location: 'Kraków, Poland' }),
@@ -45,6 +80,7 @@ export const TOURNAMENTS: Tournament[] = [
   make({ id: 'na-challenger', name: 'ESL Challenger League NA', shortName: 'ECL NA', kind: 'regional', tier: 'B', region: 'North America', month: 3, week: 3, prizePool: 80000, format: 'Round robin', seriesFormat: 'BO3', teams: 16, location: 'Online' }),
   make({ id: 'asia-champions', name: 'Asian Champions League', shortName: 'ACL', kind: 'regional', tier: 'A', region: 'Asia', month: 5, week: 1, prizePool: 300000, format: 'Groups + playoffs', seriesFormat: 'BO3', teams: 16, location: 'Shanghai, China' }),
   make({ id: 'oce-masters', name: 'Oceania Masters', shortName: 'OCE', kind: 'regional', tier: 'B', region: 'Oceania', month: 4, week: 4, prizePool: 50000, format: 'Double elimination', seriesFormat: 'BO3', teams: 8, location: 'Sydney, Australia' }),
+  ...CIRCUIT_EVENTS,
 ];
 
 export const MAJORS = TOURNAMENTS.filter((tournament) => tournament.kind === 'major');

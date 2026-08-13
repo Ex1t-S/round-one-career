@@ -1,4 +1,5 @@
 import { CareerDecision, EventCategory } from '@/types/game';
+import { CONTEXTUAL_DECISIONS } from './contextual-decisions';
 
 type Blueprint = { category: EventCategory; subject: string; tension: string; positive: string; conservative: string; risky: string };
 
@@ -51,4 +52,5 @@ export const CAREER_EVENTS: CareerDecision[] = BLUEPRINTS.flatMap((blueprint, bl
   ],
 })));
 
-export const getCareerEvent = (id?: string) => CAREER_EVENTS.find((event) => event.id === id);
+export const ALL_CAREER_DECISIONS = [...CONTEXTUAL_DECISIONS, ...CAREER_EVENTS];
+export const getCareerEvent = (id?: string) => ALL_CAREER_DECISIONS.find((event) => event.id === id);

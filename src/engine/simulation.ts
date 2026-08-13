@@ -3,6 +3,7 @@ import { getTournament } from '@/data/tournaments';
 import { CareerState, MapResult, MatchResult, MatchStats, PlayerRole, Team } from '@/types/game';
 import { clamp, overallRating } from './progression';
 import { pick, randomInt, rngFor } from './random';
+import { activeConsumableModifier } from './consumables';
 
 const roleKeys: Record<PlayerRole, (keyof CareerState['player']['attributes'])[]> = {
   Entry: ['aim', 'reaction', 'entryImpact', 'movement'], AWPer: ['awpSkill', 'reaction', 'positioning', 'clutch'], Rifler: ['aim', 'sprayControl', 'tradeEfficiency', 'consistency'], Lurker: ['gameSense', 'readingOpponents', 'positioning', 'clutch'], Support: ['utilityUsage', 'flashAssists', 'communication', 'teamChemistry'], IGL: ['leadership', 'communication', 'gameSense', 'readingOpponents'], Hybrid: ['adaptability', 'aim', 'awpSkill', 'gameSense'], Anchor: ['positioning', 'mentalStrength', 'utilityUsage', 'clutch'],
@@ -19,7 +20,10 @@ export function playerPerformanceScore(state: CareerState, mapId: string, oppone
   const condition = state.player.form * 0.13 + attributes.confidence * 0.11 + attributes.consistency * 0.11 + state.chemistry * 0.08 + attributes.mentalStrength * (pressure / 100) * 0.08;
   const penalties = state.player.fatigue * 0.13 + state.player.burnout * 0.08 + state.player.pressure * 0.04 + state.player.injuredWeeks * 8;
   const minigameModifier = typeof state.flags.lastMinigameModifier === 'number' ? clamp(state.flags.lastMinigameModifier, -0.06, 0.06) * 100 : 0;
-  return clamp(roleScore * 0.48 + overallRating(attributes) * 0.18 + condition + mapModifier - opponent.globalLevel * 0.11 - penalties + minigameModifier + 11, 20, 98);
+  const consumableModifier = clamp(activeConsumableModifier(state), 0, .06) * 100;
+  const roleSecurity = (state.squad?.roleSecurity ?? 55) / 30 - 1.5;
+  const rosterRhythm = ((state.squad?.mapShare ?? 72) - 72) * .035;
+  return clamp(roleScore * 0.48 + overallRating(attributes) * 0.18 + condition + mapModifier - opponent.globalLevel * 0.11 - penalties + minigameModifier + consumableModifier + roleSecurity + rosterRhythm + (state.seasonVariance ?? 0) * .35 + 11, 20, 98);
 }
 
 function generateStats(state: CareerState, mapId: string, opponent: Team, rounds: number, random: () => number, pressure: number): MatchStats {
@@ -50,7 +54,8 @@ function aggregateStats(maps: MapResult[]): MatchStats {
 export function simulateMatch(state: CareerState, playerTeam: Team, opponent: Team, tournamentId: string, mapIds?: string[], formatOverride?: 'BO1' | 'BO3' | 'BO5'): MatchResult {
   const baseTournament = getTournament(tournamentId);
   const tournament = { ...baseTournament, seriesFormat: formatOverride ?? baseTournament.seriesFormat };
-  const random = rngFor(state.id, state.season, state.month, state.week, opponent.id, state.matches.length);
+  const random = rngFor(state.careerSeed ?? state.id, state.season, state.month, state.week, opponent.id, state.matches.length);
+  const performanceVariance = round2((random() - random()) * 9);
   const maxMaps = tournament.seriesFormat === 'BO1' ? 1 : tournament.seriesFormat === 'BO5' ? 5 : 3;
   const requiredWins = Math.ceil(maxMaps / 2);
   const pool = mapIds?.length ? mapIds : tournament.mapPool;
@@ -59,7 +64,7 @@ export function simulateMatch(state: CareerState, playerTeam: Team, opponent: Te
   for (let index = 0; index < maxMaps && teamWins < requiredWins && opponentWins < requiredWins; index += 1) {
     const mapId = pool[index % pool.length];
     const performance = playerPerformanceScore(state, mapId, opponent, tournament.pressure);
-    const teamPower = playerTeam.globalLevel * 0.65 + state.chemistry * 0.16 + performance * 0.19;
+    const teamPower = playerTeam.globalLevel * 0.65 + state.chemistry * 0.16 + performance * 0.19 + performanceVariance;
     const opponentPower = opponent.globalLevel * 0.82 + opponent.chemistry * 0.18;
     const winProbability = clamp(50 + (teamPower - opponentPower) * 1.5, 12, 88) / 100;
     const won = random() < winProbability;
@@ -75,5 +80,5 @@ export function simulateMatch(state: CareerState, playerTeam: Team, opponent: Te
   const injuryChance = clamp((state.player.fatigue + state.player.injuryRisk + state.player.burnout * 0.45) / 650, 0.01, 0.28);
   const injuryOccurred = random() < injuryChance;
   const highlights = [`${aggregate.kills} kills y ${aggregate.adr} ADR en la serie`, aggregate.clutches ? `${aggregate.clutches} clutch${aggregate.clutches > 1 ? 'es' : ''} convertido${aggregate.clutches > 1 ? 's' : ''}` : 'Partida sin clutches convertidos', pick(random, ['Una apertura cambió el mapa decisivo', 'La utility del equipo definió las rondas largas', 'El rival castigó las compras débiles', 'El lado CT sostuvo la serie'])];
-  return { id: `match-${state.season}-${state.month}-${state.week}-${state.matches.length + 1}`, season: state.season, month: state.month, week: state.week, tournamentId, opponentTeamId: opponent.id, format: tournament.seriesFormat, won, seriesScore: `${teamWins}-${opponentWins}`, maps, aggregate, highlights, explanation: [`Nivel propio ${overallRating(state.player.attributes)}`, `Forma ${state.player.form} / Fatiga ${state.player.fatigue}`, `Química ${state.chemistry}`, `Rival #${opponent.initialRanking} (${opponent.globalLevel})`, `Presión del evento ${tournament.pressure}`], fatigueChange: 7 + maps.length * 3, confidenceChange: won ? 5 : -4, injuryOccurred };
+  return { id: `match-${state.season}-${state.month}-${state.week}-${state.matches.length + 1}`, season: state.season, month: state.month, week: state.week, tournamentId, opponentTeamId: opponent.id, format: tournament.seriesFormat, won, seriesScore: `${teamWins}-${opponentWins}`, maps, aggregate, highlights, explanation: [`Nivel por rol ${playerPerformanceScore(state, maps[0]?.mapId ?? tournament.mapPool[0], opponent, tournament.pressure).toFixed(1)}`, `Forma ${state.player.form} / Fatiga ${state.player.fatigue}`, `Química ${state.chemistry}`, `Rival #${opponent.initialRanking} (${opponent.globalLevel})`, `Varianza de esta serie ${performanceVariance >= 0 ? '+' : ''}${performanceVariance.toFixed(1)}`, `Presión del evento ${tournament.pressure}`], fatigueChange: 7 + maps.length * 3, confidenceChange: won ? 5 : -4, injuryOccurred, performanceVariance };
 }

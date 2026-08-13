@@ -10,8 +10,8 @@ La versión actual incluye:
 - 29 atributos conectados al rendimiento, la progresión, los contratos y los eventos.
 - Motor probabilístico determinista: atributos, rol, mapa, rival, ranking, forma, fatiga, química, presión y estado mental explican cada resultado.
 - Estadísticas por mapa y serie: K/D, ADR, KAST, rating, aperturas, clutches 1vX, HS%, utility, trades, lados CT/T, pistolas, overtime y presión.
-- 100 equipos del circuito global, múltiples regiones y niveles competitivos.
-- 30 torneos por temporada, formatos BO1/BO3/BO5, clasificatorios, RMR y exactamente dos Majors.
+- 188 equipos del snapshot VRS global, múltiples regiones y niveles competitivos; los 100 originales se conservan.
+- 78 torneos por temporada entre eventos principales y circuitos regionales modelados, con exactamente dos Majors.
 - Ocho mapas configurables con modificadores por rol, lado y estilo.
 - 210 eventos narrativos reutilizables con consecuencias combinadas y memoria persistente.
 - Entrenamiento, fatiga, burnout, lesiones, motivación, química, transferencias, contratos, finanzas y rankings dinámicos.
@@ -30,6 +30,18 @@ Diez minijuegos opcionales aportan modificadores moderados a las series: clutch 
 Cada temporada termina ahora en `OFF-SEASON — BALANCE & UPGRADES`. La fase bloquea el año siguiente hasta revisar resultados, ingresos, impuestos, gastos, contrato, compras, inversiones, descanso y objetivos. El catálogo incluye 76 mejoras con requisitos, niveles, mantenimiento, reventa, riesgo y diminishing returns. Propiedades, inversiones, cash y valor de reventa forman el patrimonio de carrera.
 
 Career Analytics agrega gráficos SVG responsive para rendimiento, atributos, mapas, lados CT/T, opening duels, forma, finanzas, salarios, valor de mercado y patrimonio. Los fondos editoriales, banners, avatares, escudos y trofeos son assets locales originales; la aplicación no depende de URLs externas.
+
+## Phase 3
+
+La tercera etapa convierte la temporada completa en un mundo simulado, no solamente el Major. Los torneos ordinarios ahora recorren grupos, Swiss, upper/lower bracket y playoffs con varias series persistentes. Una carrera automática de balance disputa alrededor de 80 mapas por temporada, con rivales, mapas, kills y rating reales por serie.
+
+Cada carrera recibe una seed propia y cada temporada un contexto de forma. La carta, el rol, el equipo, el rival, la química, la fatiga y las decisiones determinan la probabilidad media; una varianza acotada permite que dos carreras con las mismas elecciones terminen diferente. La explicación de cada partido expone esa varianza sin presentar el resultado como azar puro.
+
+Hay seis decisiones clave por año. Leen el tier, rating reciente, puesto, fatiga y camino al Major; cada elección puede tener éxito, resultado mixto o setback y puede dejar consecuencias diferidas. El cierre anual conserva esas seis decisiones, mejora de overall, mapas, kills, earnings, reputación, ranking, mejor/peor momento y narrativa del underdog.
+
+El jugador ocupa una jerarquía real del roster —prospect, rotación, titular, estrella o banca— con confianza del coach, seguridad y porcentaje de mapas. Las ofertas detallan salario, duración, encaje y rol prometido. La creación presenta tres ofertas iniciales diferentes y permite explorar todos los equipos VRS desde el puesto 80, siempre con escudos abstractos originales.
+
+Lifestyle separa mejoras permanentes de 12 compras consumibles o personales. Informes, bootcamp, fisioterapia y sueño tienen duración limitada y modificadores moderados; autos, viajes, vacaciones y skins dan motivación, fanbase o reputación, pero nunca atributos competitivos gratuitos.
 
 ## Datos
 
@@ -139,7 +151,7 @@ Después de cambiar balance o contenido, ejecutar `npm run validate`.
 
 ## Persistencia
 
-La carrera se guarda con AsyncStorage bajo el esquema versionado v2. Los guardados v1 se validan y migran automáticamente, incluyendo defaults para Majors, finanzas, inventario, récords y opciones visuales. En web utiliza el almacenamiento local compatible; en Android e iOS usa el backend nativo de AsyncStorage. La pantalla Configuración permite:
+La carrera se guarda con AsyncStorage bajo el esquema versionado v3. Los guardados v1 y v2 se validan y migran automáticamente, incluyendo defaults para Majors, finanzas, inventario, consumibles, campañas normales, seed, roster, ofertas, decisiones diferidas, récords y opciones visuales. En web utiliza el almacenamiento local compatible; en Android e iOS usa el backend nativo de AsyncStorage. La pantalla Configuración permite:
 
 - Activar o desactivar autosave.
 - Importar una carrera JSON validada.
@@ -161,9 +173,7 @@ La misma frontera permite sumar cuentas, sincronización cloud, ligas compartida
 
 ## Próximas versiones
 
-- Árboles completos de torneo con múltiples series, clasificación y eliminación real por etapa.
 - Mercado autónomo global con fichajes, préstamos, banca, academias, retiros y organizaciones que aparecen o desaparecen.
-- Minijuegos interactivos de clutch, spray, utility, minimapa, compras y timeout.
 - Roster global de jugadores simulados con historial individual y desarrollo por edad.
 - Negociación contractual por turnos, representantes, impuestos por país y buyouts dinámicos.
 - Más cadenas narrativas, rivalidades persistentes y eventos posteriores al retiro.

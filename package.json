@@ -1,7 +1,7 @@
 {
   "name": "round-one-career",
   "main": "expo-router/entry",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "dependencies": {
     "@expo/ui": "~57.0.10",
     "@react-native-async-storage/async-storage": "2.2.0",

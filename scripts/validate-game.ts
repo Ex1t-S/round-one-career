@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 
 import { SCREEN_IDS } from '../src/constants/routes';
-import { CAREER_EVENTS, getCareerEvent } from '../src/data/events';
+import { ALL_CAREER_DECISIONS, CAREER_EVENTS, getCareerEvent } from '../src/data/events';
+import { CONSUMABLES } from '../src/data/consumables';
 import { MAPS } from '../src/data/maps';
 import { DEFAULT_MAJOR_FORMAT } from '../src/data/majorStages';
 import { STARTER_TEAMS, TEAMS } from '../src/data/teams';
@@ -14,18 +15,21 @@ import { autoSimulateMinigame, createMinigame, MINIGAME_DEFINITIONS, resolveMini
 import { advanceWeek, applyDecision, completeOffseason, createCareer, resolvePendingMatch } from '../src/engine/season';
 import { simulateMatch } from '../src/engine/simulation';
 import { annualMaintenance, calculateNetWorth, purchaseUpgrade, upgradeRequirement } from '../src/engine/upgrades';
+import { purchaseConsumable } from '../src/engine/consumables';
+import { initialTeamOffers } from '../src/engine/rosters';
+import { simulateTournamentCampaign } from '../src/engine/tournament-campaign';
 import { CAREER_SCHEMA_VERSION, migrateCareerState } from '../src/state/migrations';
 import { CareerState, MatchResult, PlayerIdentity, SwissRoundMatch } from '../src/types/game';
 import { cloneSerializable } from '../src/utils/clone';
 
-assert.equal(TEAMS.length, 100, 'The VRS seed must contain exactly the global top 100');
-assert.equal(new Set(TEAMS.map((team) => team.id)).size, 100, 'Team ids must be unique');
+assert.ok(TEAMS.length >= 180, 'The VRS seed must extend well beyond the global top 100');
+assert.equal(new Set(TEAMS.map((team) => team.id)).size, TEAMS.length, 'Team ids must be unique');
 assert.equal(TEAMS[0].name, 'Spirit');
 assert.equal(TEAMS[99].name, 'Leo');
 assert.ok(new Set(TEAMS.map((team) => team.region)).size >= 8, 'Multiple regions are required');
 assert.ok(new Set(TEAMS.map((team) => team.tier)).size >= 4, 'Multiple competitive tiers are required');
 assert.equal(MAJORS.length, 2, 'Every season must have exactly two Majors');
-assert.ok(TOURNAMENTS.length >= 30, 'The calendar needs at least 30 tournaments');
+assert.ok(TOURNAMENTS.length >= 70, 'The calendar needs a dense headline and regional circuit');
 assert.ok(CAREER_EVENTS.length >= 200, 'Decision engine must expose hundreds of reusable events');
 assert.equal(MAPS.length, 8, 'The eight-map catalog must be preserved');
 assert.ok(MAPS.filter((map) => map.active).length >= 7, 'Active map pool is incomplete');
@@ -34,8 +38,12 @@ for (const route of ['major-hub', 'major-qualification', 'swiss-stage', 'major-b
 assert.equal(MINIGAME_DEFINITIONS.length, 10, 'All ten minigames are required');
 assert.ok(UPGRADES.length >= 70, 'The lifestyle catalog must be extensive');
 assert.ok(DEFAULT_MAJOR_FORMAT.stages.length >= 10, 'The configurable Major model must include all stages');
+assert.equal(new Set(ALL_CAREER_DECISIONS.map((event) => event.slot).filter(Boolean)).size, 6, 'There must be six contextual decision slots per season');
+assert.ok(CONSUMABLES.length >= 10, 'Consumables and lifestyle purchases must be available');
 
 const identity: PlayerIdentity = { fullName: 'Test Player', nickname: 'TEST', nationality: 'Argentina', region: 'Argentina', city: 'Buenos Aires', age: 17, primaryLanguage: 'Español', secondaryLanguages: ['Inglés'], handedness: 'Diestro', personality: 'Analítico', ambition: 85, riskTolerance: 60, priority: 'Títulos', role: 'Rifler', style: 'Mechanical' };
+
+const firstOffers = initialTeamOffers(identity); assert.equal(firstOffers.length, 3); assert.ok(firstOffers.every((team) => team.initialRanking >= 80), 'The initial offers must be genuinely low tier');
 
 function assertFiniteDeep(value: unknown, path = 'state') {
   if (typeof value === 'number') assert.ok(Number.isFinite(value), `${path} contains a non-finite number`);
@@ -47,6 +55,19 @@ function resultWithOutcome(state: CareerState, opponentId: string, won: boolean)
   const result = simulateMatch(state, TEAMS.find((team) => team.id === state.teamId)!, TEAMS.find((team) => team.id === opponentId)!, MAJORS[0].id, undefined, 'BO3');
   return { ...result, won, seriesScore: won ? '2-0' : '0-2', aggregate: { ...result.aggregate, rating: won ? 1.36 : 0.84 } };
 }
+
+// Ordinary events are complete campaigns, and explicit career seeds create
+// reproducible but genuinely different timelines.
+const circuitEvent = TOURNAMENTS.find((event) => event.id.startsWith('circuit-'))!;
+const circuitCareer = createCareer(identity, STARTER_TEAMS[0], 2026, 77);
+const circuitRun = simulateTournamentCampaign(circuitCareer, circuitEvent);
+assert.ok(circuitRun.campaign.playerMatchIds.length >= 2, 'An ordinary event must contain multiple series');
+assert.equal(circuitRun.state.matches.length, circuitRun.campaign.playerMatchIds.length);
+const seededOutcomes = new Set(Array.from({ length: 14 }, (_, seed) => {
+  const sample = createCareer(identity, STARTER_TEAMS[0], 2026, seed + 1);
+  return simulateMatch(sample, STARTER_TEAMS[0], TEAMS[20], TOURNAMENTS[0].id).won;
+}));
+assert.equal(seededOutcomes.size, 2, 'Different career seeds must allow different results with identical choices');
 
 // Classification paths include direct entry and the possibility of missing the event.
 const lowRankCareer = createCareer(identity, TEAMS[99]);
@@ -114,6 +135,7 @@ const memoryGame = createMinigame(vetoCareer, 'utility-memory', 'validation'); a
 
 // Purchases, requirements, diminishing returns, maintenance and net worth.
 mechanics.offseasonPending = true; mechanics.player.money = 1_000_000; mechanics.player.reputation = 100; mechanics.player.level = 30; mechanics.trophies.push({ id: 'test-title', name: 'Test title', season: 1, tier: 'S', mvp: false }, { id: 'test-title-2', name: 'Test title 2', season: 1, tier: 'S', mvp: false });
+const consumableCash = mechanics.player.money; mechanics = purchaseConsumable(mechanics, 'bootcamp-focus').state; assert.ok(mechanics.player.money < consumableCash); assert.ok(mechanics.inventory.consumables.some((item) => item.consumableId === 'bootcamp-focus'));
 const beforeMoney = mechanics.player.money; mechanics = purchaseUpgrade(mechanics, 'monitor').state; assert.ok(mechanics.player.money < beforeMoney, 'Purchase must deduct money');
 const levelOneReaction = mechanics.player.attributes.reaction; mechanics = purchaseUpgrade(mechanics, 'monitor').state; assert.ok(mechanics.player.attributes.reaction > levelOneReaction && mechanics.player.attributes.reaction - levelOneReaction < 0.65, 'Diminishing returns must reduce later gains');
 const poor = createCareer(identity, STARTER_TEAMS[0]); poor.offseasonPending = true; assert.equal(purchaseUpgrade(poor, 'performance-lab').state.player.money, poor.player.money, 'Cannot buy without funds');
@@ -126,13 +148,13 @@ const financial = calculateFinancialSummary(mechanics); assertFiniteDeep(financi
 
 // Legacy v1 migration and JSON round-trip preserve Phase 2 domains.
 const legacy = cloneSerializable(createCareer(identity, STARTER_TEAMS[0])) as unknown as Record<string, unknown>; legacy.schemaVersion = 1;
-for (const key of ['majorCampaigns', 'minigameHistory', 'financialHistory', 'inventory', 'netWorth', 'careerRecords', 'seasonalStatistics', 'visualAssets', 'offseasonPending', 'offseasonStep']) delete legacy[key];
+for (const key of ['majorCampaigns', 'minigameHistory', 'financialHistory', 'inventory', 'netWorth', 'careerRecords', 'seasonalStatistics', 'visualAssets', 'offseasonPending', 'offseasonStep', 'careerSeed', 'seasonVariance', 'squad', 'offers', 'tournamentCampaigns', 'deferredConsequences', 'decisionSlotsUsed', 'seasonStartSnapshot']) delete legacy[key];
 const migrated = migrateCareerState(legacy); assert.ok(migrated); assert.equal(migrated!.schemaVersion, CAREER_SCHEMA_VERSION); assert.deepEqual(migrated!.majorCampaigns, []); assert.deepEqual(migrated!.inventory.upgrades, []);
 const roundTripSource = cloneSerializable(mechanics); roundTripSource.majorCampaigns.push(createMajorCampaign(roundTripSource, MAJORS[0].id)); roundTripSource.minigameHistory.push(autoSimulateMinigame(roundTripSource, 'clutch', 'roundtrip'));
-const roundTrip = migrateCareerState(JSON.parse(JSON.stringify(roundTripSource))); assert.ok(roundTrip); assert.equal(roundTrip!.majorCampaigns.length, 1); assert.equal(roundTrip!.inventory.upgrades.length, roundTripSource.inventory.upgrades.length); assert.equal(roundTrip!.minigameHistory.length, 1);
+const roundTrip = migrateCareerState(JSON.parse(JSON.stringify(roundTripSource))); assert.ok(roundTrip); assert.equal(roundTrip!.majorCampaigns.length, 1); assert.equal(roundTrip!.inventory.upgrades.length, roundTripSource.inventory.upgrades.length); assert.equal(roundTrip!.inventory.consumables.length, roundTripSource.inventory.consumables.length); assert.equal(roundTrip!.minigameHistory.length, 1);
 
 // Automated career covers active Major campaigns and mandatory off-season for 12 seasons.
-let career = createCareer(identity, STARTER_TEAMS[0]); career.settings.minigames = false; career.settings.minigameMode = 'auto';
+let career = createCareer(identity, STARTER_TEAMS[0], 2026, 20260813); career.settings.minigames = false; career.settings.minigameMode = 'auto';
 let resolvedMatches = 0; let resolvedDecisions = 0; let completedOffseasons = 0;
 for (let guard = 0; guard < 6000 && !career.finished; guard += 1) {
   if (career.pendingDecisionId) {
@@ -145,8 +167,14 @@ for (let guard = 0; guard < 6000 && !career.finished; guard += 1) {
   for (const attribute of Object.values(career.player.attributes)) assert.ok(attribute >= 1 && attribute <= 100, 'Attribute outside 1..100');
 }
 assert.ok(career.finished, 'Automated career must reach an ending'); assert.equal(career.season, 12); assert.ok(resolvedMatches > 10); assert.ok(resolvedDecisions > 20); assert.ok(completedOffseasons >= 11); assert.ok(Boolean(career.ending));
+assert.equal(resolvedDecisions, 72, 'A twelve-season career must resolve six key decisions per year');
+assert.ok(career.matches.length >= 350, `The complete circuit must create a credible professional match volume (received ${career.matches.length})`);
+assert.ok(career.seasonalStatistics.every((season) => (season.maps ?? 0) >= 15), 'Even a bench-affected season needs a meaningful official sample');
+assert.ok(career.seasonalStatistics.reduce((sum, season) => sum + (season.maps ?? 0), 0) >= 750, 'Career map volume must resemble a dense professional circuit');
+assert.ok(career.seasonalStatistics.every((season) => (season.kills ?? 0) > 0 && Number.isFinite(season.earnings)), 'Season reviews must preserve kills and earnings');
+assert.ok(career.tournamentCampaigns.length > 30, 'Ordinary tournament campaigns must persist across the career');
 assert.ok(career.matches.every((match) => match.aggregate.rating >= 0.35 && match.aggregate.rating <= 2.1));
 assert.equal(career.majorCampaigns.filter((campaign) => campaign.season === 1).length, 2, 'There must be two independent Major campaigns per season');
 const endings = new Set(['Leyenda de los Majors', 'Imperio más allá del servidor', 'El líder continúa desde el banco', 'Del servidor a la comunidad', 'Ícono del circuito', 'Una carrera de sacrificio']); assert.ok(endings.has(career.ending!));
 
-console.log(JSON.stringify({ teams: TEAMS.length, tournaments: TOURNAMENTS.length, majors: MAJORS.length, events: CAREER_EVENTS.length, maps: MAPS.length, screens: SCREEN_IDS.length, minigames: MINIGAME_DEFINITIONS.length, upgrades: UPGRADES.length, schemaVersion: career.schemaVersion, simulatedSeasons: career.season, majorCampaigns: career.majorCampaigns.length, matches: resolvedMatches, decisions: resolvedDecisions, offseasons: completedOffseasons, ending: career.ending }, null, 2));
+console.log(JSON.stringify({ teams: TEAMS.length, tournaments: TOURNAMENTS.length, majors: MAJORS.length, events: CAREER_EVENTS.length, contextualDecisions: ALL_CAREER_DECISIONS.length - CAREER_EVENTS.length, maps: MAPS.length, screens: SCREEN_IDS.length, minigames: MINIGAME_DEFINITIONS.length, upgrades: UPGRADES.length, consumables: CONSUMABLES.length, schemaVersion: career.schemaVersion, simulatedSeasons: career.season, majorCampaigns: career.majorCampaigns.length, tournamentCampaigns: career.tournamentCampaigns.length, matches: career.matches.length, mapsPlayed: career.matches.reduce((sum, match) => sum + match.maps.length, 0), decisions: resolvedDecisions, offseasons: completedOffseasons, ending: career.ending }, null, 2));

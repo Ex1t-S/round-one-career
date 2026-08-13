@@ -109,14 +109,120 @@ const VRS_SNAPSHOT = `
 100|986|Leo|aimy,amster,kL1o,leen,next1me
 `.trim();
 
+// Positions 101–200 from the same public Valve snapshot. Duplicate organization
+// names are collapsed below because a snapshot can contain more than one eligible
+// lineup for the same organization.
+const VRS_EXTENDED_SNAPSHOT = `
+101|984|The Last Resort|arTisT, bevve, Extinct, Girafffe, Vacancy
+102|984|Rebels|Icarus, NOPEEj, snapy, stadodo, TMKj
+103|983|Ground Zero|apocdud, hazr, Omichella, sliimey, tucks
+104|981|Betclic|Demho, Dr3nquu, eskyy, hades, Prism
+105|980|SportsBetExpert|consti, Infinite, motm, Peeping, shane
+106|972|Gaimin Gladiators|fer, HEN1, JOTA, Luken, NEKIZ
+107|971|NEXVOID|AccuracyTG, erkaSt, MiQ, sergelen19k, Zesta
+108|970|Chicken Coop|Crisp, Drop, jared, mds, REKMEISTER
+109|967|Black Phoenix|4X1s, karnez, Sa1nTy, Salazar, topo
+110|966|Turma do Pagode|felps, ksloks, naitte, pesadelo, WOOD7
+111|959|Fisher College|AlekS, corn, CrePoW, ReFuZR, TH0R
+112|958|Isurus|atarax1a, deco, dott1, Hezz, rzk
+113|957|Marsborne|freshie, Grizz, nicx, ogwizard, WUMBO
+114|955|PCIFIC|eNs, jresy, lugseN, maxy0y0, scolleN
+115|954|PsychoFace|abiraju, anttzz, eightz999, facecrack, PsychoDoctor
+116|951|MASONIC|b0RUP, Botman, Frøslev, kralle, Noruyp
+117|949|Lavked|1NVISIBLEE, KENSI, sol, xm1nd
+118|948|G2 Ares|hitori, Junyme, SHiNE, tAk, yksjupe
+119|942|Lazer Cats|Kiy0o, Magic, nikitea, Polbandana, tripex17
+120|929|Keyd Stars|ckzao, lash, matios, xureba, zede
+121|928|TDK|Ax1Le, h1te, nafany, sugaR, Xant3r
+122|927|Nordic Partners|Altekz, k1to, L00m1, Marix, myltsi
+123|925|ex-RUSTEC|Brilliance, jakekeS, Patsi, yiksrezo, youka
+124|923|DragonClaw|AntyVirus, Brylu, fanatyk, PeTeRoOo, suonko
+125|917|Washed|ANSG1, kiR, kroK, Lucky, suma
+126|916|ReThink|chucker, macke, p1ke, Rack, zeak
+127|915|SemperFi|hazr, keen, SaVage, shadiy, sliimey
+128|913|Nexus|fNk, Nexius, s0und, SBT, shield
+129|907|RED Canids|chayJESUS, dav1deuS, drop, kauez, reNTU
+130|905|Eternal Fire|DemQQ, EMSTAR, jottAAA, rigoN, Woro2k
+131|899|PURE|MAGILA, maty, Sh1karee, Toshas, yakuza
+132|899|Honvéd|1NSERT2, esor, fleav, iBALLY, noleN
+133|898|ENCE|Cliqq, HENU, millert, Schwarz, teme
+134|897|Sangal|clax, CYPHER, Patsi, pr1metapz, smooya
+135|887|UNO MILLE|ALLE, cLd, drg, pancc, remix
+136|882|Enjoy|kurosa, nbl, roxesz, sh1geo, zazzer
+137|880|BERG|Askan, CrePoW, KiMaRR, Rezst, Tree60
+138|880|Atreides|Chill, DEPRESHN, Goody, Nivera, Python
+139|877|Endless Journey|Aliot, Caleyy, deb0, pavlysha666, swetsi
+140|875|illwill|7Kick, hAdji, Maden, shalfey, VLDN
+141|874|Young Ninjas|joeski, mASKED, n0te, rud, tein
+142|872|Yawara|deemO, edv, j0w, r3kt, tele
+143|870|Fake do Biru|b4rtiN, detr0ittJ, hardzao, pesadelo, PKL
+144|870|ECSTATIC|Anlelele, Buzz, nicoodoz, nut nut, TMB
+145|870|Bebop|faydett, iDISBALANCE, lov1kus, redzed
+146|866|Bushido Wildcats|cacan, cadnyx, Darendeli, Muk0s, Vej
+147|862|Entropy|delle, dottie, flaw, L00m1, tevsii
+148|862|Strael Bora|5 Star, AdaMmMm, maddeN, newhope, Wumbo
+149|860|ex-Zero Tenacity|aVN, brutmonster, Cjoffo, Dragon, Kind0
+150|857|Poland|Demho, Prism, Qlocuu
+151|857|Chinggis Warriors|cool4st, Efire, Redka, ROUX, tikuak
+152|856|ex-RUBY|danistzz, H4SAN4TOR, Kaide, sh1nejezzz, YumsaN
+153|854|Rare Atom|3gl, chengking, L1haNg, Summer, Trash
+154|854|HAVU|Alxc, ottob, p3kko, puuha, uli
+155|852|Inner Circle Academy|3ippoch, L1seYoung, n0rths, NaYz, Tamefear
+156|849|MOUZ NXT|ay0k, eSx, mixer, Nikodeon, opdust
+157|847|LAG|Bwills, Cryptic, djay, Sandman, SLIGHT
+158|845|HYPERSPIRIT|ADRON, Ciocardau, d1maje, ragga, starplajerz
+159|833|regain|dvrk, grape, H0NeST, sasha, Zucar
+160|831|Marsborne|chop, Cxzi, Grizz, motm, WolfY
+161|830|Noir Verse|fostar, kirxttu, Naginat, Santuriano, xeNji
+162|830|Kaleido|chuzhongT, expSasiKi, rage, SPine, suki
+163|826|roamsfiest|Realyummy, Sn0w, TiiREX
+164|821|SINQU|Eem3l1, imbaemba, MikOne, Onjib, wejkko
+165|820|WBT|fl1peR, marat2k, NxStep, svemyy, tired73
+166|820|Alter Ego|BnTeT, Gratisfaction, PokemoN, Polbandana, tomiko
+167|816|ODDIK|Ceruttera, diozera, nardes, PremiuM, righi
+168|815|Chinggis Warriors|Efire, hasteka, ROUX, tikuak, yAmi
+169|815|FAVBET|bondik, j3kie, Marix, s4ltovsk1yy, Smash
+170|812|ALGO|adeX, aNdu, Bambosh, nukkye, szejn
+171|809|Rooster|ADK, chelleos, ju1ces, rekonz, SkulL
+172|805|MIBR Academy|fl4sh, Jerr1, lkz, revoltz, stormzyn
+173|804|SAW Youngsters|Jayy2s, jERK0z, M1KA, snowiee, tuxa
+174|804|illwill|7Kick, adamS, dycha, hAdji, nEMANHA
+175|803|WAZABI|BacH, BangBang, Laykinn, m0vski, VireZ
+176|800|MIBR fe|Dani, GaBi, Olga, poppins, yungher
+177|789|Spirit Academy|k0gaSs, Kiryasoo, Netrix, s1nside, VILBy
+178|787|Falcons Force|grecu, NaToSaphiX, NucleonZ, Tapewaare, VENO
+179|785|BMZ|fury5k, MagnumZ, QQLIGHTNING, rhittacrit, Wonderzce
+180|782|Sashi Academy|Bl4zE, Damsi, Mizi, Mol011, Thom
+181|780|Hashiras|birdfromsky, Burmylov, c0llins, JACKZ, Queenix
+182|775|Lavked|1NVISIBLEE, Djon8, k4nfuz, sol, yuramyata
+183|775|Liquid|EliGE, jL, NAF, siuhy, ultimate
+184|774|BC.Game|aragornN, electroNic, krazy, MUTiRiS, s1mple
+185|773|los kogutos|AdrieN, hotd0g, maaryy, Markoś, tomiko
+186|772|NuTorious|bones, cmrn, Kermi, neight, Signal
+187|766|Last Bullet|B1NGO, BZA, lan, Miami, Roninbaby
+188|766|Mindfreak|Bay, kairo, phoebe, void, zune
+189|766|Mai Tai|aimy, chudy, Melavi, next1me, tomiko
+190|766|UNO MILLE|brokeN, cLd, clon7, Ltz, remix
+191|766|Villainous|Burglar, DYLAN, Jolts, Panic, Sunk
+192|765|Leo|amster, leri511, Malkiss, marat2k, OneUn1que
+193|763|Vexar|ADntZ, datet, KarmaN, KEEMBO, obsward
+194|760|aimclub|ERSIN, waZz, zewts
+195|757|Haunted House|fr0k, icyvl0ne, malinov, SasukeQO, Schwarzkopf
+196|756|Fortress|As K, BqreBedre, Brand, GrEnNiE, K1ngShield
+197|753|HOTU|dukefissura, gokushima, kAlash, mizu, n0rb3r7
+198|752|NAVI Junior|FAZERY, kodak, MahaR, skizzyee, yoki
+199|752|DONSTU|Due1yant, gleb86rus, LAKSHERi, NeoLife, phorate
+200|752|Misa|Ckanic, EMSTAR, h0kz, souv, Zuedsta
+`.trim();
+
 const americas = new Set(['9z', 'Legacy', 'FURIA', 'MIBR', 'paiN', 'DENDELE', 'Liquid', 'M80', 'Wildcard', 'NRG', 'BESTIA', 'Fluxo', 'Imperial', 'LP', 'ShindeN', 'Voca', 'Galorys', 'Bounty Hunters']);
-const asia = new Set(['The MongolZ', 'TYLOO', 'Lynn Vision', 'JiJieHao', 'Nuclear TigeRES', 'The Huns', '5star']);
-const oceania = new Set(['FlyQuest', 'THUNDER dOWNUNDER']);
+const asia = new Set(['The MongolZ', 'TYLOO', 'Lynn Vision', 'JiJieHao', 'Nuclear TigeRES', 'The Huns', '5star', 'NEXVOID', 'Chinggis Warriors', 'Rare Atom', 'Kaleido', 'Alter Ego']);
+const oceania = new Set(['FlyQuest', 'THUNDER dOWNUNDER', 'Ground Zero', 'SemperFi', 'Rooster', 'Mindfreak']);
 const middleEast = new Set(['Falcons']);
 const international = new Set(['Vitality', 'Natus Vincere', 'G2', 'FaZe', 'Liquid', '100 Thieves', 'BC.Game']);
-const argentina = new Set(['9z', 'BESTIA', 'ShindeN']);
-const brazil = new Set(['Legacy', 'FURIA', 'MIBR', 'paiN', 'DENDELE', 'Fluxo', 'Imperial', 'LP', 'Galorys', 'Bounty Hunters']);
-const northAmerica = new Set(['M80', 'Wildcard', 'NRG', 'Voca']);
+const argentina = new Set(['9z', 'BESTIA', 'ShindeN', 'Isurus']);
+const brazil = new Set(['Legacy', 'FURIA', 'MIBR', 'paiN', 'DENDELE', 'Fluxo', 'Imperial', 'LP', 'Galorys', 'Bounty Hunters', 'Gaimin Gladiators', 'Turma do Pagode', 'Keyd Stars', 'RED Canids', 'UNO MILLE', 'Yawara', 'Fake do Biru', 'ODDIK', 'MIBR Academy', 'MIBR fe']);
+const northAmerica = new Set(['M80', 'Wildcard', 'NRG', 'Voca', 'SportsBetExpert', 'Chicken Coop', 'Fisher College', 'Marsborne', 'LAG', 'regain', 'Villainous']);
 
 const teamMeta: Record<string, { country: string; region?: Region; city?: string }> = {
   Spirit: { country: 'Russia', region: 'CIS', city: 'Belgrade' }, Falcons: { country: 'Saudi Arabia', region: 'Middle East', city: 'Riyadh' }, MOUZ: { country: 'Germany', city: 'Hamburg' }, '9z': { country: 'Argentina', city: 'Buenos Aires' }, Vitality: { country: 'France', city: 'Paris' }, 'Natus Vincere': { country: 'Ukraine', region: 'CIS', city: 'Kyiv' }, FURIA: { country: 'Brazil', city: 'São Paulo' }, MIBR: { country: 'Brazil', city: 'São Paulo' }, Liquid: { country: 'United States', region: 'North America', city: 'Los Angeles' }, 'The MongolZ': { country: 'Mongolia', region: 'Asia', city: 'Ulaanbaatar' }, TYLOO: { country: 'China', region: 'Asia', city: 'Shanghai' }, FlyQuest: { country: 'Australia', region: 'Oceania', city: 'Sydney' }, BESTIA: { country: 'Argentina', city: 'Buenos Aires' }, ShindeN: { country: 'Argentina', city: 'Buenos Aires' }, Imperial: { country: 'Brazil', city: 'São Paulo' }, paiN: { country: 'Brazil', city: 'São Paulo' }, Legacy: { country: 'Brazil', city: 'São Paulo' }, Fluxo: { country: 'Brazil', city: 'Rio de Janeiro' }, Astralis: { country: 'Denmark', city: 'Copenhagen' }, BIG: { country: 'Germany', city: 'Berlin' }, 'Ninjas in Pyjamas': { country: 'Sweden', city: 'Stockholm' }, fnatic: { country: 'United Kingdom', city: 'London' }, 'Eternal Fire': { country: 'Turkey', city: 'Istanbul' }, Aurora: { country: 'Turkey', city: 'Istanbul' }, FUT: { country: 'Turkey', city: 'Istanbul' }, '100 Thieves': { country: 'United States', region: 'North America', city: 'Los Angeles' }, NRG: { country: 'United States', region: 'North America', city: 'Los Angeles' }, M80: { country: 'United States', region: 'North America', city: 'Boston' }, Wildcard: { country: 'United States', region: 'North America', city: 'Dallas' }, 'Lynn Vision': { country: 'China', region: 'Asia', city: 'Shanghai' }, 'THUNDER dOWNUNDER': { country: 'Australia', region: 'Oceania', city: 'Sydney' }, JiJieHao: { country: 'China', region: 'Asia', city: 'Shanghai' }, 'The Huns': { country: 'Mongolia', region: 'Asia', city: 'Ulaanbaatar' }, 'Gentle Mates': { country: 'Spain', city: 'Madrid' }, 'Passion UA': { country: 'Ukraine', region: 'CIS', city: 'Kyiv' }, B8: { country: 'Ukraine', region: 'CIS', city: 'Kyiv' }, 'Virtus.pro': { country: 'Russia', region: 'CIS', city: 'Moscow' }, PARIVISION: { country: 'Russia', region: 'CIS', city: 'Moscow' }, BetBoom: { country: 'Russia', region: 'CIS', city: 'Moscow' },
@@ -147,7 +253,12 @@ function tierForRank(rank: number): TeamTier {
 
 const palette = ['#ff6a2b', '#75a7ff', '#62d99b', '#b085f5', '#f2c45d', '#f06f72', '#5dd5d5'];
 
-export const TEAMS: Team[] = VRS_SNAPSHOT.split('\n').map((line) => {
+const VRS_ROWS = `${VRS_SNAPSHOT}\n${VRS_EXTENDED_SNAPSHOT}`.split('\n').filter((line, index, rows) => {
+  const name = line.split('|')[2];
+  return rows.findIndex((candidate) => candidate.split('|')[2] === name) === index;
+});
+
+export const TEAMS: Team[] = VRS_ROWS.map((line) => {
   const [rankRaw, pointsRaw, name, rosterRaw] = line.split('|');
   const rank = Number(rankRaw);
   const points = Number(pointsRaw);
@@ -159,7 +270,7 @@ export const TEAMS: Team[] = VRS_SNAPSHOT.split('\n').map((line) => {
   return {
     id: slugify(name), name, abbreviation: name.replace(/[^A-Za-z0-9]/g, '').slice(0, 4).toUpperCase(),
     region, country: meta.country, city: meta.city ?? meta.country, tier, globalLevel: level,
-    initialRanking: rank, vrsPoints: points, budget: Math.round((110 - rank) * 90000 + 250000),
+    initialRanking: rank, vrsPoints: points, budget: Math.max(90000, Math.round((210 - rank) * 48000 + 180000)),
     averageSalary: Math.max(800, Math.round((105 - rank) * 320)), popularity: Math.max(20, 96 - Math.round(rank * 0.55)),
     fanbase: Math.max(12, 95 - Math.round(rank * 0.5)), staffQuality: Math.max(48, level - 4 + (rank % 5)),
     analystQuality: Math.max(45, level - 7 + (rank % 7)), coachQuality: Math.max(48, level - 5 + (rank % 4)),
@@ -183,7 +294,8 @@ for (const [a, b] of rivalryPairs) {
   if (teamA && teamB) { teamA.rivals.push(teamB.id); teamB.rivals.push(teamA.id); }
 }
 
-export const STARTER_TEAMS = TEAMS.filter((team) => ['Tier 3', 'Semi-pro'].includes(team.tier)).slice(0, 24);
+export const LOW_TIER_TEAMS = TEAMS.filter((team) => team.initialRanking >= 80);
+export const STARTER_TEAMS = LOW_TIER_TEAMS.slice(0, 48);
 export const getTeam = (id: string) => TEAMS.find((team) => team.id === id) ?? TEAMS[99];
 export const getTeamByName = (name: string) => TEAMS.find((team) => team.id === byName.get(name));
 export const TEAM_DATA_SOURCE = 'Valve Regional Standings 2026-08-03; simulation fields approximate/configurable';

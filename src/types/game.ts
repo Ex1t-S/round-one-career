@@ -14,6 +14,8 @@ export type MinigameId = 'clutch' | 'map-veto' | 'round-buy' | 'tactical-timeout
 export type MinigameMode = 'all' | 'important' | 'majors' | 'key-decisions' | 'auto';
 export type MinigameDifficulty = 'easy' | 'normal' | 'hard';
 export type UpgradeCategory = 'equipment' | 'training' | 'health' | 'housing' | 'brand' | 'staff' | 'investment' | 'luxury';
+export type SquadRole = 'prospect' | 'rotation' | 'starter' | 'star' | 'franchise' | 'benched' | 'substitute';
+export type ConsumableCategory = 'performance' | 'recovery' | 'lifestyle' | 'collectible';
 
 export type AttributeKey =
   | 'aim' | 'crosshairPlacement' | 'sprayControl' | 'movement' | 'reaction' | 'awpSkill'
@@ -229,6 +231,8 @@ export interface MatchResult {
   fatigueChange: number;
   confidenceChange: number;
   injuryOccurred: boolean;
+  tournamentStage?: string;
+  performanceVariance?: number;
 }
 
 export interface DecisionEffect {
@@ -256,6 +260,15 @@ export interface DecisionChoice {
   effectPreview: string;
   effects: DecisionEffect;
   outcome: string;
+  outcomes?: DecisionOutcome[];
+}
+
+export interface DecisionOutcome {
+  id: string;
+  weight: number;
+  text: string;
+  effects: DecisionEffect;
+  delayed?: { seasons: number; weeks: number; text: string; effects: DecisionEffect };
 }
 
 export interface CareerDecision {
@@ -268,6 +281,16 @@ export interface CareerDecision {
   requiredFlags?: string[];
   blockedFlags?: string[];
   weight: number;
+  slot?: number;
+  context?: {
+    teamTiers?: TeamTier[];
+    squadRoles?: SquadRole[];
+    minRating?: number;
+    maxRating?: number;
+    minFatigue?: number;
+    maxFatigue?: number;
+    requiresMajorQualified?: boolean;
+  };
 }
 
 export interface DecisionRecord {
@@ -276,6 +299,58 @@ export interface DecisionRecord {
   season: number;
   week: number;
   outcome: string;
+  outcomeId?: string;
+  roll?: number;
+  context?: string;
+}
+
+export interface DeferredConsequence {
+  id: string;
+  sourceEventId: string;
+  sourceChoiceId: string;
+  resolveSeason: number;
+  resolveWeek: number;
+  text: string;
+  effects: DecisionEffect;
+}
+
+export interface SquadState {
+  role: SquadRole;
+  coachTrust: number;
+  roleSecurity: number;
+  mapShare: number;
+  internalCompetition: number;
+  competitorName: string;
+  seasonsAtTeam: number;
+  lastChangeReason: string;
+}
+
+export interface CareerOffer {
+  id: string;
+  teamId: string;
+  season: number;
+  monthlySalary: number;
+  durationMonths: number;
+  squadRole: SquadRole;
+  fit: number;
+  interest: number;
+  rationale: string;
+  expiresAfterSeason: number;
+}
+
+export interface TournamentCampaignState {
+  id: string;
+  tournamentId: string;
+  season: number;
+  status: 'qualified' | 'missed' | 'active' | 'eliminated' | 'completed';
+  stage: string;
+  playerMatchIds: string[];
+  wins: number;
+  losses: number;
+  finish: string;
+  prizeMoney: number;
+  playerRating: number;
+  narrative: string;
 }
 
 export interface Trophy {
@@ -454,7 +529,22 @@ export interface UpgradeDefinition {
 export interface Property { id: string; upgradeId: string; value: number; maintenance: number; acquiredSeason: number; }
 export interface Investment { id: string; upgradeId: string; principal: number; currentValue: number; annualReturn: number; risk: number; acquiredSeason: number; }
 export interface PurchaseRecord { id: string; upgradeId: string; season: number; price: number; level: number; }
-export interface Inventory { upgrades: OwnedUpgrade[]; properties: Property[]; investments: Investment[]; purchaseHistory: PurchaseRecord[]; }
+export interface ConsumableDefinition {
+  id: string;
+  name: string;
+  category: ConsumableCategory;
+  description: string;
+  price: number;
+  durationWeeks: number;
+  reputation: number;
+  fanbase: number;
+  motivation: number;
+  performanceModifier: number;
+  fatigueRecovery: number;
+  imageKey: string;
+}
+export interface OwnedConsumable { id: string; consumableId: string; purchasedSeason: number; remainingWeeks: number; }
+export interface Inventory { upgrades: OwnedUpgrade[]; properties: Property[]; investments: Investment[]; purchaseHistory: PurchaseRecord[]; consumables: OwnedConsumable[]; }
 
 export interface CareerRecords {
   bestRating: number;
@@ -481,6 +571,20 @@ export interface SeasonalStatistics {
   marketValue: number;
   salary: number;
   attributeAverage: number;
+  maps?: number;
+  kills?: number;
+  deaths?: number;
+  earnings?: number;
+  reputationStart?: number;
+  reputationEnd?: number;
+  overallStart?: number;
+  overallEnd?: number;
+  teamRankStart?: number;
+  teamRankEnd?: number;
+  squadRole?: SquadRole;
+  bestMoment?: string;
+  worstMoment?: string;
+  seasonStory?: string;
 }
 
 export interface VisualAssetReferences {
@@ -524,6 +628,14 @@ export interface CareerState {
   careerRecords: CareerRecords;
   seasonalStatistics: SeasonalStatistics[];
   visualAssets: VisualAssetReferences;
+  careerSeed: number;
+  seasonVariance: number;
+  squad: SquadState;
+  offers: CareerOffer[];
+  tournamentCampaigns: TournamentCampaignState[];
+  deferredConsequences: DeferredConsequence[];
+  decisionSlotsUsed: number[];
+  seasonStartSnapshot: { overall: number; reputation: number; teamRank: number; money: number };
   offseasonPending: boolean;
   offseasonStep: number;
   pendingDecisionId?: string;
