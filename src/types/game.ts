@@ -8,6 +8,12 @@ export type EventCategory = 'training' | 'transfer' | 'relationship' | 'contract
 export type TournamentTier = 'S' | 'A' | 'B' | 'C' | 'Qualifier';
 export type TournamentFormat = 'BO1' | 'BO3' | 'BO5' | 'Swiss' | 'Round robin' | 'Double elimination' | 'Single elimination' | 'Groups + playoffs' | 'RMR' | 'Major stages' | 'Play-in';
 export type CalendarKind = 'preseason' | 'market' | 'bootcamp' | 'scrim' | 'qualifier' | 'rmr' | 'tournament' | 'major' | 'offseason' | 'vacation' | 'renewal' | 'awards';
+export type MajorStage = 'not-started' | 'open-qualifier' | 'closed-qualifier' | 'rmr' | 'opening-stage' | 'elimination-stage' | 'playoffs' | 'quarterfinal' | 'semifinal' | 'grand-final' | 'ceremony' | 'eliminated' | 'completed';
+export type MajorEntryPath = 'open-qualifier' | 'closed-qualifier' | 'regional-invite' | 'ranking' | 'rmr' | 'direct-invite' | 'defending-champion';
+export type MinigameId = 'clutch' | 'map-veto' | 'round-buy' | 'tactical-timeout' | 'retake-save' | 'peek-timing' | 'utility-memory' | 'minimap-read' | 'spray-control' | 'overtime-decision';
+export type MinigameMode = 'all' | 'important' | 'majors' | 'key-decisions' | 'auto';
+export type MinigameDifficulty = 'easy' | 'normal' | 'hard';
+export type UpgradeCategory = 'equipment' | 'training' | 'health' | 'housing' | 'brand' | 'staff' | 'investment' | 'luxury';
 
 export type AttributeKey =
   | 'aim' | 'crosshairPlacement' | 'sprayControl' | 'movement' | 'reaction' | 'awpSkill'
@@ -287,6 +293,202 @@ export interface RankingEntry {
   trend: number;
 }
 
+export interface SwissRecord { wins: number; losses: number; buchholz: number; }
+
+export interface SwissRoundMatch {
+  id: string;
+  round: number;
+  teamAId: string;
+  teamBId: string;
+  format: 'BO1' | 'BO3';
+  winnerId?: string;
+  loserId?: string;
+  score?: string;
+  explanation: string[];
+}
+
+export interface SwissStanding {
+  teamId: string;
+  record: SwissRecord;
+  opponents: string[];
+  status: 'active' | 'qualified' | 'eliminated';
+}
+
+export interface BracketMatch {
+  id: string;
+  round: 'quarterfinal' | 'semifinal' | 'grand-final';
+  slot: number;
+  teamAId?: string;
+  teamBId?: string;
+  winnerId?: string;
+  loserId?: string;
+  format: 'BO3' | 'BO5';
+  score?: string;
+  mvp?: string;
+  highlight?: string;
+}
+
+export interface BracketState {
+  participants: string[];
+  matches: BracketMatch[];
+  championId?: string;
+  runnerUpId?: string;
+}
+
+export interface MajorCampaignState {
+  id: string;
+  tournamentId: string;
+  season: number;
+  stage: MajorStage;
+  entryPath: MajorEntryPath;
+  qualified: boolean;
+  status: 'upcoming' | 'active' | 'eliminated' | 'completed';
+  participants: string[];
+  swiss: SwissStanding[];
+  swissRounds: SwissRoundMatch[][];
+  bracket?: BracketState;
+  pendingOpponentId?: string;
+  pendingMinigameId?: MinigameId;
+  playerMatchIds: string[];
+  objectives: string[];
+  news: string[];
+  gallery: string[];
+  playerRating: number;
+  playerKills: number;
+  mediaPressure: number;
+  mvp?: string;
+  allStarTeam: string[];
+  records: string[];
+  outcome?: string;
+}
+
+export interface MinigameDefinition {
+  id: MinigameId;
+  name: string;
+  description: string;
+  attributeKeys: AttributeKey[];
+  timeLimitSeconds?: number;
+  options: string[];
+  maxModifier: number;
+}
+
+export interface MinigameState {
+  id: string;
+  definitionId: MinigameId;
+  majorCampaignId?: string;
+  matchContext: string;
+  difficulty: MinigameDifficulty;
+  step: number;
+  choices: string[];
+  options: string[];
+  promptSequence: string[];
+  clue: string;
+  contextMetrics: Record<string, number | string>;
+  score: number;
+  startedAt: string;
+}
+
+export interface MinigameResult {
+  id: string;
+  definitionId: MinigameId;
+  season: number;
+  score: number;
+  success: boolean;
+  modifier: number;
+  choices: string[];
+  explanation: string;
+  simulated: boolean;
+  createdAt: string;
+}
+
+export interface FinancialSeasonSummary {
+  season: number;
+  salary: number;
+  prizeMoney: number;
+  winBonuses: number;
+  tournamentBonuses: number;
+  majorBonuses: number;
+  mvpBonuses: number;
+  sponsors: number;
+  streaming: number;
+  content: number;
+  otherIncome: number;
+  taxes: number;
+  agentFees: number;
+  housing: number;
+  travel: number;
+  health: number;
+  training: number;
+  maintenance: number;
+  purchases: number;
+  balance: number;
+  closingCash: number;
+  netWorth: number;
+}
+
+export interface OwnedUpgrade {
+  upgradeId: string;
+  level: number;
+  acquiredSeason: number;
+  purchasePrice: number;
+}
+
+export interface UpgradeDefinition {
+  id: string;
+  name: string;
+  category: UpgradeCategory;
+  description: string;
+  basePrice: number;
+  maxLevel: number;
+  maintenance: number;
+  requiredReputation: number;
+  requiredLevel: number;
+  requiredTitles: number;
+  weeklyTime: number;
+  resaleRate: number;
+  risk: number;
+  benefits: Partial<Record<AttributeKey | 'fatigueRecovery' | 'injuryProtection' | 'burnoutProtection' | 'motivation' | 'fanbase' | 'sponsorIncome' | 'streamingIncome' | 'trainingEfficiency' | 'technicalReliability' | 'regionalMobility' | 'financialStability', number>>;
+  imageKey: string;
+}
+
+export interface Property { id: string; upgradeId: string; value: number; maintenance: number; acquiredSeason: number; }
+export interface Investment { id: string; upgradeId: string; principal: number; currentValue: number; annualReturn: number; risk: number; acquiredSeason: number; }
+export interface PurchaseRecord { id: string; upgradeId: string; season: number; price: number; level: number; }
+export interface Inventory { upgrades: OwnedUpgrade[]; properties: Property[]; investments: Investment[]; purchaseHistory: PurchaseRecord[]; }
+
+export interface CareerRecords {
+  bestRating: number;
+  bestAdr: number;
+  mostKills: number;
+  longestWinStreak: number;
+  majorWins: number;
+  majorMvps: number;
+  clutches: number;
+  earnings: number;
+  minigameHighScore: number;
+}
+
+export interface SeasonalStatistics {
+  season: number;
+  matches: number;
+  wins: number;
+  rating: number;
+  adr: number;
+  kast: number;
+  kd: number;
+  clutches: number;
+  worldRank: number;
+  marketValue: number;
+  salary: number;
+  attributeAverage: number;
+}
+
+export interface VisualAssetReferences {
+  avatarId: string;
+  majorBanners: Record<string, string>;
+  endingAsset: string;
+}
+
 export interface CareerState {
   schemaVersion: number;
   id: string;
@@ -312,6 +514,18 @@ export interface CareerState {
   news: string[];
   socialFeed: string[];
   awards: string[];
+  majorCampaigns: MajorCampaignState[];
+  activeMajorId?: string;
+  pendingMinigame?: MinigameState;
+  minigameHistory: MinigameResult[];
+  financialHistory: FinancialSeasonSummary[];
+  inventory: Inventory;
+  netWorth: number;
+  careerRecords: CareerRecords;
+  seasonalStatistics: SeasonalStatistics[];
+  visualAssets: VisualAssetReferences;
+  offseasonPending: boolean;
+  offseasonStep: number;
   pendingDecisionId?: string;
   pendingMatchId?: string;
   finished: boolean;
@@ -319,7 +533,12 @@ export interface CareerState {
   settings: {
     simulationSpeed: 'detailed' | 'balanced' | 'fast';
     minigames: boolean;
+    minigameMode: MinigameMode;
+    minigameDifficulty: MinigameDifficulty;
     reducedMotion: boolean;
+    animations: 'full' | 'simple';
+    sound: boolean;
+    vibration: boolean;
     autosave: boolean;
   };
 }
