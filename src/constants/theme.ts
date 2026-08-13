@@ -1,37 +1,37 @@
 import { Platform } from 'react-native';
 
 export const Colors = {
-  bg: '#090b10',
-  bgRaised: '#0d1017',
-  panel: '#121722',
-  panelSoft: '#191f2b',
-  panelHover: '#202838',
-  line: '#293140',
-  lineStrong: '#3a4558',
-  text: '#f4f1ea',
-  textSoft: '#bec5d0',
-  muted: '#7e8797',
-  orange: '#ff6a2b',
-  orangeSoft: '#402116',
-  green: '#62d99b',
-  greenSoft: '#15362a',
-  red: '#f06f72',
-  redSoft: '#3b1d22',
-  blue: '#75a7ff',
-  purple: '#b085f5',
-  yellow: '#f2c45d',
-  white: '#ffffff',
-  black: '#050608',
+  bg: '#090907',
+  bgRaised: '#0f0f0d',
+  panel: '#151512',
+  panelSoft: '#1c1b17',
+  panelHover: '#24221c',
+  line: '#302d26',
+  lineStrong: '#4b463a',
+  text: '#f1ede3',
+  textSoft: '#c2bcb0',
+  muted: '#827c70',
+  orange: '#f25b2a',
+  orangeSoft: '#2c1710',
+  green: '#7fba91',
+  greenSoft: '#14251a',
+  red: '#d96b63',
+  redSoft: '#2a1715',
+  blue: '#7f9eb5',
+  purple: '#9b88ad',
+  yellow: '#c9a95c',
+  white: '#faf8f2',
+  black: '#070706',
 };
 
 export const Spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32, huge: 48 };
-export const Radius = { sm: 2, md: 4, lg: 8, pill: 999 };
-export const Layout = { maxWidth: 1440, sidebar: 224, content: 1160 };
+export const Radius = { sm: 1, md: 2, lg: 5, pill: 999 };
+export const Layout = { maxWidth: 1420, sidebar: 236, content: 1180 };
 
 export const Fonts = Platform.select({
   web: {
-    sans: "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-    mono: "'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace",
+    sans: "'Helvetica Neue', Arial, ui-sans-serif, system-ui, sans-serif",
+    mono: "'SFMono-Regular', Consolas, 'Liberation Mono', monospace",
   },
   default: { sans: 'System', mono: 'monospace' },
 })!;

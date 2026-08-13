@@ -51,6 +51,9 @@ assert.deepEqual(new Set(logoManifest.teams.map((entry) => entry.id)), new Set(T
 const verifiedLogos = logoManifest.teams.filter((entry) => entry.file);
 assert.ok(verifiedLogos.length >= 150, 'At least 150 current or parent-organization marks must be bundled');
 for (const entry of verifiedLogos) assert.ok(existsSync(resolve('assets/team-logos', entry.file!)), `Missing local logo ${entry.file}`);
+const appShellSource = readFileSync(resolve('src/components/layout/app-shell.tsx'), 'utf8');
+assert.ok(!/asChild><Pressable style=\{\[/.test(appShellSource), 'Expo Router Slot children must receive flattened styles');
+assert.ok(appShellSource.includes('StyleSheet.flatten'), 'Navigation links must flatten conditional React Native styles');
 
 const identity: PlayerIdentity = { fullName: 'Test Player', nickname: 'TEST', nationality: 'Argentina', region: 'Argentina', city: 'Buenos Aires', age: 17, primaryLanguage: 'Español', secondaryLanguages: ['Inglés'], handedness: 'Diestro', personality: 'Analítico', ambition: 85, riskTolerance: 60, priority: 'Títulos', role: 'Rifler', style: 'Mechanical' };
 

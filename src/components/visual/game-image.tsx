@@ -16,7 +16,7 @@ export function GameImage({ asset, source, mode = 'cover', ratio = 'wide', overl
   return <View style={[styles.frame, styles[ratio], mode !== 'cover' && styles[mode], style]}>
     {!failed && resolved ? <Image source={resolved} contentFit="cover" transition={180} style={StyleSheet.absoluteFill} onLoadStart={() => setLoading(true)} onLoad={() => setLoading(false)} onError={() => { setFailed(true); setLoading(false); }} /> : <Fallback mode={mode} />}
     {loading && !failed ? <View style={styles.loading}><ActivityIndicator color={Colors.orange} size="small" /></View> : null}
-    {overlay ? <LinearGradient colors={['rgba(9,11,16,.08)', 'rgba(9,11,16,.46)', 'rgba(9,11,16,.94)']} locations={[0, 0.58, 1]} style={StyleSheet.absoluteFill} /> : null}
+    {overlay ? <LinearGradient colors={['rgba(9,9,7,.08)', 'rgba(9,9,7,.46)', 'rgba(9,9,7,.94)']} locations={[0, 0.58, 1]} style={StyleSheet.absoluteFill} /> : null}
     {children ? <View style={styles.content}>{children}</View> : null}
   </View>;
 }
