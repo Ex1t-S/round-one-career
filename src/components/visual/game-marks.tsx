@@ -19,11 +19,19 @@ function AbstractTeamCrest({ id, color, size }: { id: string; color: string; siz
   </Svg>;
 }
 
+export function RoundOneMark({ size = 32, color = Colors.orange }: { size?: number; color?: string }) {
+  return <Svg width={size} height={size} viewBox="0 0 100 100" accessibilityLabel="ROUND ONE mark">
+    <Rect x="4" y="4" width="92" height="92" rx="22" fill={Colors.bgRaised} stroke={color} strokeWidth="5" />
+    <Path d="M27 27 H59 C72 27 78 35 78 45 C78 55 72 62 59 62 H43 V77 H27 Z M43 40 V50 H58 C62 50 64 48 64 45 C64 42 62 40 58 40 Z" fill={color} />
+    <Path d="M72 68 L82 78" stroke={Colors.text} strokeWidth="5" strokeLinecap="square" />
+  </Svg>;
+}
+
 export function TeamCrest({ id, color, size = 54 }: { id: string; color: string; size?: number }) {
   const source = TEAM_LOGO_ASSETS[id];
   const [failedId, setFailedId] = useState<string>();
 
-  if (!source || failedId === id) return <AbstractTeamCrest id={id} color={color} size={size} />;
+  if (!source || failedId === id) return <View style={[styles.crestFrame, styles.crestFallback, { width: size, height: size }]}><AbstractTeamCrest id={id} color={color} size={size - 8} /></View>;
   return <View style={[styles.crestFrame, { width: size, height: size }]}>
     <Image
       source={source}
@@ -58,6 +66,7 @@ export function TrophyMark({ size = 72, color = Colors.orange }: { size?: number
 }
 
 const styles = StyleSheet.create({
-  crestFrame: { alignItems: 'center', justifyContent: 'center' },
+  crestFrame: { alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.bgRaised, borderRadius: 10, borderWidth: 1, borderColor: Colors.line },
+  crestFallback: { overflow: 'hidden' },
   crestImage: { width: '100%', height: '100%' },
 });

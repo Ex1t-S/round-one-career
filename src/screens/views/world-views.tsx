@@ -8,6 +8,7 @@ import { getTeam, TEAMS } from '@/data/teams';
 import { playerWorldRank } from '@/engine/ranking';
 import { overallRating } from '@/engine/progression';
 import { useCareerStore } from '@/state/career-store';
+import { CAREER_SCHEMA_VERSION } from '@/state/migrations';
 
 export function NewsView() {
   const { career } = useCareerStore(); if (!career) return null;

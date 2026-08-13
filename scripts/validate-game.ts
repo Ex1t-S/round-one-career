@@ -21,6 +21,7 @@ import { purchaseConsumable } from '../src/engine/consumables';
 import { generateAnnualPlayerRanking } from '../src/engine/player-ranking';
 import { PRO_PLAYER_POOL } from '../src/data/pro-players';
 import { initialTeamOffers } from '../src/engine/rosters';
+import { negotiateContract } from '../src/engine/contracts';
 import { simulateTournamentCampaign } from '../src/engine/tournament-campaign';
 import { CAREER_SCHEMA_VERSION, migrateCareerState } from '../src/state/migrations';
 import { CareerState, MatchResult, PlayerIdentity, SwissRoundMatch } from '../src/types/game';
@@ -38,7 +39,8 @@ assert.ok(CAREER_EVENTS.length >= 200, 'Decision engine must expose hundreds of 
 assert.equal(MAPS.length, 8, 'The eight-map catalog must be preserved');
 assert.ok(MAPS.filter((map) => map.active).length >= 7, 'Active map pool is incomplete');
 assert.ok(SCREEN_IDS.length >= 39, 'The Phase 2 shell must export all new screens');
-for (const route of ['major-hub', 'major-qualification', 'swiss-stage', 'major-bracket', 'major-match', 'minigames', 'major-ceremony', 'season-review', 'financial-report', 'lifestyle', 'inventory', 'investments', 'analytics', 'records', 'trophy-room']) assert.ok(SCREEN_IDS.includes(route as never), `Missing static route ${route}`);
+for (const route of ['major-hub', 'major-qualification', 'swiss-stage', 'major-bracket', 'major-match', 'minigames', 'major-ceremony', 'season-review', 'financial-report', 'lifestyle', 'inventory', 'investments', 'analytics', 'records', 'trophy-room', 'performance', 'legacy', 'finance']) assert.ok(SCREEN_IDS.includes(route as never), `Missing static route ${route}`);
+assert.equal(new Set(['dashboard', 'profile', 'calendar', 'decision', 'tournament', 'match', 'performance', 'rankings', 'major-hub', 'team', 'roster', 'market', 'contract', 'training', 'health', 'legacy', 'finance', 'settings']).size, 18, 'Primary navigation must not duplicate destinations');
 assert.equal(MINIGAME_DEFINITIONS.length, 10, 'All ten minigames are required');
 assert.ok(UPGRADES.length >= 70, 'The lifestyle catalog must be extensive');
 assert.ok(DEFAULT_MAJOR_FORMAT.stages.length >= 10, 'The configurable Major model must include all stages');
@@ -55,8 +57,8 @@ const verifiedLogos = logoManifest.teams.filter((entry) => entry.file);
 assert.ok(verifiedLogos.length >= 150, 'At least 150 current or parent-organization marks must be bundled');
 for (const entry of verifiedLogos) assert.ok(existsSync(resolve('assets/team-logos', entry.file!)), `Missing local logo ${entry.file}`);
 const appShellSource = readFileSync(resolve('src/components/layout/app-shell.tsx'), 'utf8');
-assert.ok(!/asChild><Pressable style=\{\[/.test(appShellSource), 'Expo Router Slot children must receive flattened styles');
-assert.ok(appShellSource.includes('StyleSheet.flatten'), 'Navigation links must flatten conditional React Native styles');
+assert.ok(appShellSource.includes("label: 'Performance'") && appShellSource.includes("label: 'Legado'") && appShellSource.includes("label: 'Finanzas'"), 'Primary navigation must expose the product centers');
+assert.ok(appShellSource.includes('mobileItems') && appShellSource.includes('moreOpen'), 'Mobile navigation must use a dedicated compact model');
 
 const identity: PlayerIdentity = { fullName: 'Test Player', nickname: 'TEST', nationality: 'Argentina', region: 'Argentina', city: 'Buenos Aires', age: 17, primaryLanguage: 'Español', secondaryLanguages: ['Inglés'], handedness: 'Diestro', personality: 'Analítico', ambition: 85, riskTolerance: 60, priority: 'Títulos', role: 'Rifler', style: 'Mechanical' };
 
@@ -112,6 +114,17 @@ peakState.player.attributes = Object.fromEntries(Object.keys(peakState.player.at
 peakState.squad.role = 'star'; peakState.squad.roleSecurity = 100; peakState.squad.mapShare = 100;
 const peakRating = simulateMatch(peakState, TEAMS[0], TEAMS[20], TOURNAMENTS[0].id).aggregate.rating;
 assert.ok(peakRating > 1.2, 'An elite context must be able to exceed 1.20 rating');
+
+const tacticalCareer = createCareer(identity, STARTER_TEAMS[0], 2026, 318);
+tacticalCareer.pendingMatchId = `${TOURNAMENTS[0].id}|${TEAMS[20].id}`;
+const tacticalBefore = { entryImpact: tacticalCareer.player.attributes.entryImpact, discipline: tacticalCareer.player.attributes.discipline };
+tacticalCareer.pendingMatchTactic = { id: 'aggressive', label: 'Agresivo', entryImpact: 5, discipline: -3, fatigueRisk: 4, economy: -1 };
+const tacticalResolved = resolvePendingMatch(tacticalCareer).state;
+assert.deepEqual({ entryImpact: tacticalResolved.player.attributes.entryImpact, discipline: tacticalResolved.player.attributes.discipline }, tacticalBefore, 'Match tactics must not mutate base attributes');
+assert.equal(tacticalResolved.pendingMatchTactic, undefined, 'Match tactic must expire after one series');
+const negotiationCareer = createCareer(identity, STARTER_TEAMS[0], 2026, 319);
+const negotiated = negotiateContract(negotiationCareer.contract, 'salary', negotiationCareer.season);
+assert.equal(negotiated.negotiationCooldown, 2, 'Contract negotiation must create a cooldown');
 
 // Classification paths include direct entry and the possibility of missing the event.
 const lowRankCareer = createCareer(identity, TEAMS[99]);
