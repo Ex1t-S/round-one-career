@@ -21,6 +21,16 @@ La versión actual incluye:
 - Guardado automático local, importación/exportación JSON, reinicio con confirmación y funcionamiento sin conexión.
 - Diseño responsive tipo HUD esports para móvil, tablet y escritorio.
 
+## Phase 2
+
+La segunda etapa convierte cada Major en una campaña persistente. El camino configurable incluye invitaciones por ranking, clasificatorios, RMR, dos etapas Swiss, playoffs de ocho equipos, ceremonia, MVP, all-star team y consecuencias sobre ranking, reputación, contratos y valor de mercado. Tres victorias clasifican y tres derrotas eliminan; los deciders usan BO3 y la gran final puede usar BO5.
+
+Diez minijuegos opcionales aportan modificadores moderados a las series: clutch 1vX, map veto, compra de ronda, timeout táctico, retake/save, timing de peek, utility memory, lectura de minimapa, spray control y overtime decision. Pueden configurarse por frecuencia y dificultad, o simularse automáticamente.
+
+Cada temporada termina ahora en `OFF-SEASON — BALANCE & UPGRADES`. La fase bloquea el año siguiente hasta revisar resultados, ingresos, impuestos, gastos, contrato, compras, inversiones, descanso y objetivos. El catálogo incluye 76 mejoras con requisitos, niveles, mantenimiento, reventa, riesgo y diminishing returns. Propiedades, inversiones, cash y valor de reventa forman el patrimonio de carrera.
+
+Career Analytics agrega gráficos SVG responsive para rendimiento, atributos, mapas, lados CT/T, opening duels, forma, finanzas, salarios, valor de mercado y patrimonio. Los fondos editoriales, banners, avatares, escudos y trofeos son assets locales originales; la aplicación no depende de URLs externas.
+
 ## Datos
 
 La seed de equipos usa como referencia el [Valve Regional Standings global del 3 de agosto de 2026](https://github.com/ValveSoftware/counter-strike_regional_standings/blob/main/live/2026/standings_global_2026_08_03.md). Ranking, puntos, nombres y rosters se transcribieron de esa publicación pública. Presupuestos, salarios, culturas, niveles de staff, colores y otras variables propias del juego son aproximaciones configurables y no datos oficiales.
@@ -88,7 +98,7 @@ src/
   components/             HUD, layout y componentes reutilizables
   constants/              tema y catálogo de rutas
   data/                   seeds locales y adaptador de datos
-  engine/                 simulación, temporadas, ranking, contratos y progresión
+  engine/                 simulación, Majors, Swiss, brackets, minijuegos, economía y progresión
   screens/                creación y vistas del producto
   state/                  store, persistencia y acciones de carrera
   types/                  modelo TypeScript del dominio
@@ -129,7 +139,7 @@ Después de cambiar balance o contenido, ejecutar `npm run validate`.
 
 ## Persistencia
 
-La carrera se guarda con AsyncStorage bajo un esquema versionado. En web utiliza el almacenamiento local compatible; en Android e iOS usa el backend nativo de AsyncStorage. La pantalla Configuración permite:
+La carrera se guarda con AsyncStorage bajo el esquema versionado v2. Los guardados v1 se validan y migran automáticamente, incluyendo defaults para Majors, finanzas, inventario, récords y opciones visuales. En web utiliza el almacenamiento local compatible; en Android e iOS usa el backend nativo de AsyncStorage. La pantalla Configuración permite:
 
 - Activar o desactivar autosave.
 - Importar una carrera JSON validada.

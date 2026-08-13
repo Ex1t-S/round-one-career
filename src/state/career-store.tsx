@@ -5,10 +5,15 @@ import { getTeam } from '@/data/teams';
 import { CareerState, DecisionChoice, PlayerIdentity, TrainingActivity } from '@/types/game';
 import { createContract, negotiateContract } from '@/engine/contracts';
 import { applyTraining } from '@/engine/progression';
-import { advanceWeek, applyDecision, createCareer, resolvePendingMatch } from '@/engine/season';
+import { advanceWeek, applyDecision, completeOffseason, createCareer, resolvePendingMatch } from '@/engine/season';
 import { cloneSerializable } from '@/utils/clone';
+import { CAREER_SCHEMA_VERSION, migrateCareerState } from './migrations';
+import { prepareMajorMatch } from '@/engine/major';
+import { autoSimulateMinigame, createMinigame, MINIGAME_DEFINITIONS, resolveMinigame, shouldRunMinigame } from '@/engine/minigames';
+import { purchaseUpgrade, sellUpgrade } from '@/engine/upgrades';
 
-const STORAGE_KEY = '@round-one/career-v1';
+const STORAGE_KEY = '@round-one/career-v2';
+const LEGACY_STORAGE_KEY = '@round-one/career-v1';
 
 interface CareerStoreValue {
   career: CareerState | null;
@@ -21,8 +26,15 @@ interface CareerStoreValue {
   train: (activity: TrainingActivity) => void;
   transfer: (teamId: string) => void;
   negotiate: (approach: 'salary' | 'role' | 'freedom') => void;
+  continueMajor: () => void;
+  completeMinigame: (choices: string[]) => void;
+  buyUpgrade: (upgradeId: string) => void;
+  sellOwnedUpgrade: (upgradeId: string) => void;
+  setOffseasonStep: (step: number) => void;
+  finishOffseason: () => void;
   retire: (path: 'coach' | 'analyst' | 'creator' | 'retired') => void;
   updateSettings: (settings: Partial<CareerState['settings']>) => void;
+  setAvatar: (avatarId: string) => void;
   resetCareer: () => Promise<void>;
   exportCareer: () => string;
   importCareer: (serialized: string) => Promise<boolean>;
@@ -31,21 +43,16 @@ interface CareerStoreValue {
 
 const CareerStoreContext = createContext<CareerStoreValue | null>(null);
 
-function isCareerState(value: unknown): value is CareerState {
-  if (!value || typeof value !== 'object') return false;
-  const candidate = value as Partial<CareerState>;
-  return candidate.schemaVersion === 1 && Boolean(candidate.player?.identity?.nickname) && Array.isArray(candidate.matches) && Array.isArray(candidate.rankings);
-}
-
 export function CareerStoreProvider({ children }: PropsWithChildren) {
   const [career, setCareer] = useState<CareerState | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY).then((saved) => {
+    Promise.all([AsyncStorage.getItem(STORAGE_KEY), AsyncStorage.getItem(LEGACY_STORAGE_KEY)]).then(([current, legacy]) => {
+      const saved = current ?? legacy;
       if (saved) {
-        try { const parsed: unknown = JSON.parse(saved); if (isCareerState(parsed)) setCareer(parsed); } catch { setMessage('No se pudo leer la partida guardada.'); }
+        try { const parsed: unknown = JSON.parse(saved); const migrated = migrateCareerState(parsed); if (migrated) { setCareer(migrated); if ((parsed as CareerState).schemaVersion < CAREER_SCHEMA_VERSION) setMessage('Carrera anterior migrada al esquema Phase 2.'); } } catch { setMessage('No se pudo leer la partida guardada.'); }
       }
     }).finally(() => setHydrated(true));
   }, []);
@@ -72,11 +79,49 @@ export function CareerStoreProvider({ children }: PropsWithChildren) {
     train: (activity) => { if (career) mutate(applyTraining(career, activity)); },
     transfer: (teamId) => { if (!career) return; const team = getTeam(teamId); const next = cloneSerializable(career); next.teamId = team.id; next.contract = createContract(team, next.player.identity.role, Math.round(Object.values(next.player.attributes).reduce((a, b) => a + b, 0) / Object.keys(next.player.attributes).length)); next.chemistry = Math.max(35, team.chemistry - 15); next.player.money += Math.round(next.player.marketValue * 0.08); next.news.unshift(`${next.player.identity.nickname} es presentado como nuevo jugador de ${team.name}.`); next.socialFeed.unshift(`@roundone: HERE WE GO — ${next.player.identity.nickname} firma con ${team.name}.`); next.updatedAt = new Date().toISOString(); setCareer(next); setMessage(`Transferencia completada: ahora jugás para ${team.name}.`); },
     negotiate: (approach) => { if (!career) return; const next = cloneSerializable(career); next.contract = negotiateContract(next.contract, approach); next.updatedAt = new Date().toISOString(); setCareer(next); setMessage('La organización aceptó los nuevos términos del contrato.'); },
+    continueMajor: () => {
+      if (!career?.activeMajorId) return;
+      const campaign = career.majorCampaigns.find((item) => item.id === career.activeMajorId);
+      if (!campaign) return;
+      if (campaign.stage === 'ceremony') { mutate(prepareMajorMatch(career)); return; }
+      const definition = MINIGAME_DEFINITIONS[(campaign.playerMatchIds.length + campaign.swissRounds.length) % MINIGAME_DEFINITIONS.length];
+      const important = ['quarterfinal', 'semifinal', 'grand-final'].includes(campaign.stage);
+      if (shouldRunMinigame(career, true, important)) {
+        const next = cloneSerializable(career);
+        next.pendingMinigame = createMinigame(next, definition.id, `${campaign.tournamentId}:${campaign.stage}`, campaign.id);
+        const nextCampaign = next.majorCampaigns.find((item) => item.id === campaign.id);
+        if (nextCampaign) nextCampaign.pendingMinigameId = definition.id;
+        setCareer(next); setMessage(`${definition.name}: decisión clave antes de la serie.`);
+      } else {
+        const next = cloneSerializable(career);
+        const result = autoSimulateMinigame(next, definition.id, `${campaign.tournamentId}:${campaign.stage}`, campaign.id);
+        next.minigameHistory.push(result); next.flags.lastMinigameModifier = result.modifier;
+        mutate(prepareMajorMatch(next));
+      }
+    },
+    completeMinigame: (choices) => {
+      if (!career?.pendingMinigame) return;
+      const next = cloneSerializable(career);
+      const game = next.pendingMinigame!;
+      const result = resolveMinigame(next, game, choices);
+      next.minigameHistory.push(result); next.flags.lastMinigameModifier = result.modifier;
+      next.careerRecords.minigameHighScore = Math.max(next.careerRecords.minigameHighScore, result.score);
+      const campaign = next.majorCampaigns.find((item) => item.id === next.pendingMinigame?.majorCampaignId);
+      if (campaign) campaign.pendingMinigameId = undefined;
+      next.pendingMinigame = undefined;
+      const prepared = prepareMajorMatch(next);
+      setCareer(prepared.state); setMessage(`${result.explanation} ${prepared.message}`);
+    },
+    buyUpgrade: (upgradeId) => { if (career) mutate(purchaseUpgrade(career, upgradeId)); },
+    sellOwnedUpgrade: (upgradeId) => { if (career) mutate(sellUpgrade(career, upgradeId)); },
+    setOffseasonStep: (step) => { if (!career?.offseasonPending) return; const next = cloneSerializable(career); next.offseasonStep = Math.max(1, Math.min(12, step)); setCareer(next); },
+    finishOffseason: () => { if (career) mutate(completeOffseason(career)); },
     retire: (path) => { if (!career) return; const next = cloneSerializable(career); next.finished = true; next.player.path = path; next.ending = path === 'coach' ? 'El líder continúa desde el banco' : path === 'analyst' ? 'Una nueva lectura del juego' : path === 'creator' ? 'Del servidor a la comunidad' : 'Una carrera para recordar'; next.updatedAt = new Date().toISOString(); setCareer(next); setMessage('Tu carrera profesional llegó a su capítulo final.'); },
     updateSettings: (settings) => { if (!career) return; const next = cloneSerializable(career); next.settings = { ...next.settings, ...settings }; setCareer(next); },
-    resetCareer: async () => { await AsyncStorage.removeItem(STORAGE_KEY); setCareer(null); setMessage('La carrera fue eliminada.'); },
+    setAvatar: (avatarId) => { if (!career) return; const next = cloneSerializable(career); next.visualAssets.avatarId = avatarId; setCareer(next); setMessage(`Avatar ${avatarId.replace('avatar-', '')} seleccionado.`); },
+    resetCareer: async () => { await Promise.all([AsyncStorage.removeItem(STORAGE_KEY), AsyncStorage.removeItem(LEGACY_STORAGE_KEY)]); setCareer(null); setMessage('La carrera fue eliminada.'); },
     exportCareer: () => career ? JSON.stringify(career, null, 2) : '',
-    importCareer: async (serialized) => { try { const parsed: unknown = JSON.parse(serialized); if (!isCareerState(parsed)) throw new Error('invalid'); setCareer(parsed); await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(parsed)); setMessage('Carrera importada correctamente.'); return true; } catch { setMessage('El archivo JSON no contiene una carrera válida.'); return false; } },
+    importCareer: async (serialized) => { try { const parsed: unknown = JSON.parse(serialized); const migrated = migrateCareerState(parsed); if (!migrated) throw new Error('invalid'); setCareer(migrated); await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(migrated)); setMessage('Carrera importada y migrada correctamente.'); return true; } catch { setMessage('El archivo JSON no contiene una carrera válida.'); return false; } },
     clearMessage: () => setMessage(''),
   }), [career, hydrated, message, mutate]);
 

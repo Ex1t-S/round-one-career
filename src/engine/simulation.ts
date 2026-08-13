@@ -18,7 +18,8 @@ export function playerPerformanceScore(state: CareerState, mapId: string, oppone
   const mapModifier = map.modifiers[role] ?? 0;
   const condition = state.player.form * 0.13 + attributes.confidence * 0.11 + attributes.consistency * 0.11 + state.chemistry * 0.08 + attributes.mentalStrength * (pressure / 100) * 0.08;
   const penalties = state.player.fatigue * 0.13 + state.player.burnout * 0.08 + state.player.pressure * 0.04 + state.player.injuredWeeks * 8;
-  return clamp(roleScore * 0.48 + overallRating(attributes) * 0.18 + condition + mapModifier - opponent.globalLevel * 0.11 - penalties + 11, 20, 98);
+  const minigameModifier = typeof state.flags.lastMinigameModifier === 'number' ? clamp(state.flags.lastMinigameModifier, -0.06, 0.06) * 100 : 0;
+  return clamp(roleScore * 0.48 + overallRating(attributes) * 0.18 + condition + mapModifier - opponent.globalLevel * 0.11 - penalties + minigameModifier + 11, 20, 98);
 }
 
 function generateStats(state: CareerState, mapId: string, opponent: Team, rounds: number, random: () => number, pressure: number): MatchStats {
@@ -46,8 +47,9 @@ function aggregateStats(maps: MapResult[]): MatchStats {
   return { kills: sum('kills'), deaths: sum('deaths'), assists: sum('assists'), kd: round2(sum('kills') / Math.max(1, sum('deaths'))), adr: avg('adr'), kast: avg('kast'), rating: avg('rating'), openingKills: sum('openingKills'), openingDeaths: sum('openingDeaths'), firstKillPercentage: avg('firstKillPercentage'), clutches: sum('clutches'), clutch1v1: sum('clutch1v1'), clutch1v2: sum('clutch1v2'), clutch1v3: sum('clutch1v3'), clutch1v4: sum('clutch1v4'), clutch1v5: sum('clutch1v5'), headshotPercentage: avg('headshotPercentage'), damage: sum('damage'), flashAssists: sum('flashAssists'), utilityDamage: sum('utilityDamage'), tradeKills: sum('tradeKills'), entrySuccess: avg('entrySuccess'), multiKills: sum('multiKills'), ecoKills: sum('ecoKills'), antiEcoPerformance: avg('antiEcoPerformance'), ctRating: avg('ctRating'), tRating: avg('tRating'), overtimeRating: avg('overtimeRating'), pistolRating: avg('pistolRating'), pressureRating: avg('pressureRating') };
 }
 
-export function simulateMatch(state: CareerState, playerTeam: Team, opponent: Team, tournamentId: string, mapIds?: string[]): MatchResult {
-  const tournament = getTournament(tournamentId);
+export function simulateMatch(state: CareerState, playerTeam: Team, opponent: Team, tournamentId: string, mapIds?: string[], formatOverride?: 'BO1' | 'BO3' | 'BO5'): MatchResult {
+  const baseTournament = getTournament(tournamentId);
+  const tournament = { ...baseTournament, seriesFormat: formatOverride ?? baseTournament.seriesFormat };
   const random = rngFor(state.id, state.season, state.month, state.week, opponent.id, state.matches.length);
   const maxMaps = tournament.seriesFormat === 'BO1' ? 1 : tournament.seriesFormat === 'BO5' ? 5 : 3;
   const requiredWins = Math.ceil(maxMaps / 2);
