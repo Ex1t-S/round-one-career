@@ -29,12 +29,16 @@ export function playerPerformanceScore(state: CareerState, mapId: string, oppone
 function generateStats(state: CareerState, mapId: string, opponent: Team, rounds: number, random: () => number, pressure: number): MatchStats {
   const score = playerPerformanceScore(state, mapId, opponent, pressure) + (random() - 0.5) * 18;
   const role = state.player.identity.role;
-  const kills = Math.max(4, Math.round(rounds * (0.46 + score / 240)));
-  const deaths = Math.max(4, Math.round(rounds * (0.78 - score / 390 + random() * 0.08)));
+  const normalizedPerformance = clamp((score - 55) / 45, -1, 1);
+  const kills = Math.max(2, Math.round(rounds * (0.58 + normalizedPerformance * 0.2 + (random() - 0.5) * 0.1)));
+  const deaths = Math.max(2, Math.round(rounds * (0.68 - normalizedPerformance * 0.14 + (random() - 0.5) * 0.1)));
   const assists = Math.round(rounds * (0.12 + state.player.attributes.communication / 620 + (role === 'Support' ? 0.07 : 0)));
-  const adr = round2(clamp(45 + score * 0.47 + (random() - 0.5) * 12, 38, 125));
-  const kast = round2(clamp(52 + score * 0.27 + random() * 9, 45, 92));
-  const rating = round2(clamp(0.48 + kills / Math.max(1, deaths) * 0.38 + adr / 230 + kast / 600, 0.35, 2.1));
+  const adr = round2(clamp(54 + normalizedPerformance * 28 + (random() - 0.5) * 18, 28, 115));
+  const kast = round2(clamp(55 + normalizedPerformance * 18 + (random() - 0.5) * 16, 35, 92));
+  // Ratings are centered around 0.95–1.00, with genuinely bad series below 0.70
+  // and elite peaks above 1.20. A negative value would not be a valid HLTV-style rating;
+  // negative form/impact is represented by the low tail and performanceVariance.
+  const rating = round2(clamp(0.9 + normalizedPerformance * 0.2 + (kills / Math.max(1, deaths) - 0.85) * 0.3 + (adr - 65) / 380 + (kast - 65) / 1050 + (random() - 0.5) * 0.12, 0.25, 1.75));
   const openingAttempts = Math.max(1, Math.round(rounds * (role === 'Entry' ? 0.3 : 0.15)));
   const openingKills = Math.min(kills, Math.round(openingAttempts * clamp(score / 100, 0.25, 0.78)));
   const openingDeaths = Math.max(0, openingAttempts - openingKills);
@@ -55,7 +59,7 @@ export function simulateMatch(state: CareerState, playerTeam: Team, opponent: Te
   const baseTournament = getTournament(tournamentId);
   const tournament = { ...baseTournament, seriesFormat: formatOverride ?? baseTournament.seriesFormat };
   const random = rngFor(state.careerSeed ?? state.id, state.season, state.month, state.week, opponent.id, state.matches.length);
-  const performanceVariance = round2((random() - random()) * 9);
+  const performanceVariance = round2((random() - random()) * 14);
   const maxMaps = tournament.seriesFormat === 'BO1' ? 1 : tournament.seriesFormat === 'BO5' ? 5 : 3;
   const requiredWins = Math.ceil(maxMaps / 2);
   const pool = mapIds?.length ? mapIds : tournament.mapPool;

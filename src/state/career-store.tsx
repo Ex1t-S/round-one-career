@@ -14,8 +14,8 @@ import { purchaseUpgrade, sellUpgrade } from '@/engine/upgrades';
 import { purchaseConsumable } from '@/engine/consumables';
 import { generateCareerOffers } from '@/engine/rosters';
 
-const STORAGE_KEY = '@round-one/career-v3';
-const LEGACY_STORAGE_KEYS = ['@round-one/career-v2', '@round-one/career-v1'];
+const STORAGE_KEY = '@round-one/career-v4';
+const LEGACY_STORAGE_KEYS = ['@round-one/career-v3', '@round-one/career-v2', '@round-one/career-v1'];
 
 interface CareerStoreValue {
   career: CareerState | null;

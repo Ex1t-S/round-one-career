@@ -34,9 +34,9 @@ function roleForOffer(state: CareerState, team: Team): SquadRole {
   const recent = state.matches.filter((match) => match.season === state.season).slice(-12);
   const rating = recent.reduce((sum, match) => sum + match.aggregate.rating, 0) / Math.max(1, recent.length);
   const gap = overallRating(state.player.attributes) - team.globalLevel;
-  if (gap >= 7 || rating >= 1.28) return 'star';
-  if (gap >= 1 || rating >= 1.12) return 'starter';
-  if (gap >= -5 || rating >= 1.02) return 'rotation';
+  if (gap >= 7 || rating >= 1.18) return 'star';
+  if (gap >= 1 || rating >= 1.05) return 'starter';
+  if (gap >= -5 || rating >= .93) return 'rotation';
   return 'prospect';
 }
 
@@ -75,7 +75,7 @@ export function evaluateSquadState(state: CareerState) {
   next.squad.roleSecurity = Math.max(0, Math.min(100, next.squad.roleSecurity + Math.round(signal * .3 + noise)));
   const prior = next.squad.role;
   const score = next.squad.roleSecurity + next.squad.coachTrust * .35 + Math.max(-12, Math.min(18, signal));
-  next.squad.role = score >= 120 ? rating >= 1.24 ? 'star' : 'starter' : score >= 88 ? 'rotation' : score >= 62 ? 'prospect' : 'benched';
+  next.squad.role = score >= 120 ? rating >= 1.18 ? 'star' : 'starter' : score >= 88 ? 'rotation' : score >= 62 ? 'prospect' : 'benched';
   next.squad.mapShare = next.squad.role === 'star' || next.squad.role === 'starter' ? 100 : next.squad.role === 'rotation' ? 72 : next.squad.role === 'prospect' ? 48 : 18;
   next.player.benched = next.squad.role === 'benched';
   if (prior !== next.squad.role) {

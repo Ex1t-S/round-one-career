@@ -51,7 +51,7 @@ export function createCareer(identity: PlayerIdentity, team: Team, year = 2026, 
     inventory: { upgrades: [], properties: [], investments: [], purchaseHistory: [], consumables: [] }, netWorth: player.money,
     careerRecords: { bestRating: 0, bestAdr: 0, mostKills: 0, longestWinStreak: 0, majorWins: 0, majorMvps: 0, clutches: 0, earnings: 0, minigameHighScore: 0, bestPlayerRank: 0 },
     seasonalStatistics: [], playerRankingHistory: [], visualAssets: { avatarId: 'avatar-01', majorBanners: { 'colonge-major': 'major-cologne', 'singapore-major': 'major-singapore' }, endingAsset: 'career-finale' },
-    careerSeed, seasonVariance: Math.round((rngFor(careerSeed, 1, 'season-variance')() - .5) * 16),
+    careerSeed, seasonVariance: Math.round((rngFor(careerSeed, 1, 'season-variance')() - .5) * 36),
     squad: { role: team.initialRanking > 150 ? 'starter' : team.initialRanking > 110 ? 'rotation' : 'prospect', coachTrust: 55, roleSecurity: team.initialRanking > 150 ? 70 : team.initialRanking > 110 ? 58 : 46, mapShare: team.initialRanking > 150 ? 100 : team.initialRanking > 110 ? 72 : 48, internalCompetition: Math.max(35, 85 - Math.round((team.initialRanking - 80) * .3)), competitorName: team.roster[team.roster.length - 1] ?? 'academy player', seasonsAtTeam: 1, lastChangeReason: team.initialRanking > 150 ? 'El club chico te ofrece titularidad y responsabilidad inmediata.' : 'El primer contrato ofrece minutos, pero la titularidad se gana en oficiales.' },
     offers: [], tournamentCampaigns: [], deferredConsequences: [], decisionSlotsUsed: [],
     seasonStartSnapshot: { overall: overallRating(attributes), reputation: player.reputation, teamRank: team.initialRanking, money: player.money },
@@ -189,7 +189,7 @@ export function completeOffseason(state: CareerState): { state: CareerState; mes
   next.season += 1; next.year += 1; next.month = 1; next.week = 1; next.calendar = buildSeasonCalendar(next.season);
   next.player.fatigue = clamp(next.player.fatigue - 35); next.player.burnout = clamp(next.player.burnout - 25); next.player.trainingPoints += 4;
   next.decisionSlotsUsed = [];
-  next.seasonVariance = Math.round((rngFor(next.careerSeed, next.season, 'season-variance')() - .5) * 16);
+  next.seasonVariance = Math.round((rngFor(next.careerSeed, next.season, 'season-variance')() - .5) * 36);
   next.squad.seasonsAtTeam += 1;
   next.offers = next.offers.filter((offer) => offer.expiresAfterSeason >= next.season);
   next.seasonStartSnapshot = { overall: overallRating(next.player.attributes), reputation: next.player.reputation, teamRank: next.rankings.find((entry) => entry.teamId === next.teamId)?.rank ?? getTeam(next.teamId).initialRanking, money: next.player.money };
@@ -212,7 +212,9 @@ export function advanceWeek(state: CareerState): SeasonAdvanceResult {
   const decisionThresholds = [2, 10, 18, 27, 36, 44];
   const nextDecisionSlot = next.decisionSlotsUsed.length + 1;
   const decisionDue = nextDecisionSlot <= 6 && absoluteWeek >= decisionThresholds[nextDecisionSlot - 1];
-  const rosterSelected = rngFor(next.careerSeed, next.season, tournament?.id ?? 'scrim', 'roster-selection')() < Math.max(.65, next.squad.mapShare / 100);
+  // A low rating can cost maps and still remain a playable professional season;
+  // true benching is handled by the explicit substitute branch below.
+  const rosterSelected = rngFor(next.careerSeed, next.season, tournament?.id ?? 'scrim', 'roster-selection')() < Math.max(.78, next.squad.mapShare / 100);
   if (tournament && majorTournamentId) {
     next = ensureMajorCampaign(next, majorTournamentId);
     const campaign = next.majorCampaigns.find((item) => item.season === next.season && item.tournamentId === majorTournamentId);

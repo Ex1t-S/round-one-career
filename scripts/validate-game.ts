@@ -100,6 +100,19 @@ const seededOutcomes = new Set(Array.from({ length: 14 }, (_, seed) => {
 }));
 assert.equal(seededOutcomes.size, 2, 'Different career seeds must allow different results with identical choices');
 
+const ratingSamples = Array.from({ length: 48 }, (_, seed) => {
+  const sample = createCareer(identity, STARTER_TEAMS[0], 2026, seed + 3000);
+  return simulateMatch(sample, STARTER_TEAMS[0], TEAMS[20], TOURNAMENTS[0].id).aggregate.rating;
+});
+assert.ok(new Set(ratingSamples).size >= 20, 'Series rating must have meaningful spread');
+assert.ok(Math.min(...ratingSamples) < .8, 'A bad context must be able to produce a low rating');
+const peakState = createCareer(identity, TEAMS[0], 2026, 9123);
+peakState.player.form = 100; peakState.player.fatigue = 0; peakState.player.motivation = 100; peakState.chemistry = 100; peakState.seasonVariance = 18;
+peakState.player.attributes = Object.fromEntries(Object.keys(peakState.player.attributes).map((key) => [key, 100])) as typeof peakState.player.attributes;
+peakState.squad.role = 'star'; peakState.squad.roleSecurity = 100; peakState.squad.mapShare = 100;
+const peakRating = simulateMatch(peakState, TEAMS[0], TEAMS[20], TOURNAMENTS[0].id).aggregate.rating;
+assert.ok(peakRating > 1.2, 'An elite context must be able to exceed 1.20 rating');
+
 // Classification paths include direct entry and the possibility of missing the event.
 const lowRankCareer = createCareer(identity, TEAMS[99]);
 assert.equal(determineMajorEntryPath(lowRankCareer), 'open-qualifier');
@@ -206,7 +219,7 @@ assert.ok(career.seasonalStatistics.every((season) => (season.kills ?? 0) > 0 &&
 assert.equal(career.playerRankingHistory.length, 12, 'Every completed season must persist one Top 100');
 assert.ok(career.playerRankingHistory.every((board) => board.entries.length === 100 && new Set(board.entries.map((entry) => entry.playerId)).size === 100), 'Every annual ranking must contain 100 unique players');
 assert.ok(career.tournamentCampaigns.length > 30, 'Ordinary tournament campaigns must persist across the career');
-assert.ok(career.matches.every((match) => match.aggregate.rating >= 0.35 && match.aggregate.rating <= 2.1));
+assert.ok(career.matches.every((match) => match.aggregate.rating >= 0.25 && match.aggregate.rating <= 1.75));
 assert.equal(career.majorCampaigns.filter((campaign) => campaign.season === 1).length, 2, 'There must be two independent Major campaigns per season');
 const endings = new Set(['Leyenda de los Majors', 'Imperio más allá del servidor', 'El líder continúa desde el banco', 'Del servidor a la comunidad', 'Ícono del circuito', 'Una carrera de sacrificio']); assert.ok(endings.has(career.ending!));
 

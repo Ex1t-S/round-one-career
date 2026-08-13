@@ -47,6 +47,8 @@ Lifestyle separa mejoras permanentes de 12 compras consumibles o personales. Inf
 
 Cada temporada cierra con un Top 100 individual persistente. La base usa jugadores de los rosters VRS locales y una jerarquía editorial reciente; luego edad, rol, nivel del equipo, forma, consistencia, irrupciones, bajones y la seed de carrera producen una historia distinta. Los candidatos actuales parten con ventaja, pero el número uno no está prefijado y el protagonista puede entrar al ranking si sus mapas, rating, victorias y títulos lo justifican.
 
+El rating de serie usa una distribución más amplia y menos inflada: el centro de una temporada normal ronda 0.90–1.00, los malos contextos pueden caer por debajo de 0.70 y un jugador en estado élite puede superar 1.20. Los valores negativos se expresan como forma/impacto adverso; el rating estadístico en sí conserva un mínimo válido.
+
 La pantalla `Ranking mundial` permite recorrer cada edición anual, consultar movimiento, rating, equipo, edad y contexto, o cambiar a la tabla VRS de organizaciones. Entrar al Top 100 modifica noticias, premios, reputación, valor de mercado y récords de carrera. El sidebar conserva solamente destinos de uso habitual; Swiss, bracket, minijuegos, ceremonia, off-season y finales se abren desde el flujo que los activa.
 
 ## Datos
