@@ -171,6 +171,17 @@ export interface Contract {
   decisionInfluence: number;
   vacationWeeks: number;
   personalStaff: boolean;
+  lastNegotiationSeason?: number;
+  negotiationCooldown?: number;
+}
+
+export interface MatchTacticalModifier {
+  id: 'aggressive' | 'balanced' | 'save';
+  label: string;
+  entryImpact: number;
+  discipline: number;
+  fatigueRisk: number;
+  economy: number;
 }
 
 export interface MatchStats {
@@ -233,6 +244,7 @@ export interface MatchResult {
   injuryOccurred: boolean;
   tournamentStage?: string;
   performanceVariance?: number;
+  tacticalModifier?: MatchTacticalModifier['id'];
 }
 
 export interface DecisionEffect {
@@ -300,7 +312,7 @@ export interface DecisionRecord {
   week: number;
   outcome: string;
   outcomeId?: string;
-  roll?: number;
+  roll: number;
   context?: string;
 }
 
@@ -660,6 +672,7 @@ export interface CareerState {
   deferredConsequences: DeferredConsequence[];
   decisionSlotsUsed: number[];
   seasonStartSnapshot: { overall: number; reputation: number; teamRank: number; money: number };
+  pendingMatchTactic?: MatchTacticalModifier;
   offseasonPending: boolean;
   offseasonStep: number;
   pendingDecisionId?: string;

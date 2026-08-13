@@ -35,6 +35,7 @@ export function migrateCareerState(value: unknown): CareerState | null {
     inventory: source.inventory && Array.isArray(source.inventory.upgrades) ? { ...source.inventory, properties: source.inventory.properties ?? [], investments: source.inventory.investments ?? [], purchaseHistory: source.inventory.purchaseHistory ?? [], consumables: source.inventory.consumables ?? [] } : { upgrades: [], properties: [], investments: [], purchaseHistory: [], consumables: [] },
     netWorth: Number.isFinite(source.netWorth) ? source.netWorth : source.player.money,
     careerRecords: { ...defaultRecords(), ...(source.careerRecords ?? {}) },
+    contract: { ...source.contract, negotiationCooldown: source.contract?.negotiationCooldown ?? 0 },
     seasonalStatistics: Array.isArray(source.seasonalStatistics) ? source.seasonalStatistics : [],
     playerRankingHistory: Array.isArray(source.playerRankingHistory) ? source.playerRankingHistory : [],
     visualAssets: source.visualAssets ?? { avatarId: 'avatar-01', majorBanners: { 'colonge-major': 'major-cologne', 'singapore-major': 'major-singapore' }, endingAsset: 'career-finale' },

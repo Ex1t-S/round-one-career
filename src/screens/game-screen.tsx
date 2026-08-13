@@ -13,14 +13,15 @@ import { AwardsView, HallOfFameView, NewsView, RetirementView, SettingsView, Soc
 import { MajorBracketView, MajorCeremonyView, MajorHubView, MajorMatchCenterView, MajorQualificationView, MinigameCenterView, SwissStageView } from './views/major-views';
 import { FinancialReportView, InventoryView, InvestmentsView, LifestyleUpgradesView, SeasonReviewView } from './views/economy-views';
 import { CareerAnalyticsView, RecordsView, TrophyRoomView } from './views/analytics-views';
+import { FinanceCenterView, LegacyCenterView, PerformanceCenterView } from './views/centers-views';
 
 const screens: Record<ScreenId, () => React.JSX.Element | null> = {
   dashboard: DashboardView, profile: ProfileView, timeline: TimelineView, decision: DecisionView, calendar: CalendarView,
-  tournament: TournamentView, match: MatchView, statistics: StatisticsView, rankings: RankingsView,
+  tournament: TournamentView, match: MatchView, statistics: StatisticsView, performance: PerformanceCenterView, rankings: RankingsView,
   'major-hub': MajorHubView, 'major-qualification': MajorQualificationView, 'swiss-stage': SwissStageView, 'major-bracket': MajorBracketView, 'major-match': MajorMatchCenterView, minigames: MinigameCenterView, 'major-ceremony': MajorCeremonyView,
   team: TeamView, roster: RosterView, market: MarketView, contract: ContractView, training: TrainingView, health: HealthView, trophies: TrophiesView, rivalries: RivalriesView,
   'season-review': SeasonReviewView, 'financial-report': FinancialReportView, lifestyle: LifestyleUpgradesView, inventory: InventoryView, investments: InvestmentsView, analytics: CareerAnalyticsView, records: RecordsView, 'trophy-room': TrophyRoomView,
-  news: NewsView, social: SocialView, awards: AwardsView, retirement: RetirementView, 'hall-of-fame': HallOfFameView, summary: SummaryView, settings: SettingsView,
+  news: NewsView, social: SocialView, awards: AwardsView, retirement: RetirementView, 'hall-of-fame': HallOfFameView, summary: SummaryView, settings: SettingsView, legacy: LegacyCenterView, finance: FinanceCenterView,
 };
 
 export function GameScreen({ screen }: { screen: string }) {

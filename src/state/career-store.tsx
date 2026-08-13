@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import { getTeam } from '@/data/teams';
-import { CareerState, DecisionChoice, PlayerIdentity, TrainingActivity } from '@/types/game';
+import { CareerState, DecisionChoice, MatchTacticalModifier, PlayerIdentity, TrainingActivity } from '@/types/game';
 import { createContract, negotiateContract } from '@/engine/contracts';
 import { applyTraining } from '@/engine/progression';
 import { advanceUntilAction, advanceWeek, applyDecision, completeOffseason, createCareer, resolvePendingMatch } from '@/engine/season';
@@ -80,15 +80,24 @@ export function CareerStoreProvider({ children }: PropsWithChildren) {
     resolveMatch: (approach = 'balanced') => {
       if (!career) return;
       const prepared = cloneSerializable(career);
-      if (approach === 'aggressive') { prepared.player.attributes.entryImpact = Math.min(100, prepared.player.attributes.entryImpact + 4); prepared.player.attributes.discipline = Math.max(1, prepared.player.attributes.discipline - 2); prepared.player.fatigue = Math.min(100, prepared.player.fatigue + 4); }
-      if (approach === 'save') { prepared.player.attributes.discipline = Math.min(100, prepared.player.attributes.discipline + 4); prepared.player.attributes.entryImpact = Math.max(1, prepared.player.attributes.entryImpact - 2); prepared.player.fatigue = Math.max(0, prepared.player.fatigue - 2); }
+      const tactics: Record<typeof approach, MatchTacticalModifier> = {
+        aggressive: { id: 'aggressive', label: 'Agresivo', entryImpact: 5, discipline: -3, fatigueRisk: 4, economy: -1 },
+        balanced: { id: 'balanced', label: 'Balanceado', entryImpact: 0, discipline: 0, fatigueRisk: 0, economy: 0 },
+        save: { id: 'save', label: 'Conservar', entryImpact: -3, discipline: 4, fatigueRisk: -2, economy: 3 },
+      };
+      prepared.pendingMatchTactic = tactics[approach];
       prepared.flags.lastMatchApproach = approach;
       mutate(resolvePendingMatch(prepared));
     },
     choose: (choice) => { if (career) mutate(applyDecision(career, choice)); },
     train: (activity) => { if (career) mutate(applyTraining(career, activity)); },
     transfer: (teamId) => { if (!career) return; const team = getTeam(teamId); const next = cloneSerializable(career); const offer = next.offers.find((item) => item.teamId === teamId); next.teamId = team.id; next.contract = createContract(team, next.player.identity.role, Math.round(Object.values(next.player.attributes).reduce((a, b) => a + b, 0) / Object.keys(next.player.attributes).length)); if (offer) { next.contract.monthlySalary = offer.monthlySalary; next.contract.monthsRemaining = offer.durationMonths; next.squad.role = offer.squadRole; next.squad.roleSecurity = offer.squadRole === 'star' ? 86 : offer.squadRole === 'starter' ? 74 : offer.squadRole === 'rotation' ? 55 : 40; } next.squad.mapShare = ['star', 'starter'].includes(next.squad.role) ? 100 : next.squad.role === 'rotation' ? 72 : 45; next.squad.seasonsAtTeam = 1; next.squad.competitorName = team.roster.at(-1) ?? 'academy player'; next.squad.lastChangeReason = offer?.rationale ?? 'Nuevo contrato y nueva competencia interna.'; next.offers = generateCareerOffers(next).filter((item) => item.teamId !== team.id); next.chemistry = Math.max(35, team.chemistry - 15); next.player.money += Math.round(next.player.marketValue * 0.08); next.news.unshift(`${next.player.identity.nickname} es presentado como nuevo jugador de ${team.name} con rol ${next.squad.role}.`); next.socialFeed.unshift(`@roundone: HERE WE GO — ${next.player.identity.nickname} firma con ${team.name}.`); next.updatedAt = new Date().toISOString(); setCareer(next); setMessage(`Transferencia completada: ${team.name} · rol ${next.squad.role}.`); },
-    negotiate: (approach) => { if (!career) return; const next = cloneSerializable(career); next.contract = negotiateContract(next.contract, approach); next.updatedAt = new Date().toISOString(); setCareer(next); setMessage('La organización aceptó los nuevos términos del contrato.'); },
+    negotiate: (approach) => {
+      if (!career) return;
+      const cooldown = career.contract.negotiationCooldown ?? 0;
+      if (cooldown > 0 || career.contract.lastNegotiationSeason === career.season) { setMessage(`La próxima ventana de negociación estará disponible en ${cooldown || 1} temporada(s).`); return; }
+      const next = cloneSerializable(career); next.contract = negotiateContract(next.contract, approach, career.season); next.updatedAt = new Date().toISOString(); setCareer(next); setMessage('La organización respondió a la negociación y fijó una nueva ventana contractual.');
+    },
     continueMajor: () => {
       if (!career?.activeMajorId) return;
       const campaign = career.majorCampaigns.find((item) => item.id === career.activeMajorId);

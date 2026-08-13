@@ -3,14 +3,15 @@ import { clamp, overallRating } from './progression';
 
 export function createContract(team: Team, role: PlayerRole, playerRating = 50): Contract {
   const multiplier = 0.55 + playerRating / 110;
-  return { teamId: team.id, monthlySalary: Math.round(team.averageSalary * multiplier), monthsRemaining: 24, prizeShare: 12, winBonus: Math.round(team.averageSalary * 0.35), majorBonus: Math.round(team.averageSalary * 5), mvpBonus: Math.round(team.averageSalary * 3), buyout: Math.round(team.budget * 0.08 * multiplier), guaranteedRole: role, streamingAllowed: true, decisionInfluence: clamp(Math.round(playerRating - 35), 5, 80), vacationWeeks: 3, personalStaff: false };
+  return { teamId: team.id, monthlySalary: Math.round(team.averageSalary * multiplier), monthsRemaining: 24, prizeShare: 12, winBonus: Math.round(team.averageSalary * 0.35), majorBonus: Math.round(team.averageSalary * 5), mvpBonus: Math.round(team.averageSalary * 3), buyout: Math.round(team.budget * 0.08 * multiplier), guaranteedRole: role, streamingAllowed: true, decisionInfluence: clamp(Math.round(playerRating - 35), 5, 80), vacationWeeks: 3, personalStaff: false, negotiationCooldown: 0 };
 }
 
-export function negotiateContract(contract: Contract, approach: 'salary' | 'role' | 'freedom'): Contract {
+export function negotiateContract(contract: Contract, approach: 'salary' | 'role' | 'freedom', season?: number): Contract {
   const next = { ...contract };
   if (approach === 'salary') { next.monthlySalary = Math.round(next.monthlySalary * 1.15); next.buyout = Math.round(next.buyout * 1.2); next.monthsRemaining += 6; }
   if (approach === 'role') { next.decisionInfluence = clamp(next.decisionInfluence + 15); next.monthlySalary = Math.round(next.monthlySalary * 0.95); }
   if (approach === 'freedom') { next.streamingAllowed = true; next.vacationWeeks += 1; next.prizeShare = Math.max(5, next.prizeShare - 2); }
+  if (season !== undefined) { next.lastNegotiationSeason = season; next.negotiationCooldown = 2; }
   return next;
 }
 

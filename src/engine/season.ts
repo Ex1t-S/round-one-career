@@ -189,6 +189,7 @@ export function completeOffseason(state: CareerState): { state: CareerState; mes
   next.season += 1; next.year += 1; next.month = 1; next.week = 1; next.calendar = buildSeasonCalendar(next.season);
   next.player.fatigue = clamp(next.player.fatigue - 35); next.player.burnout = clamp(next.player.burnout - 25); next.player.trainingPoints += 4;
   next.decisionSlotsUsed = [];
+  next.contract.negotiationCooldown = Math.max(0, (next.contract.negotiationCooldown ?? 0) - 1);
   next.seasonVariance = Math.round((rngFor(next.careerSeed, next.season, 'season-variance')() - .5) * 36);
   next.squad.seasonsAtTeam += 1;
   next.offers = next.offers.filter((offer) => offer.expiresAfterSeason >= next.season);
@@ -283,7 +284,7 @@ export function resolvePendingMatch(state: CareerState): { state: CareerState; m
   const result = simulateMatch(state, team, opponent, tournamentId, selectedMaps, majorFormat);
   let next = cloneSerializable(state);
   next.matches.push(result); next.pendingMatchId = undefined;
-  next.player.fatigue = clamp(next.player.fatigue + result.fatigueChange); next.player.attributes.confidence = clamp(next.player.attributes.confidence + result.confidenceChange, 1, 100); next.player.form = clamp(next.player.form + (result.won ? 4 : -3));
+  next.player.fatigue = clamp(next.player.fatigue + result.fatigueChange + (state.pendingMatchTactic?.fatigueRisk ?? 0)); next.player.attributes.confidence = clamp(next.player.attributes.confidence + result.confidenceChange, 1, 100); next.player.form = clamp(next.player.form + (result.won ? 4 : -3));
   next.player.xp += 120 + result.aggregate.kills * 3 + (result.won ? 140 : 30); next.player.reputation = clamp(next.player.reputation + (result.won ? 3 : -1)); next.player.fanbase = clamp(next.player.fanbase + (result.won ? 2 : 0));
   if (result.injuryOccurred) { next.player.injuredWeeks = 1 + Math.floor(next.player.injuryRisk / 30); next.news.unshift(`${next.player.identity.nickname} sufre una molestia y estará ${next.player.injuredWeeks} semana(s) fuera.`); }
   if (!campaignId && result.won && tournament.kind === 'major' && result.aggregate.rating > 1.1) { next.trophies.push({ id: `trophy-${Date.now()}`, name: tournament.name, season: next.season, tier: tournament.tier, mvp: result.aggregate.rating >= 1.35 }); if (result.aggregate.rating >= 1.35) next.awards.push(`MVP · ${tournament.name}`); }
@@ -293,6 +294,7 @@ export function resolvePendingMatch(state: CareerState): { state: CareerState; m
   if (campaignId) next = recordMajorMatch(next, result);
   delete next.flags.lastMinigameModifier;
   delete next.flags.lastVetoMaps;
+  next.pendingMatchTactic = undefined;
   next.player.marketValue = calculateMarketValue(next); next.updatedAt = new Date().toISOString();
   return { state: processLevelUps(next), message: `${result.won ? 'Victoria' : 'Derrota'} ${result.seriesScore}. Rating ${result.aggregate.rating.toFixed(2)}.` };
 }
