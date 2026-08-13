@@ -556,6 +556,29 @@ export interface CareerRecords {
   clutches: number;
   earnings: number;
   minigameHighScore: number;
+  bestPlayerRank: number;
+}
+
+export interface PlayerRankingEntry {
+  playerId: string;
+  nickname: string;
+  teamId: string;
+  rank: number;
+  previousRank?: number;
+  rating: number;
+  score: number;
+  age: number;
+  role: PlayerRole;
+  trend: 'up' | 'down' | 'new' | 'same';
+  story: string;
+  isUser: boolean;
+}
+
+export interface PlayerRankingSeason {
+  season: number;
+  year: number;
+  generatedAt: string;
+  entries: PlayerRankingEntry[];
 }
 
 export interface SeasonalStatistics {
@@ -627,6 +650,7 @@ export interface CareerState {
   netWorth: number;
   careerRecords: CareerRecords;
   seasonalStatistics: SeasonalStatistics[];
+  playerRankingHistory: PlayerRankingSeason[];
   visualAssets: VisualAssetReferences;
   careerSeed: number;
   seasonVariance: number;

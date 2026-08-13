@@ -13,6 +13,9 @@ export function updateRankings(rankings: RankingEntry[], playerTeamId: string, w
 }
 
 export function playerWorldRank(state: CareerState) {
+  const latest = state.playerRankingHistory?.[state.playerRankingHistory.length - 1];
+  const annual = latest?.entries.find((entry) => entry.isUser)?.rank;
+  if (annual) return annual;
   const recent = state.matches.slice(-16);
   const rating = recent.reduce((sum, match) => sum + match.aggregate.rating, 0) / Math.max(1, recent.length);
   const score = rating * 820 + state.trophies.length * 90 + state.player.reputation * 4 + state.awards.length * 120;

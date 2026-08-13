@@ -46,6 +46,7 @@
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
     "test:data": "tsx scripts/validate-game.ts",
+    "simulate:10": "tsx scripts/simulate-ten-careers.ts",
     "validate": "npm run typecheck && npm run lint && npm run test:data",
     "build:web": "expo export --platform web",
     "sync:team-logos": "node scripts/sync-team-logos.mjs"

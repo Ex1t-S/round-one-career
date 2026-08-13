@@ -4,7 +4,7 @@ import { TOURNAMENTS, getTournament } from '@/data/tournaments';
 import { CalendarEvent, CareerDecision, CareerState, DecisionChoice, DecisionEffect, PlayerIdentity, SeasonAdvanceResult, Team } from '@/types/game';
 import { createContract, monthlyFinances } from './contracts';
 import { clamp, calculateMarketValue, overallRating, processLevelUps } from './progression';
-import { playerWorldRank, updateRankings } from './ranking';
+import { updateRankings } from './ranking';
 import { rngFor, weightedPick } from './random';
 import { simulateMatch } from './simulation';
 import { buildInitialAttributes } from '@/data/roles';
@@ -16,6 +16,7 @@ import { calculateNetWorth } from './upgrades';
 import { canEnterTournament, simulateTournamentCampaign } from './tournament-campaign';
 import { evaluateSquadState, generateCareerOffers } from './rosters';
 import { tickConsumables } from './consumables';
+import { generateAnnualPlayerRanking } from './player-ranking';
 
 const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
@@ -48,8 +49,8 @@ export function createCareer(identity: PlayerIdentity, team: Team, year = 2026, 
     coachRelationship: 55, iglRelationship: 52, rivalries: {}, news: [`${identity.nickname} firma su primer contrato profesional con ${team.name}.`],
     socialFeed: [`@roundone: ${identity.nickname} comienza su camino desde ${identity.city}.`], awards: [], majorCampaigns: [], minigameHistory: [], financialHistory: [],
     inventory: { upgrades: [], properties: [], investments: [], purchaseHistory: [], consumables: [] }, netWorth: player.money,
-    careerRecords: { bestRating: 0, bestAdr: 0, mostKills: 0, longestWinStreak: 0, majorWins: 0, majorMvps: 0, clutches: 0, earnings: 0, minigameHighScore: 0 },
-    seasonalStatistics: [], visualAssets: { avatarId: 'avatar-01', majorBanners: { 'colonge-major': 'major-cologne', 'singapore-major': 'major-singapore' }, endingAsset: 'career-finale' },
+    careerRecords: { bestRating: 0, bestAdr: 0, mostKills: 0, longestWinStreak: 0, majorWins: 0, majorMvps: 0, clutches: 0, earnings: 0, minigameHighScore: 0, bestPlayerRank: 0 },
+    seasonalStatistics: [], playerRankingHistory: [], visualAssets: { avatarId: 'avatar-01', majorBanners: { 'colonge-major': 'major-cologne', 'singapore-major': 'major-singapore' }, endingAsset: 'career-finale' },
     careerSeed, seasonVariance: Math.round((rngFor(careerSeed, 1, 'season-variance')() - .5) * 16),
     squad: { role: team.initialRanking > 150 ? 'starter' : team.initialRanking > 110 ? 'rotation' : 'prospect', coachTrust: 55, roleSecurity: team.initialRanking > 150 ? 70 : team.initialRanking > 110 ? 58 : 46, mapShare: team.initialRanking > 150 ? 100 : team.initialRanking > 110 ? 72 : 48, internalCompetition: Math.max(35, 85 - Math.round((team.initialRanking - 80) * .3)), competitorName: team.roster[team.roster.length - 1] ?? 'academy player', seasonsAtTeam: 1, lastChangeReason: team.initialRanking > 150 ? 'El club chico te ofrece titularidad y responsabilidad inmediata.' : 'El primer contrato ofrece minutos, pero la titularidad se gana en oficiales.' },
     offers: [], tournamentCampaigns: [], deferredConsequences: [], decisionSlotsUsed: [],
@@ -143,7 +144,15 @@ function closeYear(state: CareerState) {
   if (next.player.identity.role === 'IGL' && next.chemistry >= 78) next.awards.push(`IGL del año · Temporada ${next.season}`);
   if (next.player.identity.role === 'AWPer' && average >= 1.15) next.awards.push(`AWPer del año · Temporada ${next.season}`);
   next.news.unshift(`${next.player.identity.nickname} cierra la temporada ${next.season} con ${average.toFixed(2)} de rating.`);
-  next.seasonalStatistics.push({ season: next.season, matches: seasonMatches.length, wins, rating: Number(average.toFixed(2)), adr: Number(adr.toFixed(1)), kast: Number(kast.toFixed(1)), kd: Number((kills / Math.max(1, deaths)).toFixed(2)), clutches, worldRank: playerWorldRank(next), marketValue: next.player.marketValue, salary: next.contract.monthlySalary, attributeAverage: overallRating(next.player.attributes), maps, kills, deaths, earnings: financial.salary + financial.prizeMoney + financial.winBonuses + financial.tournamentBonuses + financial.majorBonuses + financial.mvpBonuses + financial.sponsors + financial.streaming + financial.content + financial.otherIncome, reputationStart: next.seasonStartSnapshot.reputation, reputationEnd: next.player.reputation, overallStart: next.seasonStartSnapshot.overall, overallEnd: overallRating(next.player.attributes), teamRankStart: next.seasonStartSnapshot.teamRank, teamRankEnd, squadRole: next.squad.role, bestMoment, worstMoment, seasonStory });
+  const annualPlayerRanking = generateAnnualPlayerRanking(next);
+  const playerRank = annualPlayerRanking.entries.find((entry) => entry.isUser)?.rank ?? 501;
+  next.playerRankingHistory.push(annualPlayerRanking);
+  next.seasonalStatistics.push({ season: next.season, matches: seasonMatches.length, wins, rating: Number(average.toFixed(2)), adr: Number(adr.toFixed(1)), kast: Number(kast.toFixed(1)), kd: Number((kills / Math.max(1, deaths)).toFixed(2)), clutches, worldRank: playerRank, marketValue: next.player.marketValue, salary: next.contract.monthlySalary, attributeAverage: overallRating(next.player.attributes), maps, kills, deaths, earnings: financial.salary + financial.prizeMoney + financial.winBonuses + financial.tournamentBonuses + financial.majorBonuses + financial.mvpBonuses + financial.sponsors + financial.streaming + financial.content + financial.otherIncome, reputationStart: next.seasonStartSnapshot.reputation, reputationEnd: next.player.reputation, overallStart: next.seasonStartSnapshot.overall, overallEnd: overallRating(next.player.attributes), teamRankStart: next.seasonStartSnapshot.teamRank, teamRankEnd, squadRole: next.squad.role, bestMoment, worstMoment, seasonStory });
+  if (playerRank <= 100) next.news.unshift(`${next.player.identity.nickname} entra al Top 100 anual en el puesto #${playerRank}.`);
+  if (playerRank <= 20) { next.awards.push(`Top ${playerRank} mundial · Temporada ${next.season}`); next.player.reputation = clamp(next.player.reputation + Math.max(2, 8 - Math.floor(playerRank / 4))); }
+  if (playerRank === 1) next.awards.push(`Jugador #1 del mundo · Temporada ${next.season}`);
+  next.careerRecords.bestPlayerRank = next.careerRecords.bestPlayerRank === 0 ? (playerRank <= 100 ? playerRank : 0) : Math.min(next.careerRecords.bestPlayerRank, playerRank);
+  next.player.marketValue = calculateMarketValue(next);
   next.careerRecords.bestRating = Math.max(next.careerRecords.bestRating, ...seasonMatches.map((match) => match.aggregate.rating), 0);
   next.careerRecords.bestAdr = Math.max(next.careerRecords.bestAdr, ...seasonMatches.map((match) => match.aggregate.adr), 0);
   next.careerRecords.mostKills = Math.max(next.careerRecords.mostKills, ...seasonMatches.map((match) => match.aggregate.kills), 0);

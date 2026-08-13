@@ -4,9 +4,9 @@ import { getMinigameDefinition } from '@/engine/minigames';
 import { hashString } from '@/engine/random';
 import { overallRating } from '@/engine/progression';
 
-export const CAREER_SCHEMA_VERSION = 3;
+export const CAREER_SCHEMA_VERSION = 4;
 
-const defaultRecords = () => ({ bestRating: 0, bestAdr: 0, mostKills: 0, longestWinStreak: 0, majorWins: 0, majorMvps: 0, clutches: 0, earnings: 0, minigameHighScore: 0 });
+const defaultRecords = () => ({ bestRating: 0, bestAdr: 0, mostKills: 0, longestWinStreak: 0, majorWins: 0, majorMvps: 0, clutches: 0, earnings: 0, minigameHighScore: 0, bestPlayerRank: 0 });
 
 export function isImportableCareer(value: unknown) {
   if (!value || typeof value !== 'object') return false;
@@ -36,6 +36,7 @@ export function migrateCareerState(value: unknown): CareerState | null {
     netWorth: Number.isFinite(source.netWorth) ? source.netWorth : source.player.money,
     careerRecords: { ...defaultRecords(), ...(source.careerRecords ?? {}) },
     seasonalStatistics: Array.isArray(source.seasonalStatistics) ? source.seasonalStatistics : [],
+    playerRankingHistory: Array.isArray(source.playerRankingHistory) ? source.playerRankingHistory : [],
     visualAssets: source.visualAssets ?? { avatarId: 'avatar-01', majorBanners: { 'colonge-major': 'major-cologne', 'singapore-major': 'major-singapore' }, endingAsset: 'career-finale' },
     careerSeed: Number.isFinite(source.careerSeed) ? source.careerSeed : hashString(source.id),
     seasonVariance: Number.isFinite(source.seasonVariance) ? source.seasonVariance : 0,

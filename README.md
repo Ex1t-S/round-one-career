@@ -43,6 +43,12 @@ El jugador ocupa una jerarquía real del roster —prospect, rotación, titular,
 
 Lifestyle separa mejoras permanentes de 12 compras consumibles o personales. Informes, bootcamp, fisioterapia y sueño tienen duración limitada y modificadores moderados; autos, viajes, vacaciones y skins dan motivación, fanbase o reputación, pero nunca atributos competitivos gratuitos.
 
+## World Ranking
+
+Cada temporada cierra con un Top 100 individual persistente. La base usa jugadores de los rosters VRS locales y una jerarquía editorial reciente; luego edad, rol, nivel del equipo, forma, consistencia, irrupciones, bajones y la seed de carrera producen una historia distinta. Los candidatos actuales parten con ventaja, pero el número uno no está prefijado y el protagonista puede entrar al ranking si sus mapas, rating, victorias y títulos lo justifican.
+
+La pantalla `Ranking mundial` permite recorrer cada edición anual, consultar movimiento, rating, equipo, edad y contexto, o cambiar a la tabla VRS de organizaciones. Entrar al Top 100 modifica noticias, premios, reputación, valor de mercado y récords de carrera. El sidebar conserva solamente destinos de uso habitual; Swiss, bracket, minijuegos, ceremonia, off-season y finales se abren desde el flujo que los activa.
+
 ## Datos
 
 La seed de equipos usa como referencia el [Valve Regional Standings global del 3 de agosto de 2026](https://github.com/ValveSoftware/counter-strike_regional_standings/blob/main/live/2026/standings_global_2026_08_03.md). Ranking, puntos, nombres y rosters se transcribieron de esa publicación pública. Presupuestos, salarios, culturas, niveles de staff, colores y otras variables propias del juego son aproximaciones configurables y no datos oficiales.
@@ -151,7 +157,7 @@ Después de cambiar balance o contenido, ejecutar `npm run validate`.
 
 ## Persistencia
 
-La carrera se guarda con AsyncStorage bajo el esquema versionado v3. Los guardados v1 y v2 se validan y migran automáticamente, incluyendo defaults para Majors, finanzas, inventario, consumibles, campañas normales, seed, roster, ofertas, decisiones diferidas, récords y opciones visuales. En web utiliza el almacenamiento local compatible; en Android e iOS usa el backend nativo de AsyncStorage. La pantalla Configuración permite:
+La carrera se guarda con AsyncStorage bajo el esquema versionado v4. Los guardados v1, v2 y v3 se validan y migran automáticamente, incluyendo defaults para Majors, finanzas, inventario, consumibles, campañas normales, ranking anual de jugadores, seed, roster, ofertas, decisiones diferidas, récords y opciones visuales. En web utiliza el almacenamiento local compatible; en Android e iOS usa el backend nativo de AsyncStorage. La pantalla Configuración permite:
 
 - Activar o desactivar autosave.
 - Importar una carrera JSON validada.
