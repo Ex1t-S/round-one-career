@@ -246,6 +246,19 @@ export function advanceWeek(state: CareerState): SeasonAdvanceResult {
   return { state: next, messages, requiresDecision: Boolean(next.pendingDecisionId), requiresMatch: Boolean(next.pendingMatchId) };
 }
 
+export function advanceUntilAction(state: CareerState, maxWeeks = 12): SeasonAdvanceResult {
+  let next = state;
+  const messages: string[] = [];
+  for (let skipped = 0; skipped < Math.max(1, maxWeeks); skipped += 1) {
+    const result = advanceWeek(next);
+    messages.push(...result.messages);
+    if (result.state === next) break;
+    next = result.state;
+    if (next.pendingDecisionId || next.pendingMatchId || next.pendingMinigame || next.activeMajorId || next.offseasonPending || next.finished) break;
+  }
+  return { state: next, messages, requiresDecision: Boolean(next.pendingDecisionId), requiresMatch: Boolean(next.pendingMatchId) };
+}
+
 export function resolvePendingMatch(state: CareerState): { state: CareerState; message: string } {
   if (!state.pendingMatchId) return { state, message: 'No hay partido pendiente.' };
   const [tournamentId, opponentId, campaignId] = state.pendingMatchId.split('|');

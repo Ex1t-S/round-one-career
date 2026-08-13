@@ -14,7 +14,7 @@ import { assertBracketIntegrity, createBracket, recordBracketResult } from '../s
 import { calculateFinancialSummary, settleOffseasonFinances } from '../src/engine/economy';
 import { createMajorCampaign, createSwissStandings, determineMajorEntryPath, finalizeMajorCeremony, pairSwissRound, prepareMajorMatch, recordMajorMatch, recordSwissRound } from '../src/engine/major';
 import { autoSimulateMinigame, createMinigame, MINIGAME_DEFINITIONS, resolveMinigame } from '../src/engine/minigames';
-import { advanceWeek, applyDecision, completeOffseason, createCareer, resolvePendingMatch } from '../src/engine/season';
+import { advanceUntilAction, advanceWeek, applyDecision, completeOffseason, createCareer, resolvePendingMatch } from '../src/engine/season';
 import { simulateMatch } from '../src/engine/simulation';
 import { annualMaintenance, calculateNetWorth, purchaseUpgrade, upgradeRequirement } from '../src/engine/upgrades';
 import { purchaseConsumable } from '../src/engine/consumables';
@@ -55,6 +55,9 @@ for (const entry of verifiedLogos) assert.ok(existsSync(resolve('assets/team-log
 const identity: PlayerIdentity = { fullName: 'Test Player', nickname: 'TEST', nationality: 'Argentina', region: 'Argentina', city: 'Buenos Aires', age: 17, primaryLanguage: 'Español', secondaryLanguages: ['Inglés'], handedness: 'Diestro', personality: 'Analítico', ambition: 85, riskTolerance: 60, priority: 'Títulos', role: 'Rifler', style: 'Mechanical' };
 
 const firstOffers = initialTeamOffers(identity); assert.equal(firstOffers.length, 3); assert.ok(firstOffers.every((team) => team.initialRanking >= 80), 'The initial offers must be genuinely low tier');
+const nextAction = advanceUntilAction(createCareer(identity, STARTER_TEAMS[0], 2026, 901));
+assert.ok(nextAction.state.pendingDecisionId || nextAction.state.pendingMatchId || nextAction.state.pendingMinigame || nextAction.state.activeMajorId || nextAction.state.offseasonPending, 'Fast-forward must stop at the next playable action');
+assert.notEqual(nextAction.state.week, 1, 'Fast-forward must advance otherwise empty calendar weeks');
 
 function assertFiniteDeep(value: unknown, path = 'state') {
   if (typeof value === 'number') assert.ok(Number.isFinite(value), `${path} contains a non-finite number`);
