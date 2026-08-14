@@ -1,7 +1,7 @@
 import { CareerState, RankingEntry, Team } from '@/types/game';
 
 export function createInitialRankings(teams: Team[]): RankingEntry[] {
-  return teams.map((team) => ({ teamId: team.id, rank: team.initialRanking, points: team.vrsPoints, trend: 0 }));
+  return teams.slice().sort((a, b) => a.initialRanking - b.initialRanking || b.vrsPoints - a.vrsPoints).map((team, index) => ({ teamId: team.id, rank: index + 1, points: team.vrsPoints, trend: 0 }));
 }
 
 export function updateRankings(rankings: RankingEntry[], playerTeamId: string, won: boolean, opponentRank: number, tournamentPoints = 0): RankingEntry[] {

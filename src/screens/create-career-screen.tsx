@@ -1,11 +1,11 @@
-import { router } from 'expo-router';
+import { Href, router } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, Eyebrow, Panel, Title } from '@/components/ui/game-ui';
-import { TeamCrest } from '@/components/visual/game-marks';
+import { RoundOneMark, TeamCrest } from '@/components/visual/game-marks';
 import { Colors, Fonts, Layout, Radius, Spacing } from '@/constants/theme';
 import { LOW_TIER_TEAMS, STARTER_TEAMS, TEAMS } from '@/data/teams';
 import { TOURNAMENTS } from '@/data/tournaments';
@@ -23,7 +23,7 @@ export function CreateCareerScreen() {
   const { width } = useWindowDimensions(); const wide = width >= 900;
   const { career, hydrated, startCareer } = useCareerStore();
   const [step, setStep] = useState(1); const [fullName, setFullName] = useState(''); const [nickname, setNickname] = useState(''); const [city, setCity] = useState('Buenos Aires'); const [nationality, setNationality] = useState('Argentina'); const [age, setAge] = useState(17); const region: Region = 'Argentina'; const [role, setRole] = useState<PlayerRole>('Rifler'); const [playStyle, setPlayStyle] = useState<PlayStyle>('Mechanical'); const [personality, setPersonality] = useState<Personality>('Competitivo'); const [priority, setPriority] = useState<PlayerIdentity['priority']>('Títulos'); const [teamId, setTeamId] = useState(STARTER_TEAMS[0]?.id ?? 'leo'); const [showAllTeams, setShowAllTeams] = useState(false);
-  useEffect(() => { if (hydrated && career) router.replace({ pathname: '/[screen]', params: { screen: 'dashboard' } }); }, [career, hydrated]);
+  useEffect(() => { if (hydrated && career) router.replace('/game?view=dashboard' as Href); }, [career, hydrated]);
   const identityDraft = useMemo<PlayerIdentity>(() => ({ fullName: fullName.trim() || nickname.trim(), nickname: nickname.trim() || 'rookie', nationality, region, city, age, primaryLanguage: 'Español', secondaryLanguages: ['Inglés'], handedness: 'Diestro', personality, ambition: 82, riskTolerance: playStyle === 'Aggressive' ? 82 : 58, priority, role, style: playStyle }), [age, city, fullName, nationality, nickname, personality, playStyle, priority, role]);
   const recommendedTeams = useMemo(() => initialTeamOffers(identityDraft), [identityDraft]);
   const teamChoices = showAllTeams ? LOW_TIER_TEAMS : recommendedTeams;
@@ -35,7 +35,7 @@ export function CreateCareerScreen() {
     startCareer(identity, selectedTeam.id);
   }
   return <SafeAreaView style={screen.safe}><ScrollView contentContainerStyle={screen.page} showsVerticalScrollIndicator={false}>
-    <View style={screen.top}><Image source={require('../../assets/images/round-one-icon.png')} style={screen.brandLogo} /><Text style={screen.brand}>ROUND<Text style={screen.orange}>/</Text>ONE</Text><View style={screen.topRule} /><Text style={screen.version}>CAREER SIMULATOR · BUILD 03</Text></View>
+    <View style={screen.top}><RoundOneMark size={30} /><Text style={screen.brand}>ROUND<Text style={screen.orange}>/</Text>ONE</Text><View style={screen.topRule} /><Text style={screen.version}>{wide ? 'CAREER SIMULATOR · BETA 1' : 'BETA 1'}</Text></View>
     <View style={[screen.grid, wide && screen.gridWide]}>
       <View style={screen.hero}><Image source={require('../../assets/phase2/major-cologne.webp')} resizeMode="cover" style={StyleSheet.absoluteFill} /><LinearGradient colors={['rgba(9,9,7,.15)', 'rgba(9,9,7,.72)', 'rgba(9,9,7,.98)']} locations={[0, 0.48, 1]} style={StyleSheet.absoluteFill} /><View style={screen.heroContent}><View><Eyebrow color={Colors.orange}>COUNTER-STRIKE · CAREER MODE</Eyebrow><Text style={[screen.heroTitle, !wide && screen.heroTitleMobile]}>Tu nombre.{`\n`}Tu equipo.{`\n`}Tu <Text style={screen.heroAccent}>historia.</Text></Text><Text style={screen.heroCopy}>Una carrera deportiva con contexto, riesgo y memoria. Las decisiones cambian tu lugar en el roster; los resultados nunca están escritos.</Text></View><View><View style={screen.heroRule} /><View style={screen.heroMetrics}><View style={screen.heroMetric}><Text style={screen.heroNumber}>{TEAMS.length}</Text><Text style={screen.heroLabel}>clubes VRS</Text></View><View style={screen.heroMetric}><Text style={screen.heroNumber}>{TOURNAMENTS.length}</Text><Text style={screen.heroLabel}>eventos por año</Text></View><View style={screen.heroMetric}><Text style={screen.heroNumber}>12</Text><Text style={screen.heroLabel}>temporadas posibles</Text></View></View></View></View></View>
       <Panel style={screen.builder}>

@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { Href, router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -15,7 +15,7 @@ import { CONSUMABLES, getConsumable } from '@/data/consumables';
 import { TeamCrest } from '@/components/visual/game-marks';
 import { getTeam } from '@/data/teams';
 
-const go = (screen: string) => router.push({ pathname: '/[screen]', params: { screen } });
+const go = (screen: string) => router.push(`/game?view=${screen}` as Href);
 
 export function SeasonReviewView() {
   const { career, setOffseasonStep } = useCareerStore(); if (!career) return null;

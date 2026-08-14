@@ -3,6 +3,8 @@ import { getTeam, LOW_TIER_TEAMS, TEAMS } from '@/data/teams';
 import { overallRating } from './progression';
 import { cloneSerializable } from '@/utils/clone';
 import { hashString, rngFor } from './random';
+import { matchSequence } from './simulation';
+import { createContract } from './contracts';
 
 export function initialTeamOffers(identity: PlayerIdentity): Team[] {
   const regional = LOW_TIER_TEAMS.filter((team) => team.region === identity.region || identity.region === 'Argentina' && ['Argentina', 'South America'].includes(team.region));
@@ -15,6 +17,15 @@ export function initialTeamOffers(identity: PlayerIdentity): Team[] {
     if (available.length) chosen.push(available[Math.floor(random() * available.length)]);
   }
   return chosen.length === 3 ? chosen : LOW_TIER_TEAMS.slice(0, 3);
+}
+
+export function completeTransfer(state: CareerState, teamId: string) {
+  const team = getTeam(teamId); const next = cloneSerializable(state); const offer = next.offers.find((item) => item.teamId === teamId);
+  next.teamId = team.id; next.contract = createContract(team, next.player.identity.role, overallRating(next.player.attributes));
+  if (offer) { next.contract.monthlySalary = offer.monthlySalary; next.contract.monthsRemaining = offer.durationMonths; next.squad.role = offer.squadRole; next.squad.roleSecurity = offer.squadRole === 'star' ? 86 : offer.squadRole === 'starter' ? 74 : offer.squadRole === 'rotation' ? 55 : 40; }
+  next.squad.mapShare = ['star', 'starter'].includes(next.squad.role) ? 100 : next.squad.role === 'rotation' ? 72 : 45; next.squad.seasonsAtTeam = 1; next.squad.competitorName = team.roster.at(-1) ?? 'academy player'; next.squad.lastChangeReason = offer?.rationale ?? 'Nuevo contrato y nueva competencia interna.';
+  next.offers = generateCareerOffers(next).filter((item) => item.teamId !== team.id); next.chemistry = Math.max(35, team.chemistry - 15); next.player.money += Math.round(next.player.marketValue * .08); next.news.unshift(`${next.player.identity.nickname} es presentado como nuevo jugador de ${team.name} con rol ${next.squad.role}.`); next.socialFeed.unshift(`@roundone: HERE WE GO — ${next.player.identity.nickname} firma con ${team.name}.`); next.updatedAt = new Date().toISOString();
+  return next;
 }
 
 export function transferOffers(state: CareerState): Team[] {
@@ -70,7 +81,7 @@ export function evaluateSquadState(state: CareerState) {
   const rating = recent.reduce((sum, match) => sum + match.aggregate.rating, 0) / recent.length;
   const wins = recent.filter((match) => match.won).length;
   const signal = (rating - 1) * 42 + (wins / recent.length - .5) * 16 + (next.coachRelationship - 50) * .18 + (next.player.attributes.consistency - 50) * .08;
-  const noise = (rngFor(next.careerSeed, next.season, next.matches.length, 'squad')() - .5) * 10;
+  const noise = (rngFor(next.careerSeed, next.season, matchSequence(next), 'squad')() - .5) * 10;
   next.squad.coachTrust = Math.max(0, Math.min(100, next.squad.coachTrust + Math.round(signal * .22 + noise)));
   next.squad.roleSecurity = Math.max(0, Math.min(100, next.squad.roleSecurity + Math.round(signal * .3 + noise)));
   const prior = next.squad.role;

@@ -10,6 +10,7 @@ const roleKeys: Record<PlayerRole, (keyof CareerState['player']['attributes'])[]
 };
 
 function round2(value: number) { return Math.round(value * 100) / 100; }
+export function matchSequence(state: CareerState) { return state.matches.length + (typeof state.flags.qaFastMatchOffset === 'number' ? state.flags.qaFastMatchOffset : 0); }
 
 export function playerPerformanceScore(state: CareerState, mapId: string, opponent: Team, pressure: number) {
   const attributes = state.player.attributes;
@@ -59,7 +60,8 @@ function aggregateStats(maps: MapResult[]): MatchStats {
 export function simulateMatch(state: CareerState, playerTeam: Team, opponent: Team, tournamentId: string, mapIds?: string[], formatOverride?: 'BO1' | 'BO3' | 'BO5'): MatchResult {
   const baseTournament = getTournament(tournamentId);
   const tournament = { ...baseTournament, seriesFormat: formatOverride ?? baseTournament.seriesFormat };
-  const random = rngFor(state.careerSeed ?? state.id, state.season, state.month, state.week, opponent.id, state.matches.length);
+  const sequence = matchSequence(state);
+  const random = rngFor(state.careerSeed ?? state.id, state.season, state.month, state.week, opponent.id, sequence);
   const performanceVariance = round2((random() - random()) * 14);
   const maxMaps = tournament.seriesFormat === 'BO1' ? 1 : tournament.seriesFormat === 'BO5' ? 5 : 3;
   const requiredWins = Math.ceil(maxMaps / 2);
@@ -71,7 +73,7 @@ export function simulateMatch(state: CareerState, playerTeam: Team, opponent: Te
     const performance = playerPerformanceScore(state, mapId, opponent, tournament.pressure);
     const teamPower = playerTeam.globalLevel * 0.65 + state.chemistry * 0.16 + performance * 0.19 + performanceVariance;
     const opponentPower = opponent.globalLevel * 0.82 + opponent.chemistry * 0.18;
-    const winProbability = clamp(50 + (teamPower - opponentPower) * 1.5, 12, 88) / 100;
+    const winProbability = clamp(mapWinProbability(state, playerTeam, opponent, tournamentId, mapId) * 100 + performanceVariance * 1.5, 12, 88) / 100;
     const won = random() < winProbability;
     const overtime = Math.abs(teamPower - opponentPower) < 5 && random() > 0.65;
     const winnerScore = overtime ? 16 + randomInt(random, 0, 4) : 13;
@@ -85,5 +87,21 @@ export function simulateMatch(state: CareerState, playerTeam: Team, opponent: Te
   const injuryChance = clamp((state.player.fatigue + state.player.injuryRisk + state.player.burnout * 0.45) / 650, 0.01, 0.28);
   const injuryOccurred = random() < injuryChance;
   const highlights = [`${aggregate.kills} kills y ${aggregate.adr} ADR en la serie`, aggregate.clutches ? `${aggregate.clutches} clutch${aggregate.clutches > 1 ? 'es' : ''} convertido${aggregate.clutches > 1 ? 's' : ''}` : 'Partida sin clutches convertidos', pick(random, ['Una apertura cambió el mapa decisivo', 'La utility del equipo definió las rondas largas', 'El rival castigó las compras débiles', 'El lado CT sostuvo la serie'])];
-  return { id: `match-${state.season}-${state.month}-${state.week}-${state.matches.length + 1}`, season: state.season, month: state.month, week: state.week, tournamentId, opponentTeamId: opponent.id, format: tournament.seriesFormat, won, seriesScore: `${teamWins}-${opponentWins}`, maps, aggregate, highlights, explanation: [`Nivel por rol ${playerPerformanceScore(state, maps[0]?.mapId ?? tournament.mapPool[0], opponent, tournament.pressure).toFixed(1)}`, `Forma ${state.player.form} / Fatiga ${state.player.fatigue}`, `Química ${state.chemistry}`, `Rival #${opponent.initialRanking} (${opponent.globalLevel})`, `Varianza de esta serie ${performanceVariance >= 0 ? '+' : ''}${performanceVariance.toFixed(1)}`, `Plan táctico: ${state.pendingMatchTactic?.label ?? 'Automático'}`, `Presión del evento ${tournament.pressure}`], fatigueChange: 7 + maps.length * 3, confidenceChange: won ? 5 : -4, injuryOccurred, performanceVariance, tacticalModifier: state.pendingMatchTactic?.id };
+  return { id: `match-${state.season}-${state.month}-${state.week}-${sequence + 1}`, season: state.season, month: state.month, week: state.week, tournamentId, opponentTeamId: opponent.id, format: tournament.seriesFormat, won, seriesScore: `${teamWins}-${opponentWins}`, maps, aggregate, highlights, explanation: [`Nivel por rol ${playerPerformanceScore(state, maps[0]?.mapId ?? tournament.mapPool[0], opponent, tournament.pressure).toFixed(1)}`, `Forma ${state.player.form} / Fatiga ${state.player.fatigue}`, `Química ${state.chemistry}`, `Rival #${opponent.initialRanking} (${opponent.globalLevel})`, `Varianza de esta serie ${performanceVariance >= 0 ? '+' : ''}${performanceVariance.toFixed(1)}`, `Plan táctico: ${state.pendingMatchTactic?.label ?? 'Automático'}`, `Presión del evento ${tournament.pressure}`], fatigueChange: 7 + maps.length * 3, confidenceChange: won ? 5 : -4, injuryOccurred, performanceVariance, tacticalModifier: state.pendingMatchTactic?.id };
+}
+
+export function mapWinProbability(state: CareerState, playerTeam: Team, opponent: Team, tournamentId: string, mapId: string) {
+  const tournament = getTournament(tournamentId);
+  const performance = playerPerformanceScore(state, mapId, opponent, tournament.pressure);
+  const teamPower = playerTeam.globalLevel * 0.65 + state.chemistry * 0.16 + performance * 0.19;
+  const opponentPower = opponent.globalLevel * 0.82 + opponent.chemistry * 0.18;
+  return clamp(50 + (teamPower - opponentPower) * 1.5, 12, 88) / 100;
+}
+
+export function estimatedSeriesWinProbability(state: CareerState, playerTeam: Team, opponent: Team, tournamentId: string, format: 'BO1' | 'BO3' | 'BO5' = getTournament(tournamentId).seriesFormat) {
+  const tournament = getTournament(tournamentId);
+  const mapProbability = tournament.mapPool.reduce((sum, mapId) => sum + mapWinProbability(state, playerTeam, opponent, tournamentId, mapId), 0) / Math.max(1, tournament.mapPool.length);
+  if (format === 'BO1') return mapProbability;
+  if (format === 'BO3') return 3 * mapProbability ** 2 - 2 * mapProbability ** 3;
+  return 10 * mapProbability ** 3 - 15 * mapProbability ** 4 + 6 * mapProbability ** 5;
 }

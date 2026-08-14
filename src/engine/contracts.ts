@@ -15,6 +15,16 @@ export function negotiateContract(contract: Contract, approach: 'salary' | 'role
   return next;
 }
 
+export function contractNegotiationAvailability(contract: Contract, season: number) {
+  const cooldown = contract.negotiationCooldown ?? 0;
+  const available = cooldown <= 0 && contract.lastNegotiationSeason !== season;
+  return { available, availableSeason: available ? season : season + Math.max(1, cooldown) };
+}
+
+export function applyPrizeShare(eligiblePrize: number, prizeSharePercent: number) {
+  return Math.round(eligiblePrize * clamp(prizeSharePercent, 0, 100) / 100);
+}
+
 export function monthlyFinances(contract: Contract, money: number, lifestyle = 900) {
   const gross = contract.monthlySalary;
   const taxes = Math.round(gross * 0.22);

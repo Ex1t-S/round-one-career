@@ -6,6 +6,7 @@ import { cloneSerializable } from '@/utils/clone';
 import { createBracket, recordBracketResult } from './brackets';
 import { clamp } from './progression';
 import { rngFor } from './random';
+import { estimatedSeriesWinProbability } from './simulation';
 
 export const MAJOR_PATHS: Record<string, string> = {
   'major-1-open': 'colonge-major',
@@ -146,7 +147,10 @@ export function majorProbabilityBreakdown(state: CareerState, campaign: MajorCam
     budget: clamp(getTeam(state.teamId).budget / Math.max(1, opponent.budget) * 50, 20, 80),
     condition: clamp(100 - state.player.fatigue - state.player.injuryRisk * 0.5, 10, 95),
   };
-  const probability = clamp(factors.ranking * 0.2 + factors.recentForm * 0.13 + factors.chemistry * 0.18 + factors.playerLevel * 0.21 + factors.budget * 0.1 + factors.condition * 0.18 + roster, 8, 92);
+  const swissMatch = campaign.swissRounds.at(-1)?.find((match) => match.teamAId === state.teamId || match.teamBId === state.teamId);
+  const bracketMatch = campaign.bracket?.matches.find((match) => match.round === campaign.stage && (match.teamAId === state.teamId || match.teamBId === state.teamId));
+  const format = campaign.stage === 'open-qualifier' ? 'BO1' : swissMatch?.format ?? bracketMatch?.format ?? 'BO3';
+  const probability = estimatedSeriesWinProbability(state, getTeam(state.teamId), opponent, campaign.tournamentId, format) * 100;
   return { probability, factors };
 }
 
@@ -156,10 +160,17 @@ function fillPlayoffParticipants(state: CareerState, campaign: MajorCampaignStat
   return [...new Set([state.teamId, ...qualified, ...fallback])].slice(0, 8);
 }
 
+function eliminationStageParticipants(state: CareerState, campaign: MajorCampaignState) {
+  const advanced = campaign.swiss.filter((entry) => entry.status === 'qualified').map((entry) => entry.teamId);
+  const invited = state.rankings.slice().sort((a, b) => a.rank - b.rank).map((entry) => entry.teamId).filter((teamId) => !advanced.includes(teamId) && !campaign.participants.includes(teamId));
+  return [...advanced, ...invited].slice(0, 16);
+}
+
 export function prepareMajorMatch(state: CareerState): { state: CareerState; message: string } {
   if (!state.activeMajorId || state.pendingMatchId || state.pendingMinigame) return { state, message: 'Hay una acción pendiente.' };
   const next = cloneSerializable(state);
   const campaign = next.majorCampaigns.find((item) => item.id === next.activeMajorId);
+  if (campaign?.playerMatchIds.length) next.player.fatigue = clamp(next.player.fatigue - 8);
   if (!campaign) return { state, message: 'No hay una campaña de Major activa.' };
   if (campaign.status === 'eliminated' || campaign.status === 'completed') return { state, message: campaign.outcome ?? 'La campaña terminó.' };
   if (campaign.stage === 'ceremony') return finalizeMajorCeremony(next);
@@ -249,7 +260,8 @@ export function recordMajorMatch(state: CareerState, result: MatchResult): Caree
       campaign.stage = 'eliminated'; campaign.status = 'eliminated'; campaign.outcome = `Eliminado ${player.record.wins}-${player.record.losses} en ${currentStage.replaceAll('-', ' ')}.`;
     } else if (player?.status === 'qualified') {
       if (currentStage === 'opening-stage') {
-        campaign.stage = 'elimination-stage'; campaign.swiss = []; campaign.swissRounds = []; campaign.participants = campaignParticipants(next);
+        const participants = eliminationStageParticipants(next, campaign);
+        campaign.stage = 'elimination-stage'; campaign.swiss = []; campaign.swissRounds = []; campaign.participants = participants;
       } else campaign.stage = 'playoffs';
       campaign.news.unshift(`Avance ${player.record.wins}-${player.record.losses} desde ${currentStage.replaceAll('-', ' ')}.`);
     }

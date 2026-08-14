@@ -12,16 +12,16 @@ import { MAJORS, TOURNAMENTS } from '../src/data/tournaments';
 import { UPGRADES } from '../src/data/upgrades';
 import { assertBracketIntegrity, createBracket, recordBracketResult } from '../src/engine/brackets';
 import { calculateFinancialSummary, settleOffseasonFinances } from '../src/engine/economy';
-import { createMajorCampaign, createSwissStandings, determineMajorEntryPath, finalizeMajorCeremony, pairSwissRound, prepareMajorMatch, recordMajorMatch, recordSwissRound } from '../src/engine/major';
+import { createMajorCampaign, createSwissStandings, determineMajorEntryPath, finalizeMajorCeremony, majorProbabilityBreakdown, pairSwissRound, prepareMajorMatch, recordMajorMatch, recordSwissRound } from '../src/engine/major';
 import { autoSimulateMinigame, createMinigame, MINIGAME_DEFINITIONS, resolveMinigame } from '../src/engine/minigames';
-import { advanceUntilAction, advanceWeek, applyDecision, completeOffseason, createCareer, resolvePendingMatch } from '../src/engine/season';
-import { simulateMatch } from '../src/engine/simulation';
+import { advanceUntilAction, advanceWeek, applyDecision, CAREER_ENDINGS, completeOffseason, createCareer, evaluateCareerEnding, resolvePendingMatch } from '../src/engine/season';
+import { estimatedSeriesWinProbability, simulateMatch } from '../src/engine/simulation';
 import { annualMaintenance, calculateNetWorth, purchaseUpgrade, upgradeRequirement } from '../src/engine/upgrades';
 import { purchaseConsumable } from '../src/engine/consumables';
 import { generateAnnualPlayerRanking } from '../src/engine/player-ranking';
 import { PRO_PLAYER_POOL } from '../src/data/pro-players';
-import { initialTeamOffers } from '../src/engine/rosters';
-import { negotiateContract } from '../src/engine/contracts';
+import { completeTransfer, initialTeamOffers } from '../src/engine/rosters';
+import { applyPrizeShare, contractNegotiationAvailability, negotiateContract } from '../src/engine/contracts';
 import { simulateTournamentCampaign } from '../src/engine/tournament-campaign';
 import { CAREER_SCHEMA_VERSION, migrateCareerState } from '../src/state/migrations';
 import { CareerState, MatchResult, PlayerIdentity, SwissRoundMatch } from '../src/types/game';
@@ -57,8 +57,11 @@ const verifiedLogos = logoManifest.teams.filter((entry) => entry.file);
 assert.ok(verifiedLogos.length >= 150, 'At least 150 current or parent-organization marks must be bundled');
 for (const entry of verifiedLogos) assert.ok(existsSync(resolve('assets/team-logos', entry.file!)), `Missing local logo ${entry.file}`);
 const appShellSource = readFileSync(resolve('src/components/layout/app-shell.tsx'), 'utf8');
-assert.ok(appShellSource.includes("label: 'Performance'") && appShellSource.includes("label: 'Legado'") && appShellSource.includes("label: 'Finanzas'"), 'Primary navigation must expose the product centers');
+for (const destination of ['performance', 'legacy', 'finance']) assert.match(appShellSource, new RegExp(`id: ["']${destination}["']`), `Primary navigation must expose ${destination}`);
 assert.ok(appShellSource.includes('mobileItems') && appShellSource.includes('moreOpen'), 'Mobile navigation must use a dedicated compact model');
+for (const alias of ['statistics', 'analytics', 'timeline', 'financial-report', 'lifestyle', 'inventory', 'investments', 'records', 'trophy-room', 'awards']) {
+  assert.ok(existsSync(resolve('src/app', `${alias}.tsx`)), `Missing web compatibility adapter for /${alias}`);
+}
 
 const identity: PlayerIdentity = { fullName: 'Test Player', nickname: 'TEST', nationality: 'Argentina', region: 'Argentina', city: 'Buenos Aires', age: 17, primaryLanguage: 'Español', secondaryLanguages: ['Inglés'], handedness: 'Diestro', personality: 'Analítico', ambition: 85, riskTolerance: 60, priority: 'Títulos', role: 'Rifler', style: 'Mechanical' };
 
@@ -96,6 +99,7 @@ const circuitCareer = createCareer(identity, STARTER_TEAMS[0], 2026, 77);
 const circuitRun = simulateTournamentCampaign(circuitCareer, circuitEvent);
 assert.ok(circuitRun.campaign.playerMatchIds.length >= 2, 'An ordinary event must contain multiple series');
 assert.equal(circuitRun.state.matches.length, circuitRun.campaign.playerMatchIds.length);
+assert.equal(circuitRun.state.player.money, circuitCareer.player.money, 'Tournament prize must not be paid before the single offseason settlement');
 const seededOutcomes = new Set(Array.from({ length: 14 }, (_, seed) => {
   const sample = createCareer(identity, STARTER_TEAMS[0], 2026, seed + 1);
   return simulateMatch(sample, STARTER_TEAMS[0], TEAMS[20], TOURNAMENTS[0].id).won;
@@ -125,12 +129,39 @@ assert.equal(tacticalResolved.pendingMatchTactic, undefined, 'Match tactic must 
 const negotiationCareer = createCareer(identity, STARTER_TEAMS[0], 2026, 319);
 const negotiated = negotiateContract(negotiationCareer.contract, 'salary', negotiationCareer.season);
 assert.equal(negotiated.negotiationCooldown, 2, 'Contract negotiation must create a cooldown');
+assert.equal(contractNegotiationAvailability(negotiated, negotiationCareer.season).available, false, 'A second negotiation in the same season must be rejected');
+assert.deepEqual(contractNegotiationAvailability({ ...negotiated, negotiationCooldown: 1 }, negotiationCareer.season + 1), { available: false, availableSeason: negotiationCareer.season + 2 }, 'Cooldown must remain closed in season X+1');
+assert.equal(contractNegotiationAvailability({ ...negotiated, negotiationCooldown: 0 }, negotiationCareer.season + 2).available, true, 'Negotiation must reopen in season X+2');
+assert.equal(applyPrizeShare(100_000, 12), 12_000, 'Prize share must interpret 12 as 12%, not 1200%');
+const ledgerState = createCareer(identity, STARTER_TEAMS[0], 2026, 320);
+const ledgerOpeningCash = ledgerState.player.money;
+ledgerState.player.money -= 100;
+ledgerState.inventory.purchaseHistory.push({ id: 'ledger-purchase', upgradeId: 'monitor', season: ledgerState.season, price: 100, level: 1 });
+const ledgerResult = settleOffseasonFinances(ledgerState);
+assert.equal(ledgerResult.summary.closingCash - ledgerOpeningCash, ledgerResult.summary.balance, 'Annual cash flow must reconcile opening cash and closing cash');
+
+// Every deterministic ending is reachable from real career accomplishments.
+const endingBase = createCareer(identity, STARTER_TEAMS[0], 2026, 321);
+const endingCases: [string, (state: CareerState) => void][] = [
+  ['Leyenda de los Majors', (state) => { state.careerRecords.majorWins = 2; }],
+  ['Imperio más allá del servidor', (state) => { state.netWorth = 2_000_000; state.inventory.investments.push({ id: 'ending-investment', upgradeId: 'savings', principal: 1_000_000, currentValue: 1_000_000, annualReturn: .04, risk: 1, acquiredSeason: 1 }); state.inventory.properties.push({ id: 'ending-property', upgradeId: 'apartment', value: 1_000_000, maintenance: 0, acquiredSeason: 1 }); }],
+  ['El líder continúa desde el banco', (state) => { state.player.path = 'coach'; }],
+  ['Del servidor a la comunidad', (state) => { state.player.path = 'creator'; }],
+  ['La mente detrás del juego', (state) => { state.player.path = 'analyst'; }],
+  ['Ícono del circuito', (state) => { state.player.reputation = 90; state.careerRecords.bestPlayerRank = 10; }],
+  ['Una carrera de sacrificio', () => undefined],
+];
+assert.deepEqual(endingCases.map(([ending]) => ending), [...CAREER_ENDINGS], 'Directed tests must cover every ending');
+for (const [expected, arrange] of endingCases) { const state = cloneSerializable(endingBase); arrange(state); const evaluation = evaluateCareerEnding(state); assert.equal(evaluation.ending, expected, `Ending must be reachable: ${expected}`); assert.equal(evaluation.matchedRules[0], expected); assert.ok(evaluation.reasons.length > 0); }
 
 // Classification paths include direct entry and the possibility of missing the event.
 const lowRankCareer = createCareer(identity, TEAMS[99]);
 assert.equal(determineMajorEntryPath(lowRankCareer), 'open-qualifier');
 const invitedCareer = createCareer(identity, TEAMS[0]);
 assert.equal(determineMajorEntryPath(invitedCareer), 'direct-invite');
+const probabilityCampaign = createMajorCampaign(invitedCareer, MAJORS[0].id); probabilityCampaign.pendingOpponentId = TEAMS[5].id;
+const displayedProbability = majorProbabilityBreakdown(invitedCareer, probabilityCampaign, TEAMS[5].id).probability / 100;
+assert.ok(Math.abs(displayedProbability - estimatedSeriesWinProbability(invitedCareer, TEAMS[0], TEAMS[5], MAJORS[0].id, 'BO3')) < .0001, 'Major UI and simulation must share the same base probability');
 let eliminatedCampaignState = cloneSerializable(lowRankCareer);
 const eliminatedCampaign = createMajorCampaign(eliminatedCampaignState, MAJORS[0].id);
 eliminatedCampaignState.majorCampaigns.push(eliminatedCampaign); eliminatedCampaignState.activeMajorId = eliminatedCampaign.id;
@@ -151,6 +182,18 @@ for (let round = 1; round <= 3; round += 1) {
 assert.ok(swiss.some((entry) => entry.record.wins === 3 && entry.status === 'qualified'), 'Swiss must qualify at three wins');
 assert.ok(swiss.some((entry) => entry.record.losses === 3 && entry.status === 'eliminated'), 'Swiss must eliminate at three losses');
 for (const entry of swiss) assert.equal(new Set(entry.opponents).size, entry.opponents.length, 'Swiss should not repeat opponents when alternatives exist');
+
+function directedSwiss(sequence: ('W' | 'L')[]) {
+  const teamIds = TEAMS.slice(0, 8).map((team) => team.id); let standings = createSwissStandings(teamIds);
+  sequence.forEach((outcome, index) => { const opponentId = teamIds[index + 1]; standings = recordSwissRound(standings, [{ id: `directed-${index}`, round: index + 1, teamAId: teamIds[0], teamBId: opponentId, format: index >= 2 ? 'BO3' : 'BO1', winnerId: outcome === 'W' ? teamIds[0] : opponentId, loserId: outcome === 'W' ? opponentId : teamIds[0], explanation: [] }]); });
+  return standings;
+}
+for (const [sequence, record, status] of [[['W', 'W', 'W'], '3-0', 'qualified'], [['W', 'W', 'L', 'W'], '3-1', 'qualified'], [['W', 'W', 'L', 'L', 'W'], '3-2', 'qualified'], [['L', 'L', 'L'], '0-3', 'eliminated'], [['W', 'L', 'L', 'L'], '1-3', 'eliminated'], [['W', 'W', 'L', 'L', 'L'], '2-3', 'eliminated']] as const) {
+  const standings = directedSwiss([...sequence]); const player = standings[0]; assert.equal(`${player.record.wins}-${player.record.losses}`, record); assert.equal(player.status, status); assert.ok(!pairSwissRound(standings, sequence.length + 1).some((match) => match.teamAId === player.teamId || match.teamBId === player.teamId), `${record} team must leave active pairings`); for (const entry of standings) assert.equal(entry.record.buchholz, entry.opponents.reduce((sum, id) => sum + (standings.find((candidate) => candidate.teamId === id)?.record.wins ?? 0), 0), 'Buchholz must equal opponents wins');
+}
+
+const continuityState = createCareer(identity, TEAMS[0], 2026, 6543); const continuityCampaign = createMajorCampaign(continuityState, MAJORS[0].id); continuityCampaign.stage = 'opening-stage'; continuityCampaign.qualified = true; continuityCampaign.participants = TEAMS.slice(0, 16).map((team) => team.id); continuityCampaign.swiss = createSwissStandings(continuityCampaign.participants); continuityCampaign.swiss[0].record.wins = 2; for (let index = 1; index <= 7; index += 1) { continuityCampaign.swiss[index].record.wins = 3; continuityCampaign.swiss[index].status = 'qualified'; } for (let index = 8; index <= 14; index += 1) { continuityCampaign.swiss[index].record.losses = 3; continuityCampaign.swiss[index].status = 'eliminated'; } continuityCampaign.swiss[15].record.losses = 2; continuityCampaign.pendingOpponentId = continuityCampaign.swiss[15].teamId; continuityCampaign.swissRounds.push([{ id: 'continuity-decider', round: 5, teamAId: continuityState.teamId, teamBId: continuityCampaign.pendingOpponentId, format: 'BO3', explanation: [] }]); continuityState.majorCampaigns.push(continuityCampaign); continuityState.activeMajorId = continuityCampaign.id;
+const previousQualifiers = continuityCampaign.swiss.filter((entry) => entry.status === 'qualified').map((entry) => entry.teamId).concat(continuityState.teamId); const continuityResult = recordMajorMatch(continuityState, resultWithOutcome(continuityState, continuityCampaign.pendingOpponentId, true)); const nextParticipants = continuityResult.majorCampaigns[0].participants; assert.ok(previousQualifiers.every((teamId) => nextParticipants.includes(teamId)), 'All Opening qualifiers must remain in the Elimination participants'); assert.equal(new Set(nextParticipants).size, 16, 'Elimination stage must contain 16 unique participants');
 
 // Bracket has eight teams, advances winners and produces a champion.
 let bracket = createBracket(TEAMS.slice(0, 8).map((team) => team.id));
@@ -194,12 +237,14 @@ const memoryGame = createMinigame(vetoCareer, 'utility-memory', 'validation'); a
 mechanics.offseasonPending = true; mechanics.player.money = 1_000_000; mechanics.player.reputation = 100; mechanics.player.level = 30; mechanics.trophies.push({ id: 'test-title', name: 'Test title', season: 1, tier: 'S', mvp: false }, { id: 'test-title-2', name: 'Test title 2', season: 1, tier: 'S', mvp: false });
 const consumableCash = mechanics.player.money; mechanics = purchaseConsumable(mechanics, 'bootcamp-focus').state; assert.ok(mechanics.player.money < consumableCash); assert.ok(mechanics.inventory.consumables.some((item) => item.consumableId === 'bootcamp-focus'));
 const beforeMoney = mechanics.player.money; mechanics = purchaseUpgrade(mechanics, 'monitor').state; assert.ok(mechanics.player.money < beforeMoney, 'Purchase must deduct money');
+assert.equal(beforeMoney - mechanics.player.money, 650, 'Purchase must reduce cash exactly once by its price');
 const levelOneReaction = mechanics.player.attributes.reaction; mechanics = purchaseUpgrade(mechanics, 'monitor').state; assert.ok(mechanics.player.attributes.reaction > levelOneReaction && mechanics.player.attributes.reaction - levelOneReaction < 0.65, 'Diminishing returns must reduce later gains');
 const poor = createCareer(identity, STARTER_TEAMS[0]); poor.offseasonPending = true; assert.equal(purchaseUpgrade(poor, 'performance-lab').state.player.money, poor.player.money, 'Cannot buy without funds');
 assert.equal(upgradeRequirement(poor, UPGRADES.find((item) => item.id === 'own-team')!).allowed, false, 'Requirements must block purchases');
 mechanics = purchaseUpgrade(mechanics, 'dedicated-internet').state; assert.ok(annualMaintenance(mechanics) > 0, 'Maintenance must be charged');
-const maintenanceOnly = cloneSerializable(mechanics); maintenanceOnly.contract.monthlySalary = 0; maintenanceOnly.player.reputation = 0; maintenanceOnly.player.fanbase = 0; maintenanceOnly.player.attributes.mediaSkill = 0; maintenanceOnly.matches = []; maintenanceOnly.trophies = []; maintenanceOnly.majorCampaigns = []; const maintenanceCash = maintenanceOnly.player.money; const maintained = settleOffseasonFinances(maintenanceOnly).state; assert.equal(maintained.player.money, maintenanceCash - annualMaintenance(maintenanceOnly), 'Annual settlement must deduct maintenance');
+const maintenanceOnly = cloneSerializable(mechanics); maintenanceOnly.contract.monthlySalary = 0; maintenanceOnly.player.reputation = 0; maintenanceOnly.player.fanbase = 0; maintenanceOnly.player.attributes.mediaSkill = 0; maintenanceOnly.matches = []; maintenanceOnly.trophies = []; maintenanceOnly.majorCampaigns = []; const maintenanceCash = maintenanceOnly.player.money; const maintainedResult = settleOffseasonFinances(maintenanceOnly); const maintained = maintainedResult.state; const deferredExpenses = maintainedResult.summary.taxes + maintainedResult.summary.agentFees + maintainedResult.summary.housing + maintainedResult.summary.travel + maintainedResult.summary.health + maintainedResult.summary.training + maintainedResult.summary.maintenance; assert.equal(maintained.player.money, maintenanceCash - deferredExpenses, 'Annual settlement must deduct all deferred expenses exactly once');
 assert.ok(calculateNetWorth(mechanics) >= mechanics.player.money, 'Net worth must include assets');
+const investmentState = cloneSerializable(mechanics); const investmentCash = investmentState.player.money; const investmentWorth = calculateNetWorth(investmentState); const invested = purchaseUpgrade(investmentState, 'savings').state; assert.equal(investmentCash - invested.player.money, 5000, 'Investment purchase must deduct principal once'); assert.equal(calculateNetWorth(invested), investmentWorth, 'Moving cash into an investment must not count cash twice or destroy principal');
 for (const value of Object.values(mechanics.player.attributes)) assert.ok(value <= 100 && value >= 1, 'Upgrades cannot exceed attribute bounds');
 const financial = calculateFinancialSummary(mechanics); assertFiniteDeep(financial);
 
@@ -209,6 +254,17 @@ for (const key of ['majorCampaigns', 'minigameHistory', 'financialHistory', 'inv
 const migrated = migrateCareerState(legacy); assert.ok(migrated); assert.equal(migrated!.schemaVersion, CAREER_SCHEMA_VERSION); assert.deepEqual(migrated!.majorCampaigns, []); assert.deepEqual(migrated!.inventory.upgrades, []);
 const roundTripSource = cloneSerializable(mechanics); roundTripSource.majorCampaigns.push(createMajorCampaign(roundTripSource, MAJORS[0].id)); roundTripSource.minigameHistory.push(autoSimulateMinigame(roundTripSource, 'clutch', 'roundtrip'));
 const roundTrip = migrateCareerState(JSON.parse(JSON.stringify(roundTripSource))); assert.ok(roundTrip); assert.equal(roundTrip!.majorCampaigns.length, 1); assert.equal(roundTrip!.inventory.upgrades.length, roundTripSource.inventory.upgrades.length); assert.equal(roundTrip!.inventory.consumables.length, roundTripSource.inventory.consumables.length); assert.equal(roundTrip!.minigameHistory.length, 1);
+for (const version of [1, 2, 3, CAREER_SCHEMA_VERSION]) { const versioned = cloneSerializable(roundTripSource) as CareerState; versioned.schemaVersion = version; const restored = migrateCareerState(JSON.parse(JSON.stringify(versioned))); assert.ok(restored, `Schema v${version} must migrate`); assert.equal(restored!.schemaVersion, CAREER_SCHEMA_VERSION); }
+assert.equal(migrateCareerState({ schemaVersion: CAREER_SCHEMA_VERSION, player: { identity: { nickname: 'broken' } }, matches: 'invalid', rankings: [] }), null, 'Invalid import JSON shape must be rejected');
+
+function reload(state: CareerState, label: string) { const restored = migrateCareerState(JSON.parse(JSON.stringify(state))); assert.ok(restored, `${label} must reload`); assert.equal(restored!.teamId, state.teamId); assert.equal(restored!.season, state.season); assert.equal(restored!.matches.length, state.matches.length); assert.equal(restored!.player.money, state.player.money); assert.equal(restored!.inventory.upgrades.length, state.inventory.upgrades.length); assert.equal(restored!.majorCampaigns.length, state.majorCampaigns.length); return restored!; }
+let persistence = reload(createCareer(identity, STARTER_TEAMS[0], 2026, 88001), 'Create');
+const persistenceDecision = CAREER_EVENTS[0]; persistence.pendingDecisionId = persistenceDecision.id; persistence = applyDecision(persistence, persistenceDecision.choices[0]).state; persistence = reload(persistence, 'Decision');
+persistence.pendingMatchId = `${TOURNAMENTS[0].id}|${TEAMS[20].id}`; persistence = resolvePendingMatch(persistence).state; persistence = reload(persistence, 'Match');
+persistence = completeTransfer(persistence, TEAMS[50].id); persistence = reload(persistence, 'Transfer');
+persistence.offseasonPending = true; persistence.player.money = 50_000; persistence = purchaseUpgrade(persistence, 'monitor').state; persistence = reload(persistence, 'Purchase');
+const persistedMajor = createMajorCampaign(persistence, MAJORS[0].id); persistence.majorCampaigns.push(persistedMajor); persistence.activeMajorId = persistedMajor.id; persistence = prepareMajorMatch(persistence).state; persistence = reload(persistence, 'Major');
+persistence.pendingMatchId = undefined; persistence.activeMajorId = undefined; persistence.offseasonPending = true; persistence.offseasonStep = 12; persistence = reload(completeOffseason(persistence).state, 'Offseason');
 
 // Automated career covers active Major campaigns and mandatory off-season for 12 seasons.
 let career = createCareer(identity, STARTER_TEAMS[0], 2026, 20260813); career.settings.minigames = false; career.settings.minigameMode = 'auto';
@@ -234,6 +290,6 @@ assert.ok(career.playerRankingHistory.every((board) => board.entries.length === 
 assert.ok(career.tournamentCampaigns.length > 30, 'Ordinary tournament campaigns must persist across the career');
 assert.ok(career.matches.every((match) => match.aggregate.rating >= 0.25 && match.aggregate.rating <= 1.75));
 assert.equal(career.majorCampaigns.filter((campaign) => campaign.season === 1).length, 2, 'There must be two independent Major campaigns per season');
-const endings = new Set(['Leyenda de los Majors', 'Imperio más allá del servidor', 'El líder continúa desde el banco', 'Del servidor a la comunidad', 'Ícono del circuito', 'Una carrera de sacrificio']); assert.ok(endings.has(career.ending!));
+const endings = new Set<string>(CAREER_ENDINGS); assert.ok(endings.has(career.ending!));
 
 console.log(JSON.stringify({ teams: TEAMS.length, tournaments: TOURNAMENTS.length, majors: MAJORS.length, events: CAREER_EVENTS.length, contextualDecisions: ALL_CAREER_DECISIONS.length - CAREER_EVENTS.length, maps: MAPS.length, screens: SCREEN_IDS.length, minigames: MINIGAME_DEFINITIONS.length, upgrades: UPGRADES.length, consumables: CONSUMABLES.length, schemaVersion: career.schemaVersion, simulatedSeasons: career.season, majorCampaigns: career.majorCampaigns.length, tournamentCampaigns: career.tournamentCampaigns.length, matches: career.matches.length, mapsPlayed: career.matches.reduce((sum, match) => sum + match.maps.length, 0), decisions: resolvedDecisions, offseasons: completedOffseasons, ending: career.ending }, null, 2));

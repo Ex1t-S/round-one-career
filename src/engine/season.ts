@@ -4,7 +4,7 @@ import { TOURNAMENTS, getTournament } from '@/data/tournaments';
 import { CalendarEvent, CareerDecision, CareerState, DecisionChoice, DecisionEffect, PlayerIdentity, SeasonAdvanceResult, Team } from '@/types/game';
 import { createContract, monthlyFinances } from './contracts';
 import { clamp, calculateMarketValue, overallRating, processLevelUps } from './progression';
-import { updateRankings } from './ranking';
+import { createInitialRankings, updateRankings } from './ranking';
 import { rngFor, weightedPick } from './random';
 import { simulateMatch } from './simulation';
 import { buildInitialAttributes } from '@/data/roles';
@@ -41,11 +41,10 @@ export function createCareer(identity: PlayerIdentity, team: Team, year = 2026, 
   const now = new Date().toISOString();
   const attributes = buildInitialAttributes(identity.role, identity.style, identity.age);
   const player = { identity, attributes, level: 1, xp: 0, trainingPoints: 5, form: 55, fatigue: 10, burnout: 4, injuryRisk: 5, motivation: 78, pressure: 20, reputation: 8, fanbase: 3, marketValue: 25000, money: 1800, path: 'player' as const, benched: false, injuredWeeks: 0 };
-  const rankings = TEAMS.map((item) => ({ teamId: item.id, rank: item.initialRanking, points: item.vrsPoints, trend: 0 }));
   const careerSeed = providedSeed ?? Math.floor(Math.random() * 2147483647);
   const state: CareerState = {
     schemaVersion: CAREER_SCHEMA_VERSION, id: `career-${Date.now()}`, createdAt: now, updatedAt: now, player, teamId: team.id, season: 1, year, month: 1, week: 1,
-    calendar: buildSeasonCalendar(1), contract: createContract(team, identity.role, 52), matches: [], decisions: [], trophies: [], rankings, flags: {}, chemistry: 58,
+    calendar: buildSeasonCalendar(1), contract: createContract(team, identity.role, 52), matches: [], decisions: [], trophies: [], rankings: createInitialRankings(TEAMS), flags: {}, chemistry: 58,
     coachRelationship: 55, iglRelationship: 52, rivalries: {}, news: [`${identity.nickname} firma su primer contrato profesional con ${team.name}.`],
     socialFeed: [`@roundone: ${identity.nickname} comienza su camino desde ${identity.city}.`], awards: [], majorCampaigns: [], minigameHistory: [], financialHistory: [],
     inventory: { upgrades: [], properties: [], investments: [], purchaseHistory: [], consumables: [] }, netWorth: player.money,
@@ -175,7 +174,7 @@ export function completeOffseason(state: CareerState): { state: CareerState; mes
   if (!state.offseasonPending) return { state, message: 'No hay un off-season pendiente.' };
   if (state.offseasonStep < 12) return { state, message: 'Completá las etapas del balance antes de continuar.' };
   const next = cloneSerializable(state);
-  const currentSummary = calculateFinancialSummary(next);
+  const currentSummary = next.financialHistory.find((item) => item.season === next.season) ?? calculateFinancialSummary(next);
   next.financialHistory = [...next.financialHistory.filter((item) => item.season !== next.season), { ...currentSummary, closingCash: next.player.money, netWorth: calculateNetWorth(next) }];
   next.player.identity.age += 1;
   next.offseasonPending = false;
@@ -183,7 +182,7 @@ export function completeOffseason(state: CareerState): { state: CareerState; mes
   if (next.player.identity.age >= 34 || next.season >= 12 || next.player.burnout >= 98) {
     next.finished = true;
     next.player.path = next.player.attributes.leadership > 75 ? 'coach' : next.player.attributes.mediaSkill > 72 ? 'creator' : next.player.attributes.gameSense > 76 ? 'analyst' : 'retired';
-    next.ending = next.careerRecords.majorWins >= 2 ? 'Leyenda de los Majors' : next.netWorth >= 1000000 ? 'Imperio más allá del servidor' : next.player.path === 'coach' ? 'El líder continúa desde el banco' : next.player.path === 'creator' ? 'Del servidor a la comunidad' : next.player.reputation > 75 ? 'Ícono del circuito' : 'Una carrera de sacrificio';
+    next.ending = determineCareerEnding(next);
     return { state: next, message: next.ending };
   }
   next.season += 1; next.year += 1; next.month = 1; next.week = 1; next.calendar = buildSeasonCalendar(next.season);
@@ -258,6 +257,27 @@ export function advanceWeek(state: CareerState): SeasonAdvanceResult {
   return { state: next, messages, requiresDecision: Boolean(next.pendingDecisionId), requiresMatch: Boolean(next.pendingMatchId) };
 }
 
+export const CAREER_ENDINGS = ['Leyenda de los Majors', 'Imperio más allá del servidor', 'El líder continúa desde el banco', 'Del servidor a la comunidad', 'La mente detrás del juego', 'Ícono del circuito', 'Una carrera de sacrificio'] as const;
+type CareerEnding = typeof CAREER_ENDINGS[number];
+type EndingRule = { ending: CareerEnding; priority: number; reason: string; matches: (state: CareerState) => boolean };
+const endingRules: EndingRule[] = [
+  { ending: 'Leyenda de los Majors', priority: 100, reason: 'Ganaste al menos dos Majors.', matches: (state) => state.careerRecords.majorWins >= 2 },
+  { ending: 'Imperio más allá del servidor', priority: 90, reason: 'Construiste patrimonio y activos fuera del server.', matches: (state) => state.netWorth >= 2_000_000 && state.inventory.investments.length + state.inventory.properties.length >= 2 },
+  { ending: 'El líder continúa desde el banco', priority: 80, reason: 'Tu liderazgo abrió una carrera como coach.', matches: (state) => state.player.path === 'coach' },
+  { ending: 'Del servidor a la comunidad', priority: 70, reason: 'Tu perfil mediático abrió una carrera como creador.', matches: (state) => state.player.path === 'creator' },
+  { ending: 'La mente detrás del juego', priority: 60, reason: 'Tu lectura táctica abrió una carrera como analista.', matches: (state) => state.player.path === 'analyst' },
+  { ending: 'Ícono del circuito', priority: 50, reason: 'Combinaste reputación con logros competitivos de élite.', matches: (state) => state.player.reputation >= 85 && ((state.careerRecords.bestPlayerRank > 0 && state.careerRecords.bestPlayerRank <= 20) || state.trophies.length >= 3 || state.awards.length >= 5) },
+  { ending: 'Una carrera de sacrificio', priority: 0, reason: 'Completaste una carrera profesional sin activar otro legado prioritario.', matches: () => true },
+];
+
+export function evaluateCareerEnding(state: CareerState) {
+  const matched = endingRules.filter((rule) => rule.matches(state)).sort((a, b) => b.priority - a.priority);
+  const winner = matched[0];
+  return { ending: winner.ending, reasons: [winner.reason], matchedRules: matched.map((rule) => rule.ending), priority: winner.priority };
+}
+
+export function determineCareerEnding(state: CareerState) { return evaluateCareerEnding(state).ending; }
+
 export function advanceUntilAction(state: CareerState, maxWeeks = 12): SeasonAdvanceResult {
   let next = state;
   const messages: string[] = [];
@@ -285,7 +305,7 @@ export function resolvePendingMatch(state: CareerState): { state: CareerState; m
   let next = cloneSerializable(state);
   next.matches.push(result); next.pendingMatchId = undefined;
   next.player.fatigue = clamp(next.player.fatigue + result.fatigueChange + (state.pendingMatchTactic?.fatigueRisk ?? 0)); next.player.attributes.confidence = clamp(next.player.attributes.confidence + result.confidenceChange, 1, 100); next.player.form = clamp(next.player.form + (result.won ? 4 : -3));
-  next.player.xp += 120 + result.aggregate.kills * 3 + (result.won ? 140 : 30); next.player.reputation = clamp(next.player.reputation + (result.won ? 3 : -1)); next.player.fanbase = clamp(next.player.fanbase + (result.won ? 2 : 0));
+  next.player.xp += 120 + result.aggregate.kills * 3 + (result.won ? 140 : 30); next.player.reputation = clamp(next.player.reputation + (result.won ? .35 : -.2)); next.player.fanbase = clamp(next.player.fanbase + (result.won ? .5 : 0));
   if (result.injuryOccurred) { next.player.injuredWeeks = 1 + Math.floor(next.player.injuryRisk / 30); next.news.unshift(`${next.player.identity.nickname} sufre una molestia y estará ${next.player.injuredWeeks} semana(s) fuera.`); }
   if (!campaignId && result.won && tournament.kind === 'major' && result.aggregate.rating > 1.1) { next.trophies.push({ id: `trophy-${Date.now()}`, name: tournament.name, season: next.season, tier: tournament.tier, mvp: result.aggregate.rating >= 1.35 }); if (result.aggregate.rating >= 1.35) next.awards.push(`MVP · ${tournament.name}`); }
   next.rankings = updateRankings(next.rankings, team.id, result.won, opponent.initialRanking, result.won ? Math.round(tournament.rankingPoints / 10) : 0);

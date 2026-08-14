@@ -47,12 +47,18 @@ export function TeamCrest({ id, color, size = 54 }: { id: string; color: string;
 
 export function PlayerAvatar({ id, color = Colors.orange, size = 72 }: { id: string; color?: string; size?: number }) {
   const seed = hash(id);
+  const variant = seed % 8;
+  const skin = [Colors.orange, Colors.blue, Colors.green, Colors.purple, '#e46b5d', '#d8a24a', '#55c9b2', '#a66cff'][variant];
+  const hair = variant % 2 === 0 ? Colors.text : Colors.bg;
   return <Svg width={size} height={size} viewBox="0 0 100 100" accessibilityLabel="Avatar ficticio configurable">
-    <Defs><LinearGradient id={`a-${seed}`} x1="0" y1="0" x2="0" y2="1"><Stop offset="0" stopColor={color} /><Stop offset="1" stopColor={Colors.panelSoft} /></LinearGradient></Defs>
-    <Rect width="100" height="100" rx="50" fill={Colors.bgRaised} stroke={color} strokeWidth="2" />
-    <Circle cx="50" cy="39" r={18 + seed % 4} fill={`url(#a-${seed})`} />
-    <Path d={`M18 92 C21 ${67 - seed % 5}, 35 60, 50 60 C65 60, 79 ${67 - seed % 5}, 82 92`} fill={`url(#a-${seed})`} />
-    <Path d="M32 35 L44 31 M56 31 L68 35" stroke={Colors.text} strokeWidth="3" opacity="0.55" />
+    <Defs><LinearGradient id={`a-${seed}`} x1="0" y1="0" x2="0" y2="1"><Stop offset="0" stopColor={color === Colors.orange ? skin : color} /><Stop offset="1" stopColor={Colors.panelSoft} /></LinearGradient></Defs>
+    <Rect width="100" height="100" rx={variant === 7 ? 18 : 50} fill={Colors.bgRaised} stroke={color === Colors.orange ? skin : color} strokeWidth="2" />
+    <Circle cx="50" cy="39" r={17 + variant % 4} fill={`url(#a-${seed})`} />
+    <Path d={`M18 92 C21 ${67 - variant % 5}, 35 60, 50 60 C65 60, 79 ${67 - variant % 5}, 82 92`} fill={`url(#a-${seed})`} />
+    {variant < 4 ? <Path d={`M${30 + variant} 30 Q50 ${12 + variant * 2} ${70 - variant} 30 L${65 - variant} 24 Q50 ${18 + variant} ${35 + variant} 24 Z`} fill={hair} opacity="0.8" /> : null}
+    {variant === 4 || variant === 5 ? <Path d="M30 31 Q50 12 70 31" fill="none" stroke={hair} strokeWidth="8" strokeLinecap="round" /> : null}
+    <Path d={variant % 3 === 0 ? 'M31 39 L44 36 M56 36 L69 39' : 'M33 39 L43 39 M57 39 L67 39'} stroke={Colors.text} strokeWidth="3" opacity="0.62" />
+    <Path d={variant % 2 === 0 ? 'M42 51 Q50 56 58 51' : 'M42 52 L58 52'} fill="none" stroke={Colors.text} strokeWidth="2" opacity="0.7" />
   </Svg>;
 }
 

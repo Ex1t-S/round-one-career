@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { Href, router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
@@ -15,7 +15,7 @@ import { getMinigameDefinition, minigameStatistics, minigameStepCount } from '@/
 import { majorProbabilityBreakdown } from '@/engine/major';
 import { useCareerStore } from '@/state/career-store';
 
-const go = (screen: string) => router.push({ pathname: '/[screen]', params: { screen } });
+const go = (screen: string) => router.push(`/game?view=${screen}` as Href);
 
 function useCampaign() {
   const { career } = useCareerStore();

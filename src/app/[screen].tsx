@@ -1,6 +1,7 @@
-import { useLocalSearchParams } from 'expo-router';
+import { Href, router, useLocalSearchParams, usePathname } from 'expo-router';
+import { useEffect, useState } from 'react';
 
-import { SCREEN_IDS } from '@/constants/routes';
+import { SCREEN_IDS, ScreenId } from '@/constants/routes';
 import { GameScreen } from '@/screens/game-screen';
 
 export function generateStaticParams() {
@@ -9,5 +10,11 @@ export function generateStaticParams() {
 
 export default function DynamicGameRoute() {
   const { screen } = useLocalSearchParams<{ screen: string }>();
-  return <GameScreen screen={screen ?? 'dashboard'} />;
+  const pathname = usePathname();
+  const routeFromPath = pathname.split('/').filter(Boolean).at(-1)?.replace(/\.html$/, '');
+  const [browserScreen] = useState(() => typeof globalThis.location === 'object' ? globalThis.location.pathname.split('/').filter(Boolean).at(-1)?.replace(/\.html$/, '') : undefined);
+  const candidate = [screen, browserScreen, routeFromPath].find((value) => SCREEN_IDS.includes(value as ScreenId));
+  const selected: ScreenId = candidate ? candidate as ScreenId : 'dashboard';
+  useEffect(() => { router.replace(`/game?view=${selected}` as Href); }, [selected]);
+  return <GameScreen screen={selected} />;
 }
