@@ -45,6 +45,11 @@ for (const route of ['major-hub', 'major-qualification', 'swiss-stage', 'major-b
 assert.equal(new Set(['dashboard', 'profile', 'calendar', 'decision', 'tournament', 'match', 'performance', 'rankings', 'major-hub', 'team', 'roster', 'market', 'contract', 'training', 'health', 'legacy', 'finance', 'settings']).size, 18, 'Primary navigation must not duplicate destinations');
 assert.equal(MINIGAME_DEFINITIONS.length, 10, 'All ten minigames are required');
 assert.ok(UPGRADES.length >= 70, 'The lifestyle catalog must be extensive');
+for (const id of ['mouse-basic', 'monitor', 'headset', 'chair', 'car', 'trip']) {
+  const upgrade = UPGRADES.find((item) => item.id === id);
+  assert.ok(upgrade, `The simplified annual store must include ${id}`);
+  assert.ok(Object.values(upgrade.benefits).some((value) => Number(value) > 0), `${id} must provide a real career benefit`);
+}
 assert.ok(DEFAULT_MAJOR_FORMAT.stages.length >= 10, 'The configurable Major model must include all stages');
 assert.equal(new Set(ALL_CAREER_DECISIONS.map((event) => event.slot).filter(Boolean)).size, 6, 'There must be six contextual decision slots per season');
 assert.ok(CONSUMABLES.length >= 10, 'Consumables and lifestyle purchases must be available');

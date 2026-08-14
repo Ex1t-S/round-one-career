@@ -19,7 +19,7 @@ const SCREENSHOT_DIR = path.join(ROOT, 'docs', 'qa-screenshots');
 const identity: PlayerIdentity = { fullName: 'Beta QA', nickname: 'BETA', nationality: 'Argentina', region: 'Argentina', city: 'Buenos Aires', age: 17, primaryLanguage: 'Español', secondaryLanguages: ['Inglés'], handedness: 'Diestro', personality: 'Analítico', ambition: 84, riskTolerance: 58, priority: 'Títulos', role: 'Rifler', style: 'Mechanical' };
 const routes = ['dashboard', 'calendar', 'tournament', 'match', 'performance', 'rankings', 'major-hub', 'team', 'roster', 'market', 'contract', 'training', 'health', 'legacy', 'finance', 'settings'];
 const viewports = [320, 360, 390, 430, 768, 1024, 1280, 1440, 1920];
-const routeLabels: Record<string, string> = { dashboard: 'Home', calendar: 'Calendario', tournament: 'Torneos', match: 'Match Center', performance: 'Performance', rankings: 'Ranking mundial', 'major-hub': 'Major', team: 'Equipo', roster: 'Roster', market: 'Mercado', contract: 'Contrato', training: 'Entrenamiento', health: 'Salud', legacy: 'Legado', finance: 'Finanzas', settings: 'Configuración' };
+const routeLabels: Record<string, string> = { dashboard: 'Inicio', calendar: 'Calendario', tournament: 'Torneos', match: 'Partidos', performance: 'Rendimiento', rankings: 'Ranking mundial', 'major-hub': 'Major', team: 'Equipo', roster: 'Roster', market: 'Mercado', contract: 'Contrato', training: 'Entrenamiento', health: 'Salud', legacy: 'Legado', finance: 'Finanzas', settings: 'Configuración' };
 
 type Pending = { resolve: (value: unknown) => void; reject: (reason: unknown) => void };
 
@@ -134,7 +134,7 @@ async function main() {
       await wait(700);
       if (route === 'dashboard') return;
       const mobile = width < 1024;
-      const directLabel = mobile && route === 'match' ? 'Match' : routeLabels[route];
+      const directLabel = routeLabels[route];
       const direct = await evaluate<boolean>(`(() => { const button = Array.from(document.querySelectorAll('[role="button"]')).find(el => el.getAttribute('aria-label') === ${JSON.stringify(`Abrir ${directLabel}`)}); if (!button) return false; button.click(); return true; })()`);
       if (!direct && mobile) {
         const opened = await evaluate<boolean>(`(() => { const button = Array.from(document.querySelectorAll('[role="button"]')).find(el => el.getAttribute('aria-label') === 'Abrir más secciones'); if (!button) return false; button.click(); return true; })()`);
@@ -172,7 +172,7 @@ async function main() {
     await setSave(active);
     await cdp.send('Page.navigate', { url: `${BASE_URL}/statistics` });
     await wait(900);
-    const legacyAlias = await evaluate<{ path: string; performance: boolean }>(`({ path: location.pathname + location.search, performance: document.body.innerText.includes('PERFORMANCE CENTER') })`);
+    const legacyAlias = await evaluate<{ path: string; performance: boolean }>(`({ path: location.pathname + location.search, performance: document.body.innerText.includes('CENTRO DE RENDIMIENTO') })`);
     const overflow: string[] = [];
     const badValues: string[] = [];
     for (const width of checkedViewports) {
@@ -189,7 +189,7 @@ async function main() {
     await navigate('rankings', 1440); await screenshot('desktop-ranking-1440.png');
     await navigate('dashboard', 390); await screenshot('mobile-dashboard-390.png');
 
-    const mobileNav = await evaluate<{ labels: string[]; sidebarVisible: boolean }>(`(() => ({ labels: Array.from(document.querySelectorAll('[role="button"]')).map(el => el.getAttribute('aria-label')).filter(Boolean), sidebarVisible: document.body.innerText.includes('CURRENT ORGANIZATION') }))()`);
+    const mobileNav = await evaluate<{ labels: string[]; sidebarVisible: boolean }>(`(() => ({ labels: Array.from(document.querySelectorAll('[role="button"]')).map(el => el.getAttribute('aria-label')).filter(Boolean), sidebarVisible: document.body.innerText.includes('ORGANIZACIÓN ACTUAL') }))()`);
     const openedMore = await evaluate<boolean>(`(() => { const button = Array.from(document.querySelectorAll('[role="button"]')).find(el => el.getAttribute('aria-label') === 'Abrir más secciones'); if (!button) return false; button.click(); return true; })()`);
     await wait(250);
     const moreVisible = await evaluate<boolean>(`document.body.innerText.includes('FINANZAS') && document.body.innerText.includes('ORGANIZACIÓN')`);
@@ -200,7 +200,7 @@ async function main() {
     const calendarBefore = await evaluate<{ path: string; text: string }>(`({ path: location.pathname, text: (document.body?.innerText ?? '').slice(0, 180) })`);
     const openedCalendar = await evaluate<boolean>(`(() => { const button = Array.from(document.querySelectorAll('[role="button"]')).find(el => (el.innerText || '').toLowerCase().includes('ver detalle')); if (!button) return false; button.click(); return true; })()`);
     await wait(150);
-    const calendarDetailValid = await evaluate<boolean>(`document.body.innerText.toLowerCase().includes('event detail') && document.body.innerText.toLowerCase().includes('elegibilidad')`);
+    const calendarDetailValid = await evaluate<boolean>(`document.body.innerText.toLowerCase().includes('detalle del evento') && document.body.innerText.toLowerCase().includes('elegibilidad')`);
     const calendarPath = await evaluate<string>('location.pathname + location.search');
     await evaluate(`(() => { const scrollable = Array.from(document.querySelectorAll('*')).filter(el => ['auto','scroll'].includes(getComputedStyle(el).overflowY)).sort((a,b) => b.scrollHeight - a.scrollHeight)[0]; if (scrollable) scrollable.scrollTop = scrollable.scrollHeight; return true; })()`);
     await wait(100);
@@ -211,7 +211,7 @@ async function main() {
     for (const index of [0, 49, 99]) {
       topDetails.push(await evaluate<boolean>(`(() => { const rows = Array.from(document.querySelectorAll('[aria-label^="Ver detalle de"]')); const row = rows[${index}]; if (!row) return false; row.click(); return true; })()`));
       await wait(120);
-      topDetails.push(await evaluate<boolean>(`document.body.innerText.includes('PLAYER DETAIL') && !document.body.innerText.includes('undefined')`));
+      topDetails.push(await evaluate<boolean>(`document.body.innerText.includes('DETALLE DEL JUGADOR') && !document.body.innerText.includes('undefined')`));
       await evaluate(`(() => { const button = Array.from(document.querySelectorAll('[role="button"]')).find(el => (el.innerText || '').trim() === 'Cerrar'); if (button) button.click(); return true; })()`);
       await wait(80);
     }

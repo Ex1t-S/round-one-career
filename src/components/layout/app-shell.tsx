@@ -96,7 +96,7 @@ const groups: { label: string; items: NavItem[] }[] = [
   {
     label: "CARRERA",
     items: [
-      { id: "dashboard", label: "Home", icon: "dashboard" },
+      { id: "dashboard", label: "Inicio", icon: "dashboard" },
       { id: "profile", label: "Jugador", icon: "profile" },
       { id: "calendar", label: "Calendario", icon: "calendar" },
       { id: "decision", label: "Decisiones", icon: "decision" },
@@ -106,8 +106,8 @@ const groups: { label: string; items: NavItem[] }[] = [
     label: "COMPETICIÓN",
     items: [
       { id: "tournament", label: "Torneos", icon: "tournament" },
-      { id: "match", label: "Match Center", icon: "match" },
-      { id: "performance", label: "Performance", icon: "statistics" },
+      { id: "match", label: "Partidos", icon: "match" },
+      { id: "performance", label: "Rendimiento", icon: "statistics" },
       { id: "rankings", label: "Ranking mundial", icon: "rankings" },
       { id: "major-hub", label: "Major", icon: "major" },
     ],
@@ -142,9 +142,9 @@ const groups: { label: string; items: NavItem[] }[] = [
   },
 ];
 const mobileItems: NavItem[] = [
-  { id: "dashboard", label: "Home", icon: "dashboard" },
-  { id: "match", label: "Match", icon: "match" },
-  { id: "profile", label: "Career", icon: "profile" },
+  { id: "dashboard", label: "Inicio", icon: "dashboard" },
+  { id: "match", label: "Partidos", icon: "match" },
+  { id: "profile", label: "Carrera", icon: "profile" },
   { id: "major-hub", label: "Major", icon: "major" },
 ];
 
@@ -211,7 +211,7 @@ export function AppShell({
       ? {
           eyebrow: "TEMPORADA CERRADA",
           title: "Completá el balance y definí el próximo año",
-          label: "Abrir off-season",
+          label: "Abrir cierre anual",
           screen: "season-review",
           tone: Colors.orange,
         }
@@ -233,9 +233,9 @@ export function AppShell({
             }
           : career.pendingMatchId
             ? {
-                eyebrow: "MATCH DAY",
+                eyebrow: "DÍA DE PARTIDO",
                 title: "Elegí el plan táctico y disputá la serie",
-                label: "Abrir Match Center",
+                label: "Abrir partido",
                 screen: "match",
                 tone: Colors.red,
               }
@@ -255,18 +255,18 @@ export function AppShell({
                 };
   const editorial =
     active === "training"
-      ? { asset: "training-center" as const, label: "PLAYER DEVELOPMENT" }
+      ? { asset: "training-center" as const, label: "DESARROLLO DEL JUGADOR" }
       : active === "health"
-        ? { asset: "health-recovery" as const, label: "PERFORMANCE & WELLNESS" }
+        ? { asset: "health-recovery" as const, label: "RENDIMIENTO Y BIENESTAR" }
         : ["market", "contract"].includes(active)
-          ? { asset: "contract-market" as const, label: "CAREER BUSINESS" }
+          ? { asset: "contract-market" as const, label: "GESTIÓN DE CARRERA" }
           : null;
   return (
     <SafeAreaView style={styles.safe} edges={["top", "left", "right"]}>
       <View style={styles.app}>
         {desktop ? (
           <View style={styles.sidebar}>
-            <Pressable accessibilityRole="button" accessibilityLabel="Abrir Home" onPress={() => navigate("dashboard")} style={styles.brand}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Abrir inicio" onPress={() => navigate("dashboard")} style={styles.brand}>
               <RoundOneMark size={32} />
               <Text style={styles.brandText}>
                 ROUND<Text style={styles.brandAccent}>/</Text>ONE
@@ -326,7 +326,7 @@ export function AppShell({
             </ScrollView>
             <View style={styles.seasonCard}>
               <View style={styles.seasonRow}>
-                <Text style={styles.seasonLabel}>SEASON {career.season}</Text>
+                <Text style={styles.seasonLabel}>TEMPORADA {career.season}</Text>
                 <Text style={styles.seasonWeek}>TRAMO {career.week}/4</Text>
               </View>
               <ProgressBar
@@ -352,8 +352,8 @@ export function AppShell({
                 <Text style={styles.topStatus}>
                   <Text style={styles.liveDot}>●</Text>{" "}
                   {career.activeMajorId
-                    ? "MAJOR ACTIVE"
-                    : `${career.squad.role.toUpperCase()} · ${career.decisionSlotsUsed.length}/6 CALLS`}
+                    ? "MAJOR ACTIVO"
+                    : `${({ starter: 'TITULAR', rotation: 'ROTACIÓN', prospect: 'PROMESA', star: 'ESTRELLA', franchise: 'REFERENTE', benched: 'BANCO', substitute: 'SUPLENTE' }[career.squad.role])} · ${career.decisionSlotsUsed.length}/6 DECISIONES`}
                 </Text>
               )}
             </View>
@@ -363,10 +363,10 @@ export function AppShell({
               </Text>
               {desktop ? (
                 <Text style={styles.topMetric}>
-                  NW ${Math.round(career.netWorth / 1000)}K
+                  PATRIMONIO ${Math.round(career.netWorth / 1000)}K
                 </Text>
               ) : null}
-              <Text style={styles.topMetric}>FAT {career.player.fatigue}</Text>
+              <Text style={styles.topMetric}>FATIGA {career.player.fatigue}</Text>
             </View>
           </View>
           {!desktop ? (
@@ -412,7 +412,7 @@ export function AppShell({
                   name="settings"
                   active={!mobileItems.some((item) => item.id === active)}
                 />
-                <Text style={styles.mobileNavText}>More</Text>
+                <Text style={styles.mobileNavText}>Más</Text>
                 {career.pendingDecisionId || career.offseasonPending ? (
                   <View style={styles.navDot} />
                 ) : null}
@@ -436,7 +436,7 @@ export function AppShell({
                 onPress={(event) => event.stopPropagation()}
               >
                 <View style={styles.sheetHeader}>
-                  <Text style={styles.sheetTitle}>ROUND/ONE · NAVIGATION</Text>
+                  <Text style={styles.sheetTitle}>ROUND/ONE · NAVEGACIÓN</Text>
                   <Pressable
                     accessibilityRole="button"
                     accessibilityLabel="Cerrar navegación"

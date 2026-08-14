@@ -24,27 +24,27 @@ import { AwardsView } from "./world-views";
 
 type Tab = { id: string; label: string };
 const performanceTabs: Tab[] = [
-  { id: "overview", label: "Overview" },
-  { id: "matches", label: "Matches" },
-  { id: "maps", label: "Maps" },
-  { id: "tournaments", label: "Tournaments" },
-  { id: "seasons", label: "Seasons" },
-  { id: "advanced", label: "Advanced" },
+  { id: "overview", label: "Resumen" },
+  { id: "matches", label: "Partidos" },
+  { id: "maps", label: "Mapas" },
+  { id: "tournaments", label: "Torneos" },
+  { id: "seasons", label: "Temporadas" },
+  { id: "advanced", label: "Avanzado" },
 ];
 const legacyTabs: Tab[] = [
   { id: "history", label: "Historia" },
   { id: "trophies", label: "Trofeos" },
   { id: "awards", label: "Premios" },
-  { id: "records", label: "Records" },
+  { id: "records", label: "Récords" },
   { id: "majors", label: "Majors" },
 ];
 const financeTabs: Tab[] = [
-  { id: "overview", label: "Overview" },
-  { id: "cashflow", label: "Cash Flow" },
-  { id: "store", label: "Store" },
-  { id: "assets", label: "Assets" },
-  { id: "inventory", label: "Inventory" },
-  { id: "investments", label: "Investments" },
+  { id: "overview", label: "Resumen" },
+  { id: "cashflow", label: "Ingresos y gastos" },
+  { id: "store", label: "Tienda" },
+  { id: "assets", label: "Activos" },
+  { id: "inventory", label: "Inventario" },
+  { id: "investments", label: "Inversiones" },
 ];
 const avg = (values: number[]) =>
   values.length
@@ -137,20 +137,20 @@ export function PerformanceCenterView({
     0,
   );
   const comparisons: { label: string; list: MatchResult[] }[] = [
-    { label: "Ultimas 10", list: recent },
+    { label: "Últimas 10", list: recent },
     { label: "Temporada actual", list: current },
     { label: "Carrera", list: all },
   ];
   return (
     <View>
       <SectionHeader
-        eyebrow="PERFORMANCE CENTER"
+        eyebrow="CENTRO DE RENDIMIENTO"
         title="Una sola lectura de tu rendimiento"
       />
       <Tabs tabs={performanceTabs} value={tab} onChange={setTab} />
       <View style={s.filters}>
         <Filter
-          label={season === "all" ? "Todas las seasons" : `Season ${season}`}
+          label={season === "all" ? "Todas las temporadas" : `Temporada ${season}`}
           active={season !== "all"}
           onPress={() =>
             setSeason(
@@ -297,7 +297,7 @@ export function PerformanceCenterView({
           </View>
           <SectionHeader
             eyebrow="COMPARACION"
-            title="Ultimas 10 · temporada · carrera · career best"
+            title="Últimas 10 · temporada · carrera · career best"
           />
           <View style={s.compareGrid}>
             {comparisons.map(({ label, list }) => (
@@ -537,7 +537,7 @@ export function LegacyCenterView({
   return (
     <View>
       <SectionHeader
-        eyebrow="LEGACY CENTER"
+        eyebrow="CENTRO DE LEGADO"
         title="Los capitulos que definieron tu carrera"
       />
       <Tabs tabs={legacyTabs} value={tab} onChange={setTab} />
@@ -652,7 +652,7 @@ export function FinanceCenterView({
   return (
     <View>
       <SectionHeader
-        eyebrow="FINANCE CENTER"
+        eyebrow="CENTRO FINANCIERO"
         title="Dinero, patrimonio y estilo de vida"
       />
       <Tabs tabs={financeTabs} value={tab} onChange={setTab} />
@@ -661,7 +661,7 @@ export function FinanceCenterView({
           <Metrics
             items={[
               {
-                label: "Cash disponible",
+                label: "Capital disponible",
                 value: `$${career.player.money.toLocaleString("en-US")}`,
                 tone: "orange",
               },

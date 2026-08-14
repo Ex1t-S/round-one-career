@@ -27,8 +27,8 @@ export function GameScreen({ screen }: { screen: string }) {
   const { career, hydrated } = useCareerStore();
   const active: ScreenId = SCREEN_IDS.includes(screen as ScreenId) ? screen as ScreenId : 'dashboard';
   useEffect(() => { if (hydrated && !career) router.replace('/'); }, [career, hydrated]);
-  if (!hydrated) return <View style={styles.loading}><Text style={styles.loadingText}>LOADING CAREER DATA</Text></View>;
-  if (!career) return <View style={styles.loading}><Text style={styles.loadingText}>NO ACTIVE CAREER</Text></View>;
+  if (!hydrated) return <View style={styles.loading}><Text style={styles.loadingText}>CARGANDO DATOS DE LA CARRERA</Text></View>;
+  if (!career) return <View style={styles.loading}><Text style={styles.loadingText}>NO HAY UNA CARRERA ACTIVA</Text></View>;
   const Screen = screens[active];
   return <AppShell active={active}><Screen /></AppShell>;
 }
