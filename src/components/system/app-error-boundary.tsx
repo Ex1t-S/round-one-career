@@ -22,11 +22,11 @@ export class AppErrorBoundary extends Component<PropsWithChildren, ErrorState> {
 
 const styles = StyleSheet.create({
   page: { flex: 1, justifyContent: 'center', alignItems: 'flex-start', backgroundColor: Colors.bg, padding: Spacing.huge, borderLeftWidth: 6, borderLeftColor: Colors.orange },
-  code: { color: Colors.orange, fontFamily: Fonts.mono, fontSize: 9, fontWeight: '900', letterSpacing: 1.8 },
+  code: { color: Colors.orange, fontFamily: Fonts.mono, fontSize: 11, fontWeight: '900', letterSpacing: 1.8 },
   title: { color: Colors.text, fontFamily: Fonts.sans, fontSize: 34, fontWeight: '800', marginTop: 15, maxWidth: 620 },
   copy: { color: Colors.textSoft, fontFamily: Fonts.sans, fontSize: 14, lineHeight: 22, marginTop: 12, maxWidth: 620 },
   button: { minHeight: 44, backgroundColor: Colors.orange, justifyContent: 'center', paddingHorizontal: 18, marginTop: 24 },
-  buttonText: { color: Colors.black, fontFamily: Fonts.mono, fontSize: 9, fontWeight: '900', letterSpacing: 1 },
-  detail: { color: Colors.muted, fontFamily: Fonts.mono, fontSize: 8, lineHeight: 13, marginTop: 20, maxWidth: 720 },
+  buttonText: { color: Colors.black, fontFamily: Fonts.mono, fontSize: 11, fontWeight: '900', letterSpacing: 1 },
+  detail: { color: Colors.muted, fontFamily: Fonts.mono, fontSize: 10, lineHeight: 13, marginTop: 20, maxWidth: 720 },
   pressed: { opacity: 0.7 },
 });

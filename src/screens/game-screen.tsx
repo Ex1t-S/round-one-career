@@ -33,4 +33,4 @@ export function GameScreen({ screen }: { screen: string }) {
   return <AppShell active={active}><Screen /></AppShell>;
 }
 
-const styles = StyleSheet.create({ loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.bg }, loadingText: { color: Colors.orange, fontFamily: Fonts.mono, fontSize: 9, letterSpacing: 1.5 } });
+const styles = StyleSheet.create({ loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.bg }, loadingText: { color: Colors.orange, fontFamily: Fonts.mono, fontSize: 11, letterSpacing: 1.5 } });

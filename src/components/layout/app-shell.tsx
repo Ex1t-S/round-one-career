@@ -241,16 +241,16 @@ export function AppShell({
               }
             : career.pendingDecisionId
               ? {
-                  eyebrow: `DECISIÓN ${career.decisionSlotsUsed.length + 1}/6`,
+                  eyebrow: `PLAN DE TEMPORADA · ${career.decisionSlotsUsed.length + 1}/6`,
                   title: getDecisionTitle(career.pendingDecisionId),
-                  label: "Tomar decisión",
+                  label: "Continuar plan",
                   screen: "decision",
                   tone: Colors.orange,
                 }
               : {
                   eyebrow: "CARRERA EN CURSO",
-                  title: "Avanzá hasta la próxima decisión o serie",
-                  label: "Continuar carrera",
+                  title: "Simulá hasta el próximo evento importante",
+                  label: "Continuar simulación",
                   tone: Colors.green,
                 };
   const editorial =
@@ -275,15 +275,15 @@ export function AppShell({
             <View style={styles.playerMini}>
               <TeamCrest id={team.id} color={team.color} size={38} />
               <View style={styles.playerMiniCopy}>
-                <Text style={styles.nickname}>
+                <Text numberOfLines={1} style={styles.nickname}>
                   {career.player.identity.nickname}
                 </Text>
-                <Text style={styles.teamLabel}>
+                <Text numberOfLines={1} style={styles.teamLabel}>
                   #{rank} · {team.name}
                 </Text>
               </View>
               <Badge tone={career.player.form >= 60 ? "green" : "orange"}>
-                {career.player.form}
+                {Math.round(career.player.form)}
               </Badge>
             </View>
             <ScrollView
@@ -327,7 +327,7 @@ export function AppShell({
             <View style={styles.seasonCard}>
               <View style={styles.seasonRow}>
                 <Text style={styles.seasonLabel}>SEASON {career.season}</Text>
-                <Text style={styles.seasonWeek}>W{career.week}</Text>
+                <Text style={styles.seasonWeek}>TRAMO {career.week}/4</Text>
               </View>
               <ProgressBar
                 value={(((career.month - 1) * 4 + career.week) / 48) * 100}
@@ -573,7 +573,7 @@ const styles = StyleSheet.create({
   brandText: {
     color: Colors.text,
     fontFamily: Fonts.sans,
-    fontSize: 13,
+    fontSize: 15,
     fontWeight: "800",
     letterSpacing: 1.8,
   },
@@ -590,13 +590,13 @@ const styles = StyleSheet.create({
   nickname: {
     color: Colors.text,
     fontFamily: Fonts.sans,
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: "800",
   },
   teamLabel: {
     color: Colors.muted,
     fontFamily: Fonts.mono,
-    fontSize: 8,
+    fontSize: 10,
     marginTop: 4,
   },
   navScroll: { paddingVertical: 14, paddingBottom: 26 },
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
   navGroupLabel: {
     color: Colors.muted,
     fontFamily: Fonts.mono,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "900",
     letterSpacing: 1.4,
     paddingHorizontal: 10,
@@ -636,7 +636,7 @@ const styles = StyleSheet.create({
   navText: {
     color: Colors.textSoft,
     fontFamily: Fonts.sans,
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: "600",
   },
   navTextActive: { color: Colors.text },
@@ -657,11 +657,11 @@ const styles = StyleSheet.create({
   seasonLabel: {
     color: Colors.textSoft,
     fontFamily: Fonts.mono,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "900",
   },
-  seasonWeek: { color: Colors.orange, fontFamily: Fonts.mono, fontSize: 8 },
-  seasonDate: { color: Colors.muted, fontFamily: Fonts.mono, fontSize: 8 },
+  seasonWeek: { color: Colors.orange, fontFamily: Fonts.mono, fontSize: 10 },
+  seasonDate: { color: Colors.muted, fontFamily: Fonts.mono, fontSize: 10 },
   main: { flex: 1 },
   topbar: {
     height: 60,
@@ -679,7 +679,7 @@ const styles = StyleSheet.create({
   topStatus: {
     color: Colors.muted,
     fontFamily: Fonts.mono,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "800",
     letterSpacing: 1,
   },
@@ -688,7 +688,7 @@ const styles = StyleSheet.create({
   topMetric: {
     color: Colors.textSoft,
     fontFamily: Fonts.mono,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "800",
   },
   mobileNav: {
@@ -714,7 +714,7 @@ const styles = StyleSheet.create({
   mobileNavText: {
     color: Colors.muted,
     fontFamily: Fonts.mono,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "800",
   },
   modalBackdrop: {
@@ -743,7 +743,7 @@ const styles = StyleSheet.create({
     color: Colors.orange,
     fontFamily: Fonts.mono,
     fontWeight: "900",
-    fontSize: 10,
+    fontSize: 12,
     letterSpacing: 1.2,
   },
   sheetClose: {
@@ -758,7 +758,7 @@ const styles = StyleSheet.create({
   sheetCloseText: {
     color: Colors.textSoft,
     fontFamily: Fonts.mono,
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: "800",
   },
   sheetScroller: { flexShrink: 1 },
@@ -792,12 +792,13 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
     borderLeftColor: Colors.green,
   },
-  toastDot: { color: Colors.green, fontSize: 8 },
+  toastDot: { color: Colors.green, fontSize: 10 },
   toastText: {
     flex: 1,
     color: Colors.textSoft,
     fontFamily: Fonts.sans,
-    fontSize: 11,
+    fontSize: 13,
+    lineHeight: 18,
   },
   toastClose: { color: Colors.muted, fontSize: 17 },
   contentScroll: { flex: 1 },
@@ -829,14 +830,14 @@ const styles = StyleSheet.create({
   actionDockCopy: { flex: 1, minWidth: 220 },
   actionDockEyebrow: {
     fontFamily: Fonts.mono,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "900",
     letterSpacing: 1.2,
   },
   actionDockTitle: {
     color: Colors.text,
     fontFamily: Fonts.sans,
-    fontSize: 13,
+    fontSize: 16,
     fontWeight: "700",
     marginTop: 6,
   },
@@ -850,7 +851,7 @@ const styles = StyleSheet.create({
   actionDockButtonText: {
     color: Colors.black,
     fontFamily: Fonts.mono,
-    fontSize: 8,
+    fontSize: 11,
     fontWeight: "900",
     letterSpacing: 0.8,
     textTransform: "uppercase",
@@ -859,7 +860,7 @@ const styles = StyleSheet.create({
   editorialLabel: {
     color: Colors.orange,
     fontFamily: Fonts.mono,
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: "900",
     letterSpacing: 1.5,
   },

@@ -44,16 +44,32 @@ export function calculateMarketValue(state: CareerState) {
   return Math.round(Math.max(15000, (rating ** 2 * 110 + performance * 180000 + state.player.reputation * 5500 + titles) * ageFactor));
 }
 
+export function trainingAvailability(state: CareerState, activity: TrainingActivity) {
+  const missingPoints = Math.max(0, activity.pointCost - state.player.trainingPoints);
+  const missingMoney = Math.max(0, activity.moneyCost - state.player.money);
+  const saturation = state.player.fatigue > 80 || state.player.burnout > 75 ? 0.45 : state.player.fatigue > 60 ? 0.7 : 1;
+  const projectedGain = Math.max(1, Math.round(activity.gains * saturation));
+  const available = !state.finished && missingPoints === 0 && missingMoney === 0;
+  const reason = state.finished
+    ? 'La carrera ya terminó.'
+    : missingPoints > 0
+      ? `Faltan ${missingPoints} TP.`
+      : missingMoney > 0
+        ? `Faltan $${missingMoney.toLocaleString('en-US')}.`
+        : `Usar ${activity.pointCost} TP${activity.moneyCost ? ` + $${activity.moneyCost.toLocaleString('en-US')}` : ''}`;
+  return { available, missingPoints, missingMoney, projectedGain, saturation, reason };
+}
+
 export function applyTraining(state: CareerState, activity: TrainingActivity): { state: CareerState; message: string } {
-  if (state.player.trainingPoints < activity.pointCost || state.player.money < activity.moneyCost) return { state, message: 'No tenés recursos suficientes para esta actividad.' };
+  const availability = trainingAvailability(state, activity);
+  if (!availability.available) return { state, message: availability.reason };
   const next = cloneSerializable(state);
   next.player.trainingPoints -= activity.pointCost;
   next.player.money -= activity.moneyCost;
   next.player.fatigue = clamp(next.player.fatigue + activity.fatigue);
   next.player.burnout = clamp(next.player.burnout + activity.burnout);
-  const saturation = next.player.fatigue > 80 || next.player.burnout > 75 ? 0.45 : next.player.fatigue > 60 ? 0.7 : 1;
-  for (const key of activity.attributes) next.player.attributes[key] = clamp(next.player.attributes[key] + Math.max(1, Math.round(activity.gains * saturation)), 1, 100);
+  for (const key of activity.attributes) next.player.attributes[key] = clamp(next.player.attributes[key] + availability.projectedGain, 1, 100);
   next.player.xp += 80 + activity.attributes.length * 20;
   next.updatedAt = new Date().toISOString();
-  return { state: processLevelUps(next), message: `${activity.name}: mejoraste ${activity.attributes.map((key) => ATTRIBUTE_LABELS[key]).join(', ')}.` };
+  return { state: processLevelUps(next), message: `${activity.name}: -${activity.pointCost} TP${activity.moneyCost ? ` · -$${activity.moneyCost.toLocaleString('en-US')}` : ''}. Mejoraste ${activity.attributes.map((key) => ATTRIBUTE_LABELS[key]).join(', ')}.` };
 }

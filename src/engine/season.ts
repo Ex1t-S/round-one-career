@@ -58,6 +58,7 @@ export function createCareer(identity: PlayerIdentity, team: Team, year = 2026, 
     settings: { simulationSpeed: 'balanced', minigames: true, minigameMode: 'important', minigameDifficulty: 'normal', reducedMotion: false, animations: 'full', sound: false, vibration: true, autosave: true },
   };
   state.player.marketValue = calculateMarketValue(state);
+  state.pendingDecisionId = selectDecision(state).id;
   return state;
 }
 
@@ -68,7 +69,7 @@ function selectDecision(state: CareerState) {
   const recent = state.matches.filter((match) => match.season === state.season).slice(-8);
   const rating = recent.reduce((sum, match) => sum + match.aggregate.rating, 0) / Math.max(1, recent.length);
   const team = getTeam(state.teamId);
-  const contextual = ALL_CAREER_DECISIONS.filter((event) => event.slot === nextSlot && matchesDecisionContext(event, state, team, rating) && !used.has(event.id));
+  const contextual = ALL_CAREER_DECISIONS.filter((event) => event.slot === nextSlot && matchesDecisionContext(event, state, team, rating) && !(recent.length === 0 && event.id === 'ctx-slump-response'));
   if (contextual.length) return weightedPick(random, contextual, (event) => event.weight);
   const candidates = CAREER_EVENTS.filter((event) => (event.minSeason ?? 1) <= state.season && !used.has(event.id));
   return weightedPick(random, candidates.length ? candidates : CAREER_EVENTS, (event) => event.weight);
@@ -188,6 +189,7 @@ export function completeOffseason(state: CareerState): { state: CareerState; mes
   next.season += 1; next.year += 1; next.month = 1; next.week = 1; next.calendar = buildSeasonCalendar(next.season);
   next.player.fatigue = clamp(next.player.fatigue - 35); next.player.burnout = clamp(next.player.burnout - 25); next.player.trainingPoints += 4;
   next.decisionSlotsUsed = [];
+  next.pendingDecisionId = selectDecision(next).id;
   next.contract.negotiationCooldown = Math.max(0, (next.contract.negotiationCooldown ?? 0) - 1);
   next.seasonVariance = Math.round((rngFor(next.careerSeed, next.season, 'season-variance')() - .5) * 36);
   next.squad.seasonsAtTeam += 1;
@@ -201,6 +203,13 @@ export function advanceWeek(state: CareerState): SeasonAdvanceResult {
   if (state.finished || state.offseasonPending || state.activeMajorId || state.pendingDecisionId || state.pendingMatchId || state.pendingMinigame) return { state, messages: [state.offseasonPending ? 'OFF-SEASON · Completá Balance & Upgrades para iniciar el próximo año.' : state.activeMajorId ? 'La campaña del Major está activa. Continuá desde Major Hub.' : 'Hay una acción pendiente antes de avanzar.'], requiresDecision: Boolean(state.pendingDecisionId), requiresMatch: Boolean(state.pendingMatchId) };
   let next = cloneSerializable(state);
   const messages: string[] = [];
+  // Saves created before the season-planning flow may still have unanswered slots.
+  // Surface the batch before simulating more calendar time.
+  if (next.decisionSlotsUsed.length < 6) {
+    const decision = selectDecision(next);
+    next.pendingDecisionId = decision.id;
+    return { state: next, messages: [`Plan de temporada · decisión ${next.decisionSlotsUsed.length + 1}/6.`], requiresDecision: true, requiresMatch: false };
+  }
   const team = getTeam(next.teamId);
   messages.push(...resolveDeferredConsequences(next));
   next.calendar = next.calendar.map((event) => event.month === next.month && event.week === next.week ? { ...event, status: 'active' } : event);
@@ -208,10 +217,6 @@ export function advanceWeek(state: CareerState): SeasonAdvanceResult {
   const linkedMajorEvent = scheduled.find((item) => majorTournamentForEvent(item.id));
   const tournament = linkedMajorEvent ?? scheduled.filter((item) => canEnterTournament(next, item)).sort((a, b) => b.prestige - a.prestige)[0];
   const majorTournamentId = tournament ? majorTournamentForEvent(tournament.id) : undefined;
-  const absoluteWeek = (next.month - 1) * 4 + next.week;
-  const decisionThresholds = [2, 10, 18, 27, 36, 44];
-  const nextDecisionSlot = next.decisionSlotsUsed.length + 1;
-  const decisionDue = nextDecisionSlot <= 6 && absoluteWeek >= decisionThresholds[nextDecisionSlot - 1];
   // A low rating can cost maps and still remain a playable professional season;
   // true benching is handled by the explicit substitute branch below.
   const rosterSelected = rngFor(next.careerSeed, next.season, tournament?.id ?? 'scrim', 'roster-selection')() < Math.max(.78, next.squad.mapShare / 100);
@@ -224,10 +229,6 @@ export function advanceWeek(state: CareerState): SeasonAdvanceResult {
         messages.push(`${getTournament(majorTournamentId).shortName}: ${campaign.outcome}`);
       } else { if (next.player.benched) campaign.news.unshift(`${next.player.identity.nickname} entra como suplente de emergencia.`); messages.push(`${getTournament(majorTournamentId).shortName}: campaña activa en ${campaign.stage.replaceAll('-', ' ')}.`); }
     } else messages.push(`${getTournament(majorTournamentId).shortName}: el camino de esta temporada ya terminó.`);
-  } else if (decisionDue) {
-    const decision = selectDecision(next);
-    next.pendingDecisionId = decision.id;
-    messages.push(`Nueva decisión: ${decision.title}`);
   } else if (tournament && next.player.injuredWeeks === 0 && (rosterSelected || next.player.benched && rngFor(next.careerSeed, next.season, tournament.id, 'substitute')() < .3)) {
     const simulated = simulateTournamentCampaign(next, tournament);
     next = evaluateSquadState(simulated.state);
@@ -278,7 +279,7 @@ export function evaluateCareerEnding(state: CareerState) {
 
 export function determineCareerEnding(state: CareerState) { return evaluateCareerEnding(state).ending; }
 
-export function advanceUntilAction(state: CareerState, maxWeeks = 12): SeasonAdvanceResult {
+export function advanceUntilAction(state: CareerState, maxWeeks = 52): SeasonAdvanceResult {
   let next = state;
   const messages: string[] = [];
   for (let skipped = 0; skipped < Math.max(1, maxWeeks); skipped += 1) {
@@ -339,9 +340,10 @@ export function applyDecision(state: CareerState, choice: DecisionChoice): { sta
   next.decisions.push({ eventId: event.id, choiceId: choice.id, season: next.season, week: next.week, outcome: outcomeText, outcomeId: outcome?.id, roll: Number(roll.toFixed(4)), context });
   if (event.slot && !next.decisionSlotsUsed.includes(event.slot)) next.decisionSlotsUsed.push(event.slot);
   else if (!event.slot && next.decisionSlotsUsed.length < 6) next.decisionSlotsUsed.push(next.decisionSlotsUsed.length + 1);
-  next.pendingDecisionId = undefined;
+  next.pendingDecisionId = next.decisionSlotsUsed.length < 6 ? selectDecision(next).id : undefined;
   next.player.xp += 90;
   next.news.unshift(`${next.player.identity.nickname}: ${outcomeText}`);
   next.updatedAt = new Date().toISOString();
-  return { state: processLevelUps(next), message: `${outcomeText} Resultado ${outcome?.id ?? 'directo'}; la misma elección puede resolver distinto en otra carrera.` };
+  const progress = next.pendingDecisionId ? ` Siguiente decisión: ${next.decisionSlotsUsed.length + 1}/6.` : ' Plan de temporada completado; ya podés iniciar la simulación.';
+  return { state: processLevelUps(next), message: `${outcomeText}${progress}` };
 }

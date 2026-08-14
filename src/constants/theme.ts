@@ -30,8 +30,17 @@ export const Layout = { maxWidth: 1420, sidebar: 236, content: 1180 };
 
 export const Fonts = Platform.select({
   web: {
-    sans: "'Helvetica Neue', Arial, ui-sans-serif, system-ui, sans-serif",
-    mono: "'SFMono-Regular', Consolas, 'Liberation Mono', monospace",
+    sans: "'Segoe UI Variable Text', 'Segoe UI', Inter, Arial, ui-sans-serif, system-ui, sans-serif",
+    mono: "'Cascadia Mono', 'SFMono-Regular', Consolas, monospace",
   },
   default: { sans: 'System', mono: 'monospace' },
 })!;
+
+export const Typography = {
+  micro: { fontSize: 10, lineHeight: 14 },
+  label: { fontSize: 11, lineHeight: 15, letterSpacing: 0.6 },
+  bodySmall: { fontSize: 12, lineHeight: 18 },
+  body: { fontSize: 14, lineHeight: 21 },
+  titleSmall: { fontSize: 22, lineHeight: 27 },
+  title: { fontSize: 34, lineHeight: 39 },
+};

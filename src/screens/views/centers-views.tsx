@@ -750,7 +750,7 @@ const s = StyleSheet.create({
   tabText: {
     color: Colors.muted,
     fontFamily: Fonts.mono,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "900",
   },
   tabTextActive: { color: Colors.orange },
@@ -768,7 +768,7 @@ const s = StyleSheet.create({
     borderColor: Colors.orange,
     backgroundColor: Colors.orangeSoft,
   },
-  filterText: { color: Colors.muted, fontFamily: Fonts.mono, fontSize: 8 },
+  filterText: { color: Colors.muted, fontFamily: Fonts.mono, fontSize: 10 },
   filterTextActive: { color: Colors.orange },
   emptyState: { marginBottom: 15 },
   emptyTitle: { color: Colors.text, fontSize: 13, fontWeight: "800" },
@@ -791,7 +791,7 @@ const s = StyleSheet.create({
   compareLabel: {
     color: Colors.orange,
     fontFamily: Fonts.mono,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: "900",
   },
   compareValue: {
@@ -803,7 +803,7 @@ const s = StyleSheet.create({
   muted: {
     color: Colors.muted,
     fontFamily: Fonts.mono,
-    fontSize: 8,
+    fontSize: 10,
     lineHeight: 14,
     marginTop: 5,
   },

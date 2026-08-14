@@ -20,12 +20,14 @@ import { annualMaintenance, calculateNetWorth, purchaseUpgrade, upgradeRequireme
 import { purchaseConsumable } from '../src/engine/consumables';
 import { generateAnnualPlayerRanking } from '../src/engine/player-ranking';
 import { PRO_PLAYER_POOL } from '../src/data/pro-players';
+import { TRAINING_ACTIVITIES } from '../src/data/training';
 import { completeTransfer, initialTeamOffers } from '../src/engine/rosters';
 import { applyPrizeShare, contractNegotiationAvailability, negotiateContract } from '../src/engine/contracts';
 import { simulateTournamentCampaign } from '../src/engine/tournament-campaign';
 import { CAREER_SCHEMA_VERSION, migrateCareerState } from '../src/state/migrations';
 import { CareerState, MatchResult, PlayerIdentity, SwissRoundMatch } from '../src/types/game';
 import { cloneSerializable } from '../src/utils/clone';
+import { applyTraining, trainingAvailability } from '../src/engine/progression';
 
 assert.ok(TEAMS.length >= 180, 'The VRS seed must extend well beyond the global top 100');
 assert.equal(new Set(TEAMS.map((team) => team.id)).size, TEAMS.length, 'Team ids must be unique');
@@ -66,9 +68,26 @@ for (const alias of ['statistics', 'analytics', 'timeline', 'financial-report', 
 const identity: PlayerIdentity = { fullName: 'Test Player', nickname: 'TEST', nationality: 'Argentina', region: 'Argentina', city: 'Buenos Aires', age: 17, primaryLanguage: 'Español', secondaryLanguages: ['Inglés'], handedness: 'Diestro', personality: 'Analítico', ambition: 85, riskTolerance: 60, priority: 'Títulos', role: 'Rifler', style: 'Mechanical' };
 
 const firstOffers = initialTeamOffers(identity); assert.equal(firstOffers.length, 3); assert.ok(firstOffers.every((team) => team.initialRanking >= 80), 'The initial offers must be genuinely low tier');
-const nextAction = advanceUntilAction(createCareer(identity, STARTER_TEAMS[0], 2026, 901));
-assert.ok(nextAction.state.pendingDecisionId || nextAction.state.pendingMatchId || nextAction.state.pendingMinigame || nextAction.state.activeMajorId || nextAction.state.offseasonPending, 'Fast-forward must stop at the next playable action');
-assert.notEqual(nextAction.state.week, 1, 'Fast-forward must advance otherwise empty calendar weeks');
+let seasonPlan = createCareer(identity, STARTER_TEAMS[0], 2026, 901);
+assert.ok(seasonPlan.pendingDecisionId, 'A new career must begin with the six-question season plan');
+const planDate = `${seasonPlan.month}-${seasonPlan.week}`;
+for (let slot = 1; slot <= 6; slot += 1) {
+  const event = getCareerEvent(seasonPlan.pendingDecisionId); assert.ok(event, `Season-plan question ${slot} must exist`);
+  seasonPlan = applyDecision(seasonPlan, event!.choices[0]).state;
+  assert.equal(`${seasonPlan.month}-${seasonPlan.week}`, planDate, 'The season plan must not advance calendar time between answers');
+  assert.equal(seasonPlan.decisionSlotsUsed.length, slot, `Season-plan question ${slot} must be recorded`);
+  assert.equal(Boolean(seasonPlan.pendingDecisionId), slot < 6, 'Only the sixth answer may close the season plan');
+}
+const nextAction = advanceUntilAction(seasonPlan);
+assert.ok(nextAction.state.pendingDecisionId || nextAction.state.pendingMatchId || nextAction.state.pendingMinigame || nextAction.state.activeMajorId || nextAction.state.offseasonPending, 'Simulation must stop at the next playable action');
+assert.ok(nextAction.state.month !== 1 || nextAction.state.week !== 1, 'Simulation must pass otherwise empty calendar time');
+
+const trainingCareer = cloneSerializable(seasonPlan); trainingCareer.player.trainingPoints = 32; trainingCareer.player.money = 8317; trainingCareer.player.xp = 0;
+const trainingActivity = TRAINING_ACTIVITIES.find((activity) => activity.id === 'aim-routine')!;
+assert.equal(trainingAvailability(trainingCareer, trainingActivity).available, true, '32 TP and sufficient cash must enable training');
+const trained = applyTraining(trainingCareer, trainingActivity).state;
+assert.equal(trained.player.trainingPoints, 30, 'Training must deduct its TP cost exactly once');
+assert.ok(trained.player.attributes.aim > trainingCareer.player.attributes.aim, 'Training must improve the previewed attribute');
 
 function assertFiniteDeep(value: unknown, path = 'state') {
   if (typeof value === 'number') assert.ok(Number.isFinite(value), `${path} contains a non-finite number`);

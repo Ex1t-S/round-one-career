@@ -5,7 +5,7 @@ import { getTeam } from '@/data/teams';
 import { CareerState, DecisionChoice, MatchTacticalModifier, PlayerIdentity, TrainingActivity } from '@/types/game';
 import { contractNegotiationAvailability, negotiateContract } from '@/engine/contracts';
 import { applyTraining } from '@/engine/progression';
-import { advanceUntilAction, advanceWeek, applyDecision, completeOffseason, createCareer, evaluateCareerEnding, resolvePendingMatch } from '@/engine/season';
+import { advanceUntilAction, applyDecision, completeOffseason, createCareer, evaluateCareerEnding, resolvePendingMatch } from '@/engine/season';
 import { cloneSerializable } from '@/utils/clone';
 import { CAREER_SCHEMA_VERSION, migrateCareerState } from './migrations';
 import { prepareMajorMatch } from '@/engine/major';
@@ -22,7 +22,6 @@ interface CareerStoreValue {
   hydrated: boolean;
   message: string;
   startCareer: (identity: PlayerIdentity, teamId: string) => void;
-  advance: () => void;
   advanceToNextAction: () => void;
   resolveMatch: (approach?: 'aggressive' | 'balanced' | 'save') => void;
   choose: (choice: DecisionChoice) => void;
@@ -70,7 +69,6 @@ export function CareerStoreProvider({ children }: PropsWithChildren) {
   const value = useMemo<CareerStoreValue>(() => ({
     career, hydrated, message,
     startCareer: (identity, teamId) => { const team = getTeam(teamId); const next = createCareer(identity, team); setCareer(next); setMessage(`Contrato firmado con ${team.name}. Tu carrera empieza ahora.`); },
-    advance: () => { if (!career) return; const result = advanceWeek(career); setCareer(result.state); setMessage(result.messages.join(' ')); },
     advanceToNextAction: () => {
       if (!career) return;
       const result = advanceUntilAction(career);
