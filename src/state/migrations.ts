@@ -3,6 +3,7 @@ import { calculateNetWorth } from '@/engine/upgrades';
 import { getMinigameDefinition } from '@/engine/minigames';
 import { hashString } from '@/engine/random';
 import { overallRating } from '@/engine/progression';
+import { PRO_PLAYER_POOL } from '@/data/pro-players';
 
 export const CAREER_SCHEMA_VERSION = 4;
 
@@ -25,6 +26,15 @@ export function migrateCareerState(value: unknown): CareerState | null {
   if (!isImportableCareer(value) || !finiteNumbers(value)) return null;
   const source = value as CareerState;
   const pendingDefinition = source.pendingMinigame ? getMinigameDefinition(source.pendingMinigame.definitionId) : undefined;
+  const playerAges = new Map(PRO_PLAYER_POOL.map((profile) => [profile.nickname.toLowerCase(), profile.age]));
+  const normalizedRankingHistory = (Array.isArray(source.playerRankingHistory) ? source.playerRankingHistory : []).map((board) => ({
+    ...board,
+    entries: board.entries.map((entry) => {
+      if (entry.isUser) return entry;
+      const baseAge = playerAges.get(entry.nickname.toLowerCase());
+      return baseAge === undefined ? entry : { ...entry, age: baseAge + Math.max(0, board.season - 1) };
+    }),
+  }));
   const migrated: CareerState = {
     ...source,
     schemaVersion: CAREER_SCHEMA_VERSION,
@@ -37,7 +47,7 @@ export function migrateCareerState(value: unknown): CareerState | null {
     careerRecords: { ...defaultRecords(), ...(source.careerRecords ?? {}) },
     contract: { ...source.contract, negotiationCooldown: source.contract?.negotiationCooldown ?? 0 },
     seasonalStatistics: Array.isArray(source.seasonalStatistics) ? source.seasonalStatistics : [],
-    playerRankingHistory: Array.isArray(source.playerRankingHistory) ? source.playerRankingHistory : [],
+    playerRankingHistory: normalizedRankingHistory,
     visualAssets: source.visualAssets ?? { avatarId: 'avatar-01', majorBanners: { 'colonge-major': 'major-cologne', 'singapore-major': 'major-singapore' }, endingAsset: 'career-finale' },
     careerSeed: Number.isFinite(source.careerSeed) ? source.careerSeed : hashString(source.id),
     seasonVariance: Number.isFinite(source.seasonVariance) ? source.seasonVariance : 0,

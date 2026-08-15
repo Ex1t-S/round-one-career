@@ -30,6 +30,10 @@ export function completeTransfer(state: CareerState, teamId: string) {
 
 export function transferOffers(state: CareerState): Team[] {
   if (state.offers.length) return state.offers.filter((offer) => offer.expiresAfterSeason >= state.season).map((offer) => getTeam(offer.teamId));
+  // During the end-of-season window an empty list is a real outcome. Do not
+  // replace it with synthetic exploratory interest: the player may simply have
+  // to stay, improve and wait for the next market window.
+  if (state.offseasonPending) return [];
   const rating = overallRating(state.player.attributes);
   const current = getTeam(state.teamId);
   const targetRank = Math.max(1, current.initialRanking - Math.round((rating - 50) * 1.8 + state.player.reputation / 5));
@@ -55,13 +59,25 @@ export function generateCareerOffers(state: CareerState): CareerOffer[] {
   const current = getTeam(state.teamId);
   const recent = state.matches.filter((match) => match.season === state.season).slice(-18);
   const rating = recent.reduce((sum, match) => sum + match.aggregate.rating, 0) / Math.max(1, recent.length);
-  const performanceLift = Math.round((rating - 1) * 75 + (state.player.reputation - 20) * .25 + (state.squad.role === 'star' ? 8 : 0));
-  const targetRank = Math.max(1, current.initialRanking - performanceLift);
+  const liveRank = state.rankings.find((entry) => entry.teamId === current.id)?.rank ?? current.initialRanking;
+  const startingRank = state.seasonStartSnapshot.teamRank || current.initialRanking;
+  const rankGain = Math.max(0, startingRank - liveRank);
+  const playerRank = state.playerRankingHistory.at(-1)?.entries.find((entry) => entry.isUser)?.rank ?? 501;
+  const performanceLift = (rating - 1) * 75 + (state.player.reputation - 20) * .25 + (state.squad.role === 'star' ? 8 : 0) + (playerRank <= 100 ? 10 : 0);
+  const youthPenalty = state.player.identity.age <= 20 && state.season <= 2 ? 8 : 0;
+  // A team jump alone creates visibility, not an automatic promotion. Young
+  // players with an ordinary rating may receive no formal offer at all.
+  const targetRank = Math.max(1, Math.min(188, Math.round(liveRank - performanceLift + youthPenalty)));
   const preference = state.flags.transferPreference;
   const candidates = TEAMS.filter((team) => team.id !== current.id && team.budget > state.player.marketValue * .35 && Math.abs(team.initialRanking - targetRank) <= (preference === 'project' ? 40 : 24))
     .sort((a, b) => Math.abs(a.initialRanking - targetRank) - Math.abs(b.initialRanking - targetRank));
   const random = rngFor(state.careerSeed, state.season, 'offers', state.decisions.length);
-  return candidates.slice(0, 12).sort(() => random() - .5).slice(0, 5).map((team, index) => {
+  const exceptionalSeason = rating >= 1.15 || playerRank <= 20 || (rankGain >= 55 && rating >= 1.05);
+  const credibleSeason = rating >= 1.02 || playerRank <= 100 || rankGain >= 35 || state.squad.role === 'star';
+  const firstSeasonsQuiet = state.season <= 2 && state.player.identity.age <= 20 && rating < 1.08 && playerRank > 100;
+  const offerCount = exceptionalSeason ? 3 + (random() > .55 ? 1 : 0) : credibleSeason ? (firstSeasonsQuiet ? (random() > .58 ? 1 : 0) : 1 + (random() > .72 ? 1 : 0)) : (random() > .62 ? 1 : 0);
+  if (offerCount === 0) return [];
+  return candidates.slice(0, 12).sort(() => random() - .5).slice(0, offerCount).map((team, index) => {
     const squadRole = roleForOffer(state, team);
     const fit = roleFit(state, team);
     return {

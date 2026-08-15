@@ -21,7 +21,7 @@ import { purchaseConsumable } from '../src/engine/consumables';
 import { generateAnnualPlayerRanking } from '../src/engine/player-ranking';
 import { PRO_PLAYER_POOL } from '../src/data/pro-players';
 import { TRAINING_ACTIVITIES } from '../src/data/training';
-import { completeTransfer, initialTeamOffers } from '../src/engine/rosters';
+import { completeTransfer, generateCareerOffers, initialTeamOffers } from '../src/engine/rosters';
 import { applyPrizeShare, contractNegotiationAvailability, negotiateContract } from '../src/engine/contracts';
 import { simulateTournamentCampaign } from '../src/engine/tournament-campaign';
 import { CAREER_SCHEMA_VERSION, migrateCareerState } from '../src/state/migrations';
@@ -73,6 +73,7 @@ for (const alias of ['statistics', 'analytics', 'timeline', 'financial-report', 
 const identity: PlayerIdentity = { fullName: 'Test Player', nickname: 'TEST', nationality: 'Argentina', region: 'Argentina', city: 'Buenos Aires', age: 17, primaryLanguage: 'Español', secondaryLanguages: ['Inglés'], handedness: 'Diestro', personality: 'Analítico', ambition: 85, riskTolerance: 60, priority: 'Títulos', role: 'Rifler', style: 'Mechanical' };
 
 const firstOffers = initialTeamOffers(identity); assert.equal(firstOffers.length, 3); assert.ok(firstOffers.every((team) => team.initialRanking >= 80), 'The initial offers must be genuinely low tier');
+const quietMarket = createCareer(identity, TEAMS.find((team) => team.initialRanking >= 160)!); assert.ok(generateCareerOffers(quietMarket).length <= 1, 'A young prospect with no official sample must not receive a full market slate');
 let seasonPlan = createCareer(identity, STARTER_TEAMS[0], 2026, 901);
 assert.ok(seasonPlan.pendingDecisionId, 'A new career must begin with the six-question season plan');
 const planDate = `${seasonPlan.month}-${seasonPlan.week}`;
@@ -283,6 +284,7 @@ const financial = calculateFinancialSummary(mechanics); assertFiniteDeep(financi
 const legacy = cloneSerializable(createCareer(identity, STARTER_TEAMS[0])) as unknown as Record<string, unknown>; legacy.schemaVersion = 1;
 for (const key of ['majorCampaigns', 'minigameHistory', 'financialHistory', 'inventory', 'netWorth', 'careerRecords', 'seasonalStatistics', 'playerRankingHistory', 'visualAssets', 'offseasonPending', 'offseasonStep', 'careerSeed', 'seasonVariance', 'squad', 'offers', 'tournamentCampaigns', 'deferredConsequences', 'decisionSlotsUsed', 'seasonStartSnapshot']) delete legacy[key];
 const migrated = migrateCareerState(legacy); assert.ok(migrated); assert.equal(migrated!.schemaVersion, CAREER_SCHEMA_VERSION); assert.deepEqual(migrated!.majorCampaigns, []); assert.deepEqual(migrated!.inventory.upgrades, []);
+const ageProbe = cloneSerializable(createCareer(identity, STARTER_TEAMS[0], 2026, 88002)); const ageBoard = generateAnnualPlayerRanking(ageProbe); ageBoard.entries = ageBoard.entries.map((entry) => entry.nickname === 'ZywOo' ? { ...entry, age: 19 } : entry); ageProbe.playerRankingHistory = [ageBoard]; const normalizedAges = migrateCareerState(ageProbe); assert.equal(normalizedAges?.playerRankingHistory[0]?.entries.find((entry) => entry.nickname === 'ZywOo')?.age, 25, 'Known player ages must be repaired when loading old ranking snapshots');
 const roundTripSource = cloneSerializable(mechanics); roundTripSource.majorCampaigns.push(createMajorCampaign(roundTripSource, MAJORS[0].id)); roundTripSource.minigameHistory.push(autoSimulateMinigame(roundTripSource, 'clutch', 'roundtrip'));
 const roundTrip = migrateCareerState(JSON.parse(JSON.stringify(roundTripSource))); assert.ok(roundTrip); assert.equal(roundTrip!.majorCampaigns.length, 1); assert.equal(roundTrip!.inventory.upgrades.length, roundTripSource.inventory.upgrades.length); assert.equal(roundTrip!.inventory.consumables.length, roundTripSource.inventory.consumables.length); assert.equal(roundTrip!.minigameHistory.length, 1);
 for (const version of [1, 2, 3, CAREER_SCHEMA_VERSION]) { const versioned = cloneSerializable(roundTripSource) as CareerState; versioned.schemaVersion = version; const restored = migrateCareerState(JSON.parse(JSON.stringify(versioned))); assert.ok(restored, `Schema v${version} must migrate`); assert.equal(restored!.schemaVersion, CAREER_SCHEMA_VERSION); }
