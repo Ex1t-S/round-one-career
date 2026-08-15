@@ -3,8 +3,8 @@ import { Pressable, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-n
 
 import { Colors, Fonts, Radius, Spacing } from '@/constants/theme';
 
-export function Panel({ children, style, accent }: PropsWithChildren<{ style?: StyleProp<ViewStyle>; accent?: 'orange' | 'green' | 'red' }>) {
-  return <View style={[styles.panel, accent === 'orange' && styles.panelOrange, accent === 'green' && styles.panelGreen, accent === 'red' && styles.panelRed, style]}>{children}</View>;
+export function Panel({ children, style, accent }: PropsWithChildren<{ style?: StyleProp<ViewStyle>; accent?: 'orange' | 'green' | 'red' | 'blue' }>) {
+  return <View style={[styles.panel, accent === 'orange' && styles.panelOrange, accent === 'green' && styles.panelGreen, accent === 'red' && styles.panelRed, accent === 'blue' && styles.panelBlue, style]}>{children}</View>;
 }
 
 export function Eyebrow({ children, color = Colors.muted }: PropsWithChildren<{ color?: string }>) { return <Text style={[styles.eyebrow, { color }]}>{children}</Text>; }
@@ -46,7 +46,7 @@ export function Divider() { return <View style={styles.divider} />; }
 
 const styles = StyleSheet.create({
   panel: { backgroundColor: Colors.panel, borderWidth: 1, borderColor: Colors.line, padding: Spacing.lg, borderRadius: Radius.md },
-  panelOrange: { borderLeftWidth: 3, borderLeftColor: Colors.orange }, panelGreen: { borderLeftWidth: 3, borderLeftColor: Colors.green }, panelRed: { borderLeftWidth: 3, borderLeftColor: Colors.red },
+  panelOrange: { borderLeftWidth: 3, borderLeftColor: Colors.orange }, panelGreen: { borderLeftWidth: 3, borderLeftColor: Colors.green }, panelRed: { borderLeftWidth: 3, borderLeftColor: Colors.red }, panelBlue: { borderLeftWidth: 3, borderLeftColor: Colors.blue },
   eyebrow: { fontFamily: Fonts.sans, fontSize: 13, lineHeight: 18, fontWeight: '800', letterSpacing: 0.65, textTransform: 'uppercase', marginBottom: 8 },
   title: { color: Colors.text, fontFamily: Fonts.sans, fontSize: 34, lineHeight: 39, fontWeight: '900', letterSpacing: -1 },
   hero: { fontSize: 52, lineHeight: 56, letterSpacing: -2 }, medium: { fontSize: 23, lineHeight: 28 },

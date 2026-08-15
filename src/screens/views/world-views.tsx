@@ -56,7 +56,49 @@ export function SummaryView() {
 
 } */
 
-export function SettingsView() {
+export function SettingsView() { return <View><SnapshotPanel /><SettingsViewLegacy /></View>; }
+
+function SnapshotPanel() {
+  const { career: careerValue, exportCareer } = useCareerStore();
+  const [snapshot, setSnapshot] = useState('');
+  if (!careerValue) return null;
+  const career = careerValue;
+  function generateSnapshot() {
+    const latest = career.matches.at(-1);
+    const activeMajor = career.majorCampaigns.find((item) => item.id === career.activeMajorId);
+    const currentMatches = career.matches.filter((item) => item.season === career.season);
+    const currentTeamRank = career.rankings.find((entry) => entry.teamId === career.teamId)?.rank ?? null;
+    const payload = {
+      snapshotVersion: 1,
+      generatedAt: new Date().toISOString(),
+      app: 'ROUND/ONE Beta 1',
+      route: 'settings',
+      summary: {
+        player: career.player.identity.nickname,
+        season: career.season,
+        year: career.year,
+        teamId: career.teamId,
+        teamRank: currentTeamRank,
+        role: career.squad.role,
+        age: career.player.identity.age,
+        rating: currentMatches.length ? Number((currentMatches.reduce((sum, item) => sum + item.aggregate.rating, 0) / currentMatches.length).toFixed(2)) : null,
+        currentSeasonSeries: currentMatches.length,
+        currentSeasonWins: currentMatches.filter((item) => item.won).length,
+        money: career.player.money,
+        netWorth: career.netWorth,
+        pendingAction: career.offseasonPending ? 'offseason' : career.pendingDecisionId ? 'decision' : career.pendingMinigame ? 'minigame' : career.pendingMatchId ? 'match' : career.activeMajorId ? 'major' : 'advance',
+        activeMajor: activeMajor ? { tournamentId: activeMajor.tournamentId, stage: activeMajor.stage, status: activeMajor.status, qualified: activeMajor.qualified } : null,
+        lastMatch: latest ? { opponentTeamId: latest.opponentTeamId, tournamentId: latest.tournamentId, won: latest.won, seriesScore: latest.seriesScore, rating: latest.aggregate.rating } : null,
+        offers: career.offers.length,
+      },
+      career: JSON.parse(exportCareer()),
+    };
+    setSnapshot(JSON.stringify(payload, null, 2));
+  }
+  return <Panel accent="blue"><SectionHeader eyebrow="QA · ESTADO ACTUAL" title="Snapshot de la carrera" /><Text style={w.settingCopy}>Genera una copia legible del estado exacto de esta partida para analizarla o compartirla.</Text><Button label="Generar snapshot" onPress={generateSnapshot} /><TextInput multiline editable={false} value={snapshot} placeholder="Tocá Generar snapshot para ver el estado actual..." placeholderTextColor={Colors.muted} style={w.snapshotInput} /></Panel>;
+}
+
+function SettingsViewLegacy() {
   const { career, updateSettings, exportCareer, importCareer, resetCareer } = useCareerStore(); const [json, setJson] = useState(''); const [confirmReset, setConfirmReset] = useState(false); if (!career) return null; const settings = career.settings;
   return <View><SectionHeader eyebrow="ROUND/ONE · BETA 1" title="Configuración y guardado" /><Panel><SettingRow label="Autoguardado" copy="Guarda cada cambio en el dispositivo." value={settings.autosave} onChange={(value) => updateSettings({ autosave: value })} /><SettingRow label="Minijuegos" copy="Permite decisiones interactivas o simulación automática." value={settings.minigames} onChange={(value) => updateSettings({ minigames: value })} /><SettingRow label="Movimiento reducido" copy="Desactiva transiciones complejas." value={settings.reducedMotion} onChange={(value) => updateSettings({ reducedMotion: value })} /><SettingRow label="Sonido" copy="Feedback no intrusivo, apagado por defecto." value={settings.sound} onChange={(value) => updateSettings({ sound: value })} /><SettingRow label="Vibración" copy="Feedback háptico móvil." value={settings.vibration} onChange={(value) => updateSettings({ vibration: value })} /></Panel><SectionHeader eyebrow={`GUARDADO PORTÁTIL · SCHEMA V${CAREER_SCHEMA_VERSION}`} title="Exportar e importar JSON" /><Panel><Text style={w.settingCopy}>Los guardados anteriores se validan y reciben defaults sin perder historial.</Text><TextInput multiline value={json} onChangeText={setJson} placeholder="Pegá acá el JSON de una carrera..." placeholderTextColor={Colors.muted} style={w.jsonInput} /><View style={w.settingActions}><Button variant="secondary" label="Generar JSON" onPress={() => setJson(exportCareer())} /><Button label="Importar JSON" disabled={!json.trim()} onPress={() => importCareer(json)} /></View></Panel><Panel accent="red"><Text style={w.pathTitle}>Eliminar guardado actual</Text><Text style={w.pathCopy}>Exportá una copia antes de borrar.</Text>{confirmReset ? <View style={w.settingActions}><Button variant="ghost" label="Cancelar" onPress={() => setConfirmReset(false)} /><Button variant="danger" label="Sí, borrar carrera" onPress={resetCareer} /></View> : <Button variant="danger" label="Borrar carrera..." onPress={() => setConfirmReset(true)} />}</Panel></View>;
 }
@@ -64,6 +106,7 @@ export function SettingsView() {
 function SettingRow({ label, copy, value, onChange }: { label: string; copy: string; value: boolean; onChange: (value: boolean) => void }) { return <View style={w.settingRow}><View style={w.settingRowCopy}><Text style={w.settingLabel}>{label}</Text><Text style={w.settingCopy}>{copy}</Text></View><Switch value={value} onValueChange={onChange} trackColor={{ false: Colors.lineStrong, true: Colors.orangeSoft }} thumbColor={value ? Colors.orange : Colors.muted} /></View>; }
 
 const w = StyleSheet.create({
+  snapshotInput: { minHeight: 220, maxHeight: 520, marginTop: 14, padding: 12, color: Colors.textSoft, backgroundColor: Colors.bg, borderWidth: 1, borderColor: Colors.blue, fontFamily: Fonts.mono, fontSize: 10, lineHeight: 14, textAlignVertical: 'top' },
   newsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 9 }, leadNews: { width: '100%', padding: 26 }, newsCard: { minWidth: 260, flexGrow: 1, flexBasis: 330 }, newsTop: { flexDirection: 'row', justifyContent: 'space-between' }, newsTime: { color: Colors.muted, fontFamily: Fonts.mono, fontSize: 10 }, leadTitle: { color: Colors.text, fontSize: 27, lineHeight: 31, fontWeight: '900', marginTop: 18, maxWidth: 800 }, newsTitle: { color: Colors.text, fontSize: 15, lineHeight: 19, fontWeight: '900', marginTop: 15 }, newsCopy: { color: Colors.muted, fontSize: 10, lineHeight: 16, marginTop: 9 },
   socialLayout: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 }, socialMain: { flex: 1.5, minWidth: 290, gap: 8 }, socialSide: { flex: 0.6, minWidth: 220 }, post: { flexDirection: 'row', gap: 12 }, postAvatar: { width: 38, height: 38, backgroundColor: Colors.orangeSoft, borderWidth: 1, borderColor: Colors.orange, alignItems: 'center', justifyContent: 'center' }, postAvatarText: { color: Colors.orange, fontFamily: Fonts.mono, fontSize: 11, fontWeight: '900' }, postCopy: { flex: 1 }, postHandle: { color: Colors.text, fontSize: 11, fontWeight: '900' }, postText: { color: Colors.textSoft, fontSize: 12, lineHeight: 18, marginTop: 5 }, postStats: { flexDirection: 'row', gap: 17, marginTop: 10 }, postStat: { color: Colors.muted, fontFamily: Fonts.mono, fontSize: 10 }, followers: { color: Colors.orange, fontSize: 48, fontWeight: '900' }, followersLabel: { color: Colors.muted, fontFamily: Fonts.mono, fontSize: 10 },
   awardHero: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 20 }, awardGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 9, marginBottom: 22 }, awardCard: { minWidth: 210, flexGrow: 1, flexBasis: 240 }, awardIcon: { color: Colors.orange, fontSize: 27 }, awardName: { color: Colors.text, fontSize: 14, fontWeight: '900', marginTop: 12 }, awardScore: { color: Colors.muted, fontFamily: Fonts.mono, fontSize: 10, marginVertical: 10 }, awardRow: { flexDirection: 'row', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: Colors.line }, awardRowIndex: { width: 34, color: Colors.orange, fontFamily: Fonts.mono, fontSize: 11 }, awardRowText: { color: Colors.textSoft, fontSize: 11 }, muted: { color: Colors.muted, fontSize: 11 },
