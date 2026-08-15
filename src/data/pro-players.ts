@@ -27,6 +27,10 @@ const KNOWN_AGES: Record<string, number> = {
   KSCERATO: 26, Spinx: 25, Twistzz: 26, mezii: 27, Senzu: 23, XANTARES: 31, YEKINDAR: 26,
   xertioN: 22, torzsi: 24, NiKo: 29, iM: 27, b1t: 23, HeavyGod: 24, Jimpphat: 20,
   NertZ: 27, w0nderful: 21, Techno: 21, device: 30, malbsMd: 23, EliGE: 29,
+  FalleN: 34, jks: 29, NAF: 28, insani: 21, nilo: 20, Brollan: 23,
+  sjuush: 26, stavn: 23, woxic: 27,
+  kyousuke: 20, karrigan: 35, Snappi: 35, apEX: 32, KRIMZ: 31, Boombl4: 26,
+  vsm: 25, biguzera: 24, makazze: 19, meyern: 23,
 };
 
 function idFor(nickname: string) {

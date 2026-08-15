@@ -690,6 +690,15 @@ export interface CareerState {
     vibration: boolean;
     autosave: boolean;
   };
+  trainingLedger?: TrainingLedger;
+}
+
+export interface TrainingLedger {
+  season: number;
+  spentPoints: number;
+  spentMoney: number;
+  attributeGrowth: Partial<Record<AttributeKey, number>>;
+  activityCounts: Record<string, number>;
 }
 
 export interface TrainingActivity {

@@ -27,7 +27,8 @@ function scorePro(profile: ProPlayerProfile, state: CareerState) {
   const slump = random() < .08 ? 4 + random() * 8 : 0;
   const team = getTeam(profile.teamId);
   const teamScore = Math.max(-3, 7 - team.initialRanking * .08);
-  const score = profile.baseScore + ageModifier(age, profile.potential) + teamScore + formNoise + breakout - slump;
+  const seedAnchor = profile.seedRank ? Math.max(0, 8 - profile.seedRank * 0.15) : 0;
+  const score = profile.baseScore + ageModifier(age, profile.potential) + teamScore + seedAnchor + formNoise + breakout - slump;
   const story = breakout >= 5 ? 'Irrupción del año' : slump >= 4 ? 'Año irregular' : formNoise >= 5 ? 'Pico de forma' : profile.seedRank && profile.seedRank <= 20 ? 'Consistencia de élite' : 'Impacto sostenido';
   return { score, age, story };
 }
@@ -51,7 +52,7 @@ export function generateAnnualPlayerRanking(state: CareerState): PlayerRankingSe
   const candidates: Omit<PlayerRankingEntry, 'rank' | 'trend' | 'previousRank'>[] = PRO_PLAYER_POOL.map((profile) => {
     const result = scorePro(profile, state);
     return {
-      playerId: profile.id, nickname: profile.nickname, teamId: profile.teamId, rating: Number(Math.max(.91, Math.min(1.48, .65 + result.score * .0068)).toFixed(2)),
+      playerId: profile.id, nickname: profile.nickname, teamId: profile.teamId, rating: Number(Math.max(.86, Math.min(1.58, .58 + result.score * .0081)).toFixed(2)),
       score: Number(result.score.toFixed(2)), age: result.age, role: profile.role, story: result.story, isUser: false,
     };
   });

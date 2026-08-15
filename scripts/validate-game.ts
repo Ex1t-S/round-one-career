@@ -27,7 +27,7 @@ import { simulateTournamentCampaign } from '../src/engine/tournament-campaign';
 import { CAREER_SCHEMA_VERSION, migrateCareerState } from '../src/state/migrations';
 import { CareerState, MatchResult, PlayerIdentity, SwissRoundMatch } from '../src/types/game';
 import { cloneSerializable } from '../src/utils/clone';
-import { applyTraining, trainingAvailability } from '../src/engine/progression';
+import { applyTraining, trainingAvailability, TRAINING_SEASON_CAP } from '../src/engine/progression';
 
 assert.ok(TEAMS.length >= 180, 'The VRS seed must extend well beyond the global top 100');
 assert.equal(new Set(TEAMS.map((team) => team.id)).size, TEAMS.length, 'Team ids must be unique');
@@ -93,6 +93,10 @@ assert.equal(trainingAvailability(trainingCareer, trainingActivity).available, t
 const trained = applyTraining(trainingCareer, trainingActivity).state;
 assert.equal(trained.player.trainingPoints, 30, 'Training must deduct its TP cost exactly once');
 assert.ok(trained.player.attributes.aim > trainingCareer.player.attributes.aim, 'Training must improve the previewed attribute');
+let cappedTraining = cloneSerializable(trainingCareer); cappedTraining.player.trainingPoints = 200;
+for (let index = 0; index < 40; index += 1) { const available = trainingAvailability(cappedTraining, trainingActivity); if (!available.available) break; cappedTraining = applyTraining(cappedTraining, trainingActivity).state; }
+assert.ok((cappedTraining.trainingLedger?.attributeGrowth.aim ?? 0) <= TRAINING_SEASON_CAP, 'Training must cap annual growth per attribute');
+assert.ok(cappedTraining.player.attributes.aim - trainingCareer.player.attributes.aim <= TRAINING_SEASON_CAP, 'Aim cannot be maxed in one annual training phase');
 
 function assertFiniteDeep(value: unknown, path = 'state') {
   if (typeof value === 'number') assert.ok(Number.isFinite(value), `${path} contains a non-finite number`);
@@ -109,6 +113,8 @@ function resultWithOutcome(state: CareerState, opponentId: string, won: boolean)
 const initialBoard = generateAnnualPlayerRanking(createCareer(identity, STARTER_TEAMS[0], 2026, 44));
 assert.equal(initialBoard.entries.length, 100);
 for (const nickname of ['ZywOo', 'donk', 'm0NESY', 'Spinx']) assert.ok(initialBoard.entries.some((entry) => entry.nickname === nickname), `${nickname} must be represented in the current player world`);
+assert.ok(initialBoard.entries.every((entry) => entry.age >= 18 && entry.age <= 40), 'Top 100 player ages must stay within a plausible professional range');
+assert.ok(new Set(initialBoard.entries.map((entry) => entry.rating)).size >= 12, 'Annual player ratings need visible separation');
 const annualWinners = new Set(Array.from({ length: 36 }, (_, seed) => generateAnnualPlayerRanking(createCareer(identity, STARTER_TEAMS[0], 2026, seed + 500)).entries[0].nickname));
 assert.ok(annualWinners.size >= 4, 'Controlled variance must allow several credible world #1 players');
 const superstar = createCareer(identity, TEAMS[0], 2026, 9001); superstar.player.reputation = 100;
@@ -263,6 +269,7 @@ const consumableCash = mechanics.player.money; mechanics = purchaseConsumable(me
 const beforeMoney = mechanics.player.money; mechanics = purchaseUpgrade(mechanics, 'monitor').state; assert.ok(mechanics.player.money < beforeMoney, 'Purchase must deduct money');
 assert.equal(beforeMoney - mechanics.player.money, 650, 'Purchase must reduce cash exactly once by its price');
 const levelOneReaction = mechanics.player.attributes.reaction; mechanics = purchaseUpgrade(mechanics, 'monitor').state; assert.ok(mechanics.player.attributes.reaction > levelOneReaction && mechanics.player.attributes.reaction - levelOneReaction < 0.65, 'Diminishing returns must reduce later gains');
+const purchaseLimitState = cloneSerializable(mechanics); purchaseLimitState.inventory.purchaseHistory = Array.from({ length: 8 }, (_, index) => ({ id: `limit-${index}`, upgradeId: 'mouse-basic', season: purchaseLimitState.season, price: 1, level: index + 1 })); assert.equal(upgradeRequirement(purchaseLimitState, UPGRADES.find((item) => item.id === 'headset')!).allowed, false, 'Permanent upgrades must have a seasonal purchase limit');
 const poor = createCareer(identity, STARTER_TEAMS[0]); poor.offseasonPending = true; assert.equal(purchaseUpgrade(poor, 'performance-lab').state.player.money, poor.player.money, 'Cannot buy without funds');
 assert.equal(upgradeRequirement(poor, UPGRADES.find((item) => item.id === 'own-team')!).allowed, false, 'Requirements must block purchases');
 mechanics = purchaseUpgrade(mechanics, 'dedicated-internet').state; assert.ok(annualMaintenance(mechanics) > 0, 'Maintenance must be charged');

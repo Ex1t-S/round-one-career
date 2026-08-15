@@ -11,9 +11,14 @@ export function upgradeRequirement(state: CareerState, definition: UpgradeDefini
   const owned = state.inventory.upgrades.find((item) => item.upgradeId === definition.id);
   const level = owned?.level ?? 0;
   const price = upgradePrice(definition, level);
+  const seasonalPurchases = state.inventory.purchaseHistory.filter((item) => item.season === state.season).length;
+  const purchaseLimit = Math.max(4, Math.min(8, 4 + Math.floor(state.player.level / 3)));
+  const budget = safeBudget(state);
   if (!state.offseasonPending) return { allowed: false, reason: 'Las compras se habilitan durante el off-season.', price, level };
+  if (seasonalPurchases >= purchaseLimit) return { allowed: false, reason: `Limite de ${purchaseLimit} compras permanentes por cierre anual alcanzado.`, price, level };
   if (level >= definition.maxLevel) return { allowed: false, reason: 'Nivel máximo alcanzado.', price, level };
   if (state.player.money < price) return { allowed: false, reason: 'Fondos insuficientes.', price, level };
+  if (price > budget.spendable) return { allowed: false, reason: `Reserva $${budget.reserve.toLocaleString('en-US')} para sostener la proxima temporada.`, price, level };
   if (state.player.reputation < definition.requiredReputation) return { allowed: false, reason: `Requiere ${definition.requiredReputation} de reputación.`, price, level };
   if (state.player.level < definition.requiredLevel) return { allowed: false, reason: `Requiere nivel ${definition.requiredLevel}.`, price, level };
   if (state.trophies.length < definition.requiredTitles) return { allowed: false, reason: `Requiere ${definition.requiredTitles} título(s).`, price, level };

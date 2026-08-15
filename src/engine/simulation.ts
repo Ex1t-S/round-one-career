@@ -71,8 +71,8 @@ export function simulateMatch(state: CareerState, playerTeam: Team, opponent: Te
   for (let index = 0; index < maxMaps && teamWins < requiredWins && opponentWins < requiredWins; index += 1) {
     const mapId = pool[index % pool.length];
     const performance = playerPerformanceScore(state, mapId, opponent, tournament.pressure);
-    const teamPower = playerTeam.globalLevel * 0.65 + state.chemistry * 0.16 + performance * 0.19 + performanceVariance;
-    const opponentPower = opponent.globalLevel * 0.82 + opponent.chemistry * 0.18;
+    const teamPower = playerTeam.globalLevel * 0.78 + state.chemistry * 0.12 + performance * 0.10 + performanceVariance;
+    const opponentPower = opponent.globalLevel * 0.78 + opponent.chemistry * 0.12;
     const winProbability = clamp(mapWinProbability(state, playerTeam, opponent, tournamentId, mapId) * 100 + performanceVariance * 1.5, 12, 88) / 100;
     const won = random() < winProbability;
     const overtime = Math.abs(teamPower - opponentPower) < 5 && random() > 0.65;
@@ -93,9 +93,9 @@ export function simulateMatch(state: CareerState, playerTeam: Team, opponent: Te
 export function mapWinProbability(state: CareerState, playerTeam: Team, opponent: Team, tournamentId: string, mapId: string) {
   const tournament = getTournament(tournamentId);
   const performance = playerPerformanceScore(state, mapId, opponent, tournament.pressure);
-  const teamPower = playerTeam.globalLevel * 0.65 + state.chemistry * 0.16 + performance * 0.19;
-  const opponentPower = opponent.globalLevel * 0.82 + opponent.chemistry * 0.18;
-  return clamp(50 + (teamPower - opponentPower) * 1.5, 12, 88) / 100;
+  const teamPower = playerTeam.globalLevel * 0.78 + state.chemistry * 0.12 + performance * 0.10;
+  const opponentPower = opponent.globalLevel * 0.78 + opponent.chemistry * 0.12;
+  return clamp(50 + (teamPower - opponentPower) * 1.9, 12, 88) / 100;
 }
 
 export function estimatedSeriesWinProbability(state: CareerState, playerTeam: Team, opponent: Team, tournamentId: string, format: 'BO1' | 'BO3' | 'BO5' = getTournament(tournamentId).seriesFormat) {

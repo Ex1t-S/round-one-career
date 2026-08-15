@@ -1,9 +1,16 @@
 import { ATTRIBUTE_LABELS } from '@/data/roles';
-import { AttributeKey, CareerState, PlayerAttributes, TrainingActivity } from '@/types/game';
+import { AttributeKey, CareerState, PlayerAttributes, TrainingActivity, TrainingLedger } from '@/types/game';
 import { cloneSerializable } from '@/utils/clone';
 
 export const clamp = (value: number, min = 0, max = 100) => Math.max(min, Math.min(max, Number.isFinite(value) ? value : min));
 export const clampAttributes = (attributes: PlayerAttributes) => Object.fromEntries(Object.entries(attributes).map(([key, value]) => [key, clamp(value, 1, 100)])) as PlayerAttributes;
+
+export const TRAINING_SEASON_CAP = 18;
+
+export function trainingLedgerFor(state: CareerState): TrainingLedger {
+  if (state.trainingLedger?.season === state.season) return state.trainingLedger;
+  return { season: state.season, spentPoints: 0, spentMoney: 0, attributeGrowth: {}, activityCounts: {} };
+}
 
 export function overallRating(attributes: PlayerAttributes) {
   const core: AttributeKey[] = ['aim', 'reaction', 'gameSense', 'positioning', 'consistency', 'mentalStrength', 'communication', 'teamChemistry'];
@@ -48,16 +55,24 @@ export function trainingAvailability(state: CareerState, activity: TrainingActiv
   const missingPoints = Math.max(0, activity.pointCost - state.player.trainingPoints);
   const missingMoney = Math.max(0, activity.moneyCost - state.player.money);
   const saturation = state.player.fatigue > 80 || state.player.burnout > 75 ? 0.45 : state.player.fatigue > 60 ? 0.7 : 1;
-  const projectedGain = Math.max(1, Math.round(activity.gains * saturation));
-  const available = !state.finished && missingPoints === 0 && missingMoney === 0;
+  const ledger = trainingLedgerFor(state);
+  const gains = activity.attributes.map((key) => {
+    const growth = ledger.attributeGrowth[key] ?? 0;
+    const diminishing = Math.max(0.3, 1 - growth / 30);
+    return Math.max(0, Math.min(Math.round(activity.gains * saturation * diminishing), TRAINING_SEASON_CAP - growth, 100 - state.player.attributes[key]));
+  });
+  const projectedGain = gains.length ? Math.max(0, Math.min(...gains)) : 0;
+  const available = !state.finished && missingPoints === 0 && missingMoney === 0 && projectedGain > 0;
   const reason = state.finished
     ? 'La carrera ya terminó.'
     : missingPoints > 0
       ? `Faltan ${missingPoints} TP.`
       : missingMoney > 0
         ? `Faltan $${missingMoney.toLocaleString('en-US')}.`
-        : `Usar ${activity.pointCost} TP${activity.moneyCost ? ` + $${activity.moneyCost.toLocaleString('en-US')}` : ''}`;
-  return { available, missingPoints, missingMoney, projectedGain, saturation, reason };
+        : projectedGain <= 0
+          ? 'Este atributo ya alcanzó el crecimiento anual disponible.'
+          : `Usar ${activity.pointCost} TP${activity.moneyCost ? ` + $${activity.moneyCost.toLocaleString('en-US')}` : ''}`;
+  return { available, missingPoints, missingMoney, projectedGain, saturation, reason, ledger };
 }
 
 export function applyTraining(state: CareerState, activity: TrainingActivity): { state: CareerState; message: string } {
@@ -68,7 +83,15 @@ export function applyTraining(state: CareerState, activity: TrainingActivity): {
   next.player.money -= activity.moneyCost;
   next.player.fatigue = clamp(next.player.fatigue + activity.fatigue);
   next.player.burnout = clamp(next.player.burnout + activity.burnout);
-  for (const key of activity.attributes) next.player.attributes[key] = clamp(next.player.attributes[key] + availability.projectedGain, 1, 100);
+  const ledger = trainingLedgerFor(next);
+  ledger.spentPoints += activity.pointCost;
+  ledger.spentMoney += activity.moneyCost;
+  ledger.activityCounts[activity.id] = (ledger.activityCounts[activity.id] ?? 0) + 1;
+  for (const key of activity.attributes) {
+    next.player.attributes[key] = clamp(next.player.attributes[key] + availability.projectedGain, 1, 100);
+    ledger.attributeGrowth[key] = (ledger.attributeGrowth[key] ?? 0) + availability.projectedGain;
+  }
+  next.trainingLedger = ledger;
   next.player.xp += 80 + activity.attributes.length * 20;
   next.updatedAt = new Date().toISOString();
   return { state: processLevelUps(next), message: `${activity.name}: -${activity.pointCost} TP${activity.moneyCost ? ` · -$${activity.moneyCost.toLocaleString('en-US')}` : ''}. Mejoraste ${activity.attributes.map((key) => ATTRIBUTE_LABELS[key]).join(', ')}.` };

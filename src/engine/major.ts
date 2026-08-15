@@ -135,11 +135,12 @@ function opponentForQualification(state: CareerState, campaign: MajorCampaignSta
 export function majorProbabilityBreakdown(state: CareerState, campaign: MajorCampaignState, opponentId?: string) {
   const opponent = getTeam(opponentId ?? campaign.pendingOpponentId ?? TEAMS[0].id);
   const rank = state.rankings.find((entry) => entry.teamId === state.teamId)?.rank ?? 100;
+  const opponentRank = state.rankings.find((entry) => entry.teamId === opponent.id)?.rank ?? opponent.initialRanking;
   const recent = state.matches.slice(-8);
   const recentForm = recent.length ? recent.filter((match) => match.won).length / recent.length * 100 : state.player.form;
   const roster = state.player.benched ? -18 : state.player.injuredWeeks ? -22 : 0;
   const factors = {
-    ranking: clamp(58 - (rank - opponent.initialRanking) * 0.7, 18, 82),
+    ranking: clamp(58 - (rank - opponentRank) * 0.7, 18, 82),
     recentForm,
     chemistry: state.chemistry,
     playerLevel: Object.values(state.player.attributes).reduce((sum, value) => sum + value, 0) / Object.values(state.player.attributes).length,
@@ -154,16 +155,21 @@ export function majorProbabilityBreakdown(state: CareerState, campaign: MajorCam
   return { probability, factors };
 }
 
-function fillPlayoffParticipants(state: CareerState, campaign: MajorCampaignState) {
+function fillPlayoffParticipants(campaign: MajorCampaignState) {
   const qualified = campaign.swiss.filter((entry) => entry.status === 'qualified').sort((a, b) => b.record.wins - a.record.wins || b.record.buchholz - a.record.buchholz).map((entry) => entry.teamId);
-  const fallback = state.rankings.slice().sort((a, b) => a.rank - b.rank).map((entry) => entry.teamId);
-  return [...new Set([state.teamId, ...qualified, ...fallback])].slice(0, 8);
+  // Playoffs must be the continuation of the completed Swiss, never a fresh
+  // global top-eight draw. The fallback is only for old/corrupt saves that do
+  // not contain eight Swiss qualifiers; it preserves the campaign field.
+  const fallback = campaign.participants.filter((teamId) => !qualified.includes(teamId));
+  return [...new Set([...qualified, ...fallback])].slice(0, 8);
 }
 
-function eliminationStageParticipants(state: CareerState, campaign: MajorCampaignState) {
+function eliminationStageParticipants(_state: CareerState, campaign: MajorCampaignState) {
   const advanced = campaign.swiss.filter((entry) => entry.status === 'qualified').map((entry) => entry.teamId);
-  const invited = state.rankings.slice().sort((a, b) => a.rank - b.rank).map((entry) => entry.teamId).filter((teamId) => !advanced.includes(teamId) && !campaign.participants.includes(teamId));
-  return [...advanced, ...invited].slice(0, 16);
+  // Keep every team that actually qualified. Fill the new stage only with
+  // teams from the campaign field, avoiding an artificial global-top reset.
+  const carry = campaign.participants.filter((teamId) => !advanced.includes(teamId));
+  return [...new Set([...advanced, ...carry])].slice(0, 16);
 }
 
 export function prepareMajorMatch(state: CareerState): { state: CareerState; message: string } {
@@ -175,7 +181,7 @@ export function prepareMajorMatch(state: CareerState): { state: CareerState; mes
   if (campaign.status === 'eliminated' || campaign.status === 'completed') return { state, message: campaign.outcome ?? 'La campaña terminó.' };
   if (campaign.stage === 'ceremony') return finalizeMajorCeremony(next);
   if (campaign.stage === 'playoffs') {
-    campaign.bracket = createBracket(fillPlayoffParticipants(next, campaign), DEFAULT_MAJOR_FORMAT.playoffFormat, DEFAULT_MAJOR_FORMAT.grandFinalFormat);
+    campaign.bracket = createBracket(fillPlayoffParticipants(campaign), DEFAULT_MAJOR_FORMAT.playoffFormat, DEFAULT_MAJOR_FORMAT.grandFinalFormat);
     campaign.stage = 'quarterfinal';
   }
   let opponentId: string | undefined;

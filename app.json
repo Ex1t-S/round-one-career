@@ -30,7 +30,8 @@
           "image": "./assets/images/round-one-icon.png",
           "imageWidth": 96
         }
-      ]
+      ],
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true,
